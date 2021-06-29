@@ -1,9 +1,4 @@
-import * as React from 'react'
+import MapboxGL from './components/mapboxr-gl';
+export * from './components/mapboxr-gl';
 
-interface Props {
-  text: string
-}
-
-export const ExampleComponent = ({ text }: Props) => {
-  return <div>Example Component: {text}</div>
-}
+export default MapboxGL;

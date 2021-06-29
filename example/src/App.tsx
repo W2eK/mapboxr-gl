@@ -1,9 +1,15 @@
 import React from 'react';
+import MapboxGL, { MapboxrGLProps } from 'mapboxr-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
-import { ExampleComponent } from 'mapboxr-gl';
+
+const initialView: MapboxrGLProps['view'] = {
+  accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
+  style: 'mapbox://styles/mapbox/streets-v11'
+};
 
 const App = () => {
-  return <ExampleComponent text="Create React Library Example 😄" />;
+  return <MapboxGL view={initialView} />;
 };
 
 export default App;
