@@ -8,11 +8,14 @@ declare global {
   }
 }
 
-export type MapboxrGLProps = {
+export type MapboxrGLProps = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLDivElement>,
+  HTMLDivElement
+> & {
   view: Omit<mapboxgl.MapboxOptions, 'container'>;
 };
 
-const MapboxrGL: React.FC<MapboxrGLProps> = ({ children, view }) => {
+const MapboxrGL: React.FC<MapboxrGLProps> = ({ children, view, ...rest }) => {
   const container = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!container.current) return;
@@ -20,7 +23,7 @@ const MapboxrGL: React.FC<MapboxrGLProps> = ({ children, view }) => {
     if (isDev()) window.map = map;
   }, []);
   return (
-    <div style={{ height: '100vh' }} ref={container}>
+    <div ref={container} {...rest}>
       {children}
     </div>
   );

@@ -7,7 +7,7 @@ const initialView: ComponentProps<typeof MapboxrGL>['view'] = {
   style: 'mapbox://styles/mapbox/streets-v11'
 };
 const App = () => {
-  return <MapboxrGL view={initialView} />;
+  return <MapboxrGL view={initialView} style={{ height: '100vh' }} />;
 };
 
 export default App;
