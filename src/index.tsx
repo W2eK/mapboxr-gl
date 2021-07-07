@@ -1,4 +1,4 @@
-import MapboxGL from './components/mapboxr-gl';
-export * from './components/mapboxr-gl';
+import MapboxrGL from './components/map';
+// export * from './components/..';
 
-export default MapboxGL;
+export default MapboxrGL;

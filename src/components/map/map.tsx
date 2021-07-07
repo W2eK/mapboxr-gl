@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
-import isDev from '../utils/is-dev';
+import isDev from '../../utils/is-dev';
 
 declare global {
   interface Window {
