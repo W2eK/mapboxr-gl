@@ -1,4 +1,5 @@
 import MapboxrGL from './components/map';
-// export * from './components/..';
+import useMap from './components/context';
 
 export default MapboxrGL;
+export { useMap };

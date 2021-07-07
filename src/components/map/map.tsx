@@ -1,6 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
-import isDev from '../../utils/is-dev';
+
+import { Provider } from '../context';
+// import isDev from '../../utils/is-dev';
 
 declare global {
   interface Window {
@@ -8,7 +10,7 @@ declare global {
   }
 }
 
-export type MapboxrGLProps = React.DetailedHTMLProps<
+type MapboxrGLProps = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
   HTMLDivElement
 > & {
@@ -17,14 +19,16 @@ export type MapboxrGLProps = React.DetailedHTMLProps<
 
 const MapboxrGL: React.FC<MapboxrGLProps> = ({ children, view, ...rest }) => {
   const container = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<mapboxgl.Map | null>(null);
   useEffect(() => {
     if (!container.current) return;
     const map = new mapboxgl.Map({ ...view, container: container.current });
-    if (isDev()) window.map = map;
+    // if (isDev()) window.map = map;
+    setMap(map);
   }, []);
   return (
     <div ref={container} {...rest}>
-      {children}
+      {map && <Provider map={map}>{children}</Provider>}
     </div>
   );
 };
