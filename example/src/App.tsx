@@ -1,30 +1,15 @@
-import React, { ComponentProps } from 'react';
-import MapboxrGL, { Source } from 'mapboxr-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-
-const initialView: ComponentProps<typeof MapboxrGL>['view'] = {
-  accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
-  style: 'mapbox://styles/mapbox/streets-v11'
-};
+import React, { useReducer } from 'react';
+import reducer, { initialState } from './reducer';
+import Controlls from './Controlls';
+import Map from './Map';
 
 const App = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
-    <MapboxrGL view={initialView} style={{ height: '100vh' }}>
-      <Source
-        id="source"
-        type="geojson"
-        data={{
-          type: 'FeatureCollection',
-          features: [
-            {
-              type: 'Feature',
-              properties: {},
-              geometry: { type: 'Point', coordinates: [0, 0] }
-            }
-          ]
-        }}
-      />
-    </MapboxrGL>
+    <>
+      <Controlls state={state} dispatch={dispatch} />
+      <Map state={state} />
+    </>
   );
 };
 

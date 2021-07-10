@@ -27,3 +27,25 @@ body,
 #root {
   height: 100%;
 }
+
+#root {
+  display: flex;
+}
+
+.controlls {
+  /* min-width: 30vw; */
+  background-color: #fafafa;
+  padding: 1rem;
+}
+.controlls h3 {
+  margin-top: 0;
+}
+
+.controlls ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+.mapboxgl-map {
+  flex: 1;
+}
