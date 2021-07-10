@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
 
 import { Provider } from '../context';
-// import isDev from '../../utils/is-dev';
+import isDev from '../../utils/is-dev';
 
 declare global {
   interface Window {
@@ -23,8 +23,8 @@ const MapboxrGL: React.FC<MapboxrGLProps> = ({ children, view, ...rest }) => {
   useEffect(() => {
     if (!container.current) return;
     const map = new mapboxgl.Map({ ...view, container: container.current });
-    // if (isDev()) window.map = map;
-    setMap(map);
+    if (isDev()) window.map = map;
+    map.on('load', () => setMap(map));
   }, []);
   return (
     <div ref={container} {...rest}>

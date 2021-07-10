@@ -1,3 +1,6 @@
 import useMap from './context';
-export * from './context';
+import withMap from './with-map';
+
 export default useMap;
+export * from './context';
+export { withMap };
