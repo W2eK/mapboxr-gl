@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 
 import { Provider } from '../context';
 import isDev, { logger } from '../../utils/is-dev';
+import cleanUp from '../../utils/clean-up';
 
 type MapboxrGLProps = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
@@ -24,10 +25,7 @@ const MapboxrGL: React.FC<MapboxrGLProps> = ({ children, view, ...rest }) => {
     if (isDev()) window.__MAPBOXR_GL_MAP = map;
     map.on('load', () => setMap(map));
     /* On Unmount */
-    return () => {
-      logger('map', 'mapbox', 'removing');
-      map.remove();
-    };
+    return cleanUp(() => map.remove(), 'map', 'mapbox');
   }, []);
   return (
     <div ref={container} {...rest}>

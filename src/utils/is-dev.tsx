@@ -24,7 +24,7 @@ const logger = ((): Console  => {
 })();
 */
 
-enum COLORS {
+export enum COLORS {
   adding = '#49c72a',
   updating = '#df9e13',
   removing = '#df2113',

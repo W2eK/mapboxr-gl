@@ -2,20 +2,18 @@ import { useEffect } from 'react';
 // import { withMap } from '../context';
 import useMap from '../context';
 import { logger } from '../../utils/is-dev';
+import cleanUp from '../../utils/clean-up';
 
 const Layer: React.FC<mapboxgl.AnyLayer> = ({ id, ...rest }) => {
   const map = useMap();
-  // logger.group(``);
+
   /* On Mount */
   logger('layer', id, 'rendering');
   useEffect(() => {
     logger('layer', id, 'adding');
     map.addLayer({ id, ...rest });
     /* On Remove */
-    return () => {
-      logger('layer', id, 'removing');
-      map.removeLayer(id);
-    };
+    return cleanUp(() => map.removeLayer(id), 'layer', id);
   }, []);
 
   /* TODO: On Master */
@@ -35,8 +33,7 @@ const Layer: React.FC<mapboxgl.AnyLayer> = ({ id, ...rest }) => {
   // b. Remove layer, keep position
   // c. Hide layer, keep position
 
-  /* TODO: Add Context to Layer-ID */
-  // logger.groupEnd();
+  /* TODO: Inject layer name */
   return null;
 };
 

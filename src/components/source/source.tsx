@@ -4,6 +4,7 @@ import useMap from '../context';
 import assert from '../../utils/assert';
 import isEqual from '../../utils/deep-equal';
 import { logger } from '../../utils/is-dev';
+import cleanUp from '../../utils/clean-up';
 
 type SourceProps = {
   id: string;
@@ -28,16 +29,9 @@ const Source: React.FC<SourceProps> = ({ id, children, ...rest }) => {
     map.addSource(id, rest);
   }
   /* On Unmount */
-  useEffect(
-    () => () => {
-      requestAnimationFrame(() => {
-        logger('source', id, 'removing');
-        map.removeSource(id);
-      });
-    },
-    []
-  );
+  useEffect(() => cleanUp(() => map.removeSource(id), 'source', id), []);
   prev.current = rest.data;
+  /* TODO: Inject source name */
   return <Fragment>{children}</Fragment>;
 };
 
