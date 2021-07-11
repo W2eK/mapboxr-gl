@@ -1,34 +1,46 @@
-import { useRef, useEffect } from 'react';
-import { withMap } from '../context';
+import React, { Fragment, useRef, useEffect } from 'react';
+// import { withMap } from '../context';
+import useMap from '../context';
 import assert from '../../utils/assert';
 import isEqual from '../../utils/deep-equal';
+import { logger } from '../../utils/is-dev';
 
-/*
-  TODO:
-  1. add source and update source not for geojson sources
-  2. mapboxgl.AnySourceData don't work with withMap HOC
-*/
 type SourceProps = {
   id: string;
-  map: mapboxgl.Map;
 } & mapboxgl.GeoJSONSourceRaw;
 
-const Source: React.FC<SourceProps> = ({ id, map, children, ...rest }) => {
-  const prev = useRef(rest.data);
+const Source: React.FC<SourceProps> = ({ id, children, ...rest }) => {
+  /* TODO: handle non geojson-source */
+  const map = useMap();
   assert(rest.data !== undefined, 'Data prop is required for geojson-source');
+  const prev = useRef(rest.data);
   const source = map.getSource(id);
-  /* On Update */
+  logger('source', id, 'rendering');
   if (source) {
-    if (!isEqual(rest.data, prev.current))
+    /* On Update */
+    if (!isEqual(rest.data, prev.current)) {
+      logger('source', id, 'updating');
       (source as mapboxgl.GeoJSONSource).setData(rest.data);
+    }
   } else {
+    /* On Mount */
+    logger('source', id, 'adding');
     map.addSource(id, rest);
   }
   /* On Unmount */
-  // prettier-ignore
-  useEffect(() => () => { map.removeSource(id) }, []);
+  useEffect(
+    () => () => {
+      requestAnimationFrame(() => {
+        logger('source', id, 'removing');
+        map.removeSource(id);
+      });
+    },
+    []
+  );
   prev.current = rest.data;
-  return null;
+  return <Fragment>{children}</Fragment>;
 };
 
-export default withMap<SourceProps>(Source);
+export default Source;
+/* FIXME: union of types with mapboxgl.AnySourceData  don't work with withMap HOC */
+// export default withMap<SourceProps>(Source);

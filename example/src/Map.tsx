@@ -1,6 +1,6 @@
 import React, { ComponentProps } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import MapboxrGL, { Source } from 'mapboxr-gl';
+import MapboxrGL, { Source, Layer } from 'mapboxr-gl';
 import { State } from './reducer';
 
 const initialView: ComponentProps<typeof MapboxrGL>['view'] = {
@@ -14,14 +14,24 @@ type Props = {
 
 const data: GeoJSON.FeatureCollection = {
   type: 'FeatureCollection',
-  features: []
+  features: [
+    {
+      type: 'Feature',
+      properties: {},
+      geometry: { type: 'Point', coordinates: [0, 0] }
+    }
+  ]
 };
 
 function Map({ state }: Props) {
-  const { map, source } = state;
+  const { map, source, layer } = state;
   return map.checked ? (
     <MapboxrGL view={initialView} style={{ height: '100vh' }}>
-      {source.checked && <Source id="source" type="geojson" data={data} />}
+      {source.checked && (
+        <Source id="geojson" type="geojson" data={data}>
+          {layer.checked && <Layer id="circles" type="circle" source="geojson" />}
+        </Source>
+      )}
     </MapboxrGL>
   ) : null;
 }
