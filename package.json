@@ -1,7 +1,7 @@
 {
   "name": "mapboxr-gl",
   "version": "0.0.1",
-  "description": "React Components for Mapbox GL library",
+  "description": "Yet another Mapbox GL JS wrapper for React",
   "author": "W2eK",
   "license": "MIT",
   "repository": "W2eK/mapboxr-gl",

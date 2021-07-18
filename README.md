@@ -1,6 +1,6 @@
 # mapboxr-gl
 
-> React Components for Mapbox GL library
+> Yet another Mapbox GL JS wrapper for React
 
 [![NPM](https://img.shields.io/npm/v/mapboxr-gl.svg)](https://www.npmjs.com/package/mapboxr-gl) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
