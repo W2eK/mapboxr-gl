@@ -1,6 +1,12 @@
 function deepEqual(a: any, b: any): boolean {
-  if (a === b) return true;
-  if (!a || !b) return false;
+  if (
+    typeof a !== 'object' &&
+    typeof a !== 'function' &&
+    typeof b !== 'object' &&
+    typeof b !== 'function' &&
+    a === b
+  )
+    return true;
   if (typeof a !== typeof b) return false;
   if (Array.isArray(a) !== Array.isArray(b)) return false;
   if (Array.isArray(a)) {
