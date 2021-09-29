@@ -1,13 +1,6 @@
 function deepEqual(a: any, b: any): boolean {
-  if (
-    typeof a !== 'object' &&
-    typeof a !== 'function' &&
-    typeof b !== 'object' &&
-    typeof b !== 'function' &&
-    a === b
-  )
-    return true;
   if (typeof a !== typeof b) return false;
+  if (typeof a !== 'object' && typeof a !== 'function') return a === b;
   if (Array.isArray(a) !== Array.isArray(b)) return false;
   if (Array.isArray(a)) {
     if (a.length !== b.length) return false;
@@ -18,6 +11,8 @@ function deepEqual(a: any, b: any): boolean {
     if (keys.length !== Object.keys(b).length) return false;
     if (keys.every(key => deepEqual(a[key], b[key]))) return true;
     return false;
+  } else if (typeof a === 'function') {
+    return a.toSting() === b.toString();
   } else {
     return false;
   }

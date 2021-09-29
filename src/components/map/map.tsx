@@ -2,36 +2,65 @@ import React, { useRef, useState, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
 
 import { Provider } from '../context';
-import isDev, { logger } from '../../utils/is-dev';
-import cleanUp from '../../utils/clean-up';
+import { isDev, logger, cleanUp, deepEqual, getDependencies } from 'utils';
+import propHandlers, { DynamicPropNames } from './props';
+import withProps from 'hoc/with-props';
 
-type MapboxrGLProps = React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
-> & {
-  view: Omit<mapboxgl.MapboxOptions, 'container'>;
+type ConstantMapProps = Partial<
+  Omit<mapboxgl.MapboxOptions, 'container' | 'style' | DynamicPropNames>
+>;
+
+type DynamicMapProps = {
+  [P in DynamicPropNames]?: Parameters<typeof propHandlers[P]>[1];
 };
 
-const MapboxrGL: React.FC<MapboxrGLProps> = ({ children, view, ...rest }) => {
+type HTMLWrapperProps = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLDivElement>,
+  HTMLDivElement
+>;
+
+type MapboxrGLProps = ConstantMapProps & {
+  wrapper?: HTMLWrapperProps;
+  dynamic: DynamicMapProps;
+};
+
+const MapboxrGL: React.FC<MapboxrGLProps> = ({
+  children,
+  wrapper,
+  // listeners,
+  dynamic,
+  ...rest
+}) => {
+  // prettier-ignore
+  // const dynamic =
+  //   { style, minZoom, maxZoom, minPitch, maxPitch, renderWorldCopies };
+  const dependecies = getDependencies(rest);
+  const prev = useRef(dynamic);
   const container = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
+
   /* On Mount */
-  // isDev(console.log('dsds'))
   logger('map', 'mapbox', 'rendering');
+
   useEffect(() => {
     if (!container.current) return;
     logger('map', 'mapbox', 'adding');
-    const map = new mapboxgl.Map({ ...view, container: container.current });
+    const map = new mapboxgl.Map({
+      ...rest,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      container: container.current
+    });
     if (isDev()) window.__MAPBOXR_GL_MAP = map;
     map.on('load', () => setMap(map));
     /* On Unmount */
     return cleanUp(() => map.remove(), 'map', 'mapbox');
-  }, []);
+  }, dependecies);
+
   return (
-    <div ref={container} {...rest}>
+    <div ref={container} {...wrapper}>
       {map && <Provider map={map}>{children}</Provider>}
     </div>
   );
 };
 
-export default MapboxrGL;
+export default withProps(MapboxrGL, propHandlers);

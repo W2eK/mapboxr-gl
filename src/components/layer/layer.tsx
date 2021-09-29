@@ -1,20 +1,43 @@
 import { useEffect } from 'react';
 // import { withMap } from '../context';
-import useMap from '../context';
+import { withMap } from '../context';
 import { logger } from '../../utils/is-dev';
 import cleanUp from '../../utils/clean-up';
+import type { StandardLonghandProperties } from 'csstype';
+import mapboxgl from 'mapbox-gl';
 
-const Layer: React.FC<mapboxgl.AnyLayer> = ({ id, ...rest }) => {
-  const map = useMap();
+type LayerProps = {
+  // id: string;
+  map: mapboxgl.Map;
+  // source: string;
+  beforeId?: string;
+  cursor?: boolean | StandardLonghandProperties['cursor'];
+  'source-layer': string;
+} & mapboxgl.AnyLayer;
+
+
+const Layer: React.FC<LayerProps> = props => {
+  const {
+    children,
+    // id,
+    map,
+    // beforeId,
+    cursor,
+    // listeners,
+    // 'source-layer': sourceLayer,
+    ...rest
+  } = props;
+  // function Layer({ id, map, ...rest }: Layer) {
+  // const map = useMap();
 
   /* On Mount */
-  logger('layer', id, 'rendering');
-  useEffect(() => {
-    logger('layer', id, 'adding');
-    map.addLayer({ id, ...rest });
-    /* On Remove */
-    return cleanUp(() => map.removeLayer(id), 'layer', id);
-  }, []);
+  // logger('layer', id, 'rendering');
+  // useEffect(() => {
+  //   logger('layer', id, 'adding');
+  //   map.addLayer({ id, ...rest });
+  //   /* On Remove */
+  //   return cleanUp(() => map.removeLayer(id), 'layer', id);
+  // }, []);
 
   /* TODO: On Master */
   // 1. Copy Style from master
@@ -37,6 +60,4 @@ const Layer: React.FC<mapboxgl.AnyLayer> = ({ id, ...rest }) => {
   return null;
 };
 
-export default Layer;
-/* FIXME: union of types with mapboxgl.AnyLayer  don't work with withMap HOC */
-// export default withMap<LayerProps>(Layer);
+export default withMap<LayerProps>(Layer);
