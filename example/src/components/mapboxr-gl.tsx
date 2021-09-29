@@ -1,7 +1,7 @@
 import React, { ComponentProps } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapboxrGL, { Source, Layer } from 'mapboxr-gl';
-import { State } from './reducer';
+import { State } from '../state/reducer';
 
 
 type Props = {

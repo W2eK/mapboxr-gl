@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
-import reducer, { initialState } from './reducer';
-import Controlls from './Controlls';
-import Map from './Map';
+import reducer, { initialState } from '../state/reducer';
+import Controlls from './controlls';
+import Map from './mapboxr-gl';
 
 declare global {
   interface Window {

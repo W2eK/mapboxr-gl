@@ -1,5 +1,5 @@
 import React from 'react';
-import { State, ActionType, Options, Item } from './reducer';
+import { State, ActionType, Options, Item } from '../state/reducer';
 
 type Props = {
   state: State;
