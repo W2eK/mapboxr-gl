@@ -23,7 +23,9 @@ function Controlls({ state, dispatch }: Props) {
         />
         <div>
           <span>{'<'}</span>
-          <label htmlFor={key}>{label}</label>
+          <label htmlFor={key}>
+            <strong>{label}</strong>
+          </label>
           <Attributes values={props} category={key} dispatch={dispatch} />
           <span>{'/>'}</span>
         </div>

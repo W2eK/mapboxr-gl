@@ -55,8 +55,8 @@ const buildHandler =
 
 const propHandlers = {
   // Properties
-  minZoom: buildSetter('setMaxZoom'),
-  maxZoom: buildSetter('setMinZoom'),
+  minZoom: buildSetter('setMinZoom'),
+  maxZoom: buildSetter('setMaxZoom'),
   minPitch: buildSetter('setMinPitch'),
   maxPitch: buildSetter('setMaxPitch'),
   renderWorldCopies: buildSetter('setRenderWorldCopies'),

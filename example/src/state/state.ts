@@ -32,7 +32,9 @@ export const initialState: State = {
       accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
       mapStyle: 'mapbox://styles/mapbox/streets-v11',
       minZoom: '0',
-      maxZoom: '22'
+      maxZoom: '22',
+      antialias: 'true',
+      center: '[0, 0]'
     }
   },
   // source: { checked: true, label: 'Source' },

@@ -57,6 +57,7 @@ ul {
 
 .components ul {
   padding-left: 1rem;
+  margin: .125rem 0;
 }
 
 .attribute {
@@ -65,39 +66,8 @@ ul {
   align-items: center;
   justify-content: space-between;
 }
-li + li {
-  /* margin-top: 0.5rem; */
-}
 
-/* 
-ul {
-  list-style-type: none;
-  padding-left: 1rem;
-  margin: .5rem 0;
-}
-li + li {
-  margin-top: .5rem;
-}
-.controlls > ul {
-  padding: 0;
-}
-
-.controlls > ul > li {
-  display: flex;
-}
-
-.controlls > ul > li > div {
-  margin-left: .5rem;
-}
-
-.attribute {
-  display: flex;
-}
-.attribute input {
-  flex: 1;
-}
-
-*/
-.mapboxgl-map {
+.mapbox-container {
+  position: relative;
   flex: 1;
 }

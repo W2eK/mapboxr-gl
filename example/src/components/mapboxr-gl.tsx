@@ -19,6 +19,7 @@ const data: GeoJSON.FeatureCollection = {
 };
 
 const getValue = (str: string) => {
+  if (!str) return undefined;
   try {
     return JSON.parse(str);
   } catch (error) {
@@ -30,6 +31,7 @@ function Map({ state }: Props) {
   const { map } = state;
   return map.checked ? (
     <MapboxrGL
+      wrapper={{ className: 'mapbox-container' }}
       {...Object.entries(map.props).reduce(
         (obj, [key, value]) => ((obj[key] = getValue(value)), obj),
         {}

@@ -1,5 +1,7 @@
 import { initialState, Options, State } from './state';
 
+const verbose = false;
+
 export type ActionType =
   | { type: 'TOGGLE'; payload: Options }
   | {
@@ -23,8 +25,6 @@ export const updateProp = <
   key: U;
   value: State[T]['props'][U];
 }) => ({ type: 'UPDATE', payload: { option, key, value } });
-
-const verbose = true;
 
 function reducer(state = initialState, action: ActionType) {
   verbose && console.log(action);

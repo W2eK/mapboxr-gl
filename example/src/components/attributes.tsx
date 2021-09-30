@@ -21,10 +21,17 @@ const Attributes: FC<Props> = ({ values, dispatch, category }) => {
   const items = Object.entries(values).map(([key, value]) => (
     <li key={key}>
       <label className="attribute">
-        {key}{' '}
+        <em>{key}{' '}</em>
         <span>
           {' '}
-          = <input name={key} onChange={onChange} type="text" value={value} />
+          ={' '}
+          <input
+            name={key}
+            onChange={onChange}
+            type="text"
+            value={value}
+            placeholder="undefined"
+          />
         </span>
       </label>
     </li>
