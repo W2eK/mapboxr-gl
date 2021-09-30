@@ -1,8 +1,7 @@
 import React, { ComponentProps } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapboxrGL, { Source, Layer } from 'mapboxr-gl';
-import { State } from '../state/reducer';
-
+import { State } from '../state/state';
 
 type Props = {
   state: State;
@@ -19,12 +18,23 @@ const data: GeoJSON.FeatureCollection = {
   ]
 };
 
+const getValue = (str: string) => {
+  try {
+    return JSON.parse(str);
+  } catch (error) {
+    return str;
+  }
+};
+
 function Map({ state }: Props) {
   const { map } = state;
   return map.checked ? (
     <MapboxrGL
-      accessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-    />
+      {...Object.entries(map.props).reduce(
+        (obj, [key, value]) => ((obj[key] = getValue(value)), obj),
+        {}
+      )}
+    ></MapboxrGL>
   ) : null;
 }
 

@@ -1,5 +1,7 @@
 import React from 'react';
-import { State, ActionType, Options, Item } from '../state/reducer';
+import { ActionType, updateProp } from '../state/reducer';
+import { State, Options } from '../state/state';
+import Attributes from './attributes';
 
 type Props = {
   state: State;
@@ -7,10 +9,9 @@ type Props = {
 };
 
 function Controlls({ state, dispatch }: Props) {
-  const checkboxes = Object.keys(state).map(key => {
-    const { checked, label } = state[key] as Item;
-    const onChange = () =>
-      dispatch({ type: 'TOGGLE', payload: key as Options });
+  const checkboxes = (Object.keys(state) as Options[]).map(key => {
+    const { checked, label, props } = state[key];
+    const toggle = () => dispatch({ type: 'TOGGLE', payload: key });
     return (
       <li key={key}>
         <input
@@ -18,16 +19,22 @@ function Controlls({ state, dispatch }: Props) {
           id={key}
           name={key}
           checked={checked}
-          onChange={onChange}
+          onChange={toggle}
         />
-        <label htmlFor={key}>{label}</label>
+        <div>
+          <span>{'<'}</span>
+          <label htmlFor={key}>{label}</label>
+          <Attributes values={props} category={key} dispatch={dispatch} />
+          <span>{'/>'}</span>
+        </div>
       </li>
     );
   });
+
   return (
     <div className="controlls">
       <h3>Components</h3>
-      <ul>{checkboxes}</ul>
+      <ul className="components">{checkboxes}</ul>
     </div>
   );
 }

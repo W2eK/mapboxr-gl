@@ -1,35 +1,57 @@
-export enum Options {
-  MAP = 'map',
-  SOURCE = 'source',
-  LAYER = 'layer'
-}
+import { initialState, Options, State } from './state';
 
-export type Item = {
-  checked: boolean;
-  label: string;
-};
+export type ActionType =
+  | { type: 'TOGGLE'; payload: Options }
+  | {
+      type: 'UPDATE';
+      payload: {
+        option: Options;
+        key: keyof State[Options]['props'];
+        value: string;
+      };
+    };
 
-export type State = {
-  [key in Options]: Item;
-};
+export const updateProp = <
+  T extends Options,
+  U extends keyof State[T]['props']
+>({
+  option,
+  key,
+  value
+}: {
+  option: T;
+  key: U;
+  value: State[T]['props'][U];
+}) => ({ type: 'UPDATE', payload: { option, key, value } });
 
-export type ActionType = { type: 'TOGGLE'; payload: Options };
+const verbose = true;
 
-const initialState: State = {
-  map: { checked: true, label: 'Mapboxr-GL' },
-  source: { checked: true, label: 'Source' },
-  layer: { checked: true, label: 'Circle Layer' }
-};
-
-function reducer(state: State, { type, payload }: ActionType) {
-  switch (type) {
-    case 'TOGGLE':
-      const prev = state[payload];
-      return { ...state, [payload]: { ...prev, checked: !prev.checked } };
+function reducer(state = initialState, action: ActionType) {
+  verbose && console.log(action);
+  switch (action.type) {
+    case 'TOGGLE': {
+      const prev = state[action.payload];
+      return {
+        ...state,
+        [action.payload]: { ...prev, checked: !prev.checked }
+      };
+    }
+    case 'UPDATE': {
+      const { option, key, value } = action.payload;
+      const prev = state[option];
+      return {
+        ...state,
+        [option]: { ...prev, props: { ...prev.props, [key]: value } }
+      };
+    }
     default:
       return state;
   }
 }
 
-export default reducer;
+export default (...args: Parameters<typeof reducer>) => {
+  const state = reducer(...args);
+  verbose && console.log(state);
+  return state;
+};
 export { initialState };
