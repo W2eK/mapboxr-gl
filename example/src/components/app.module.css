@@ -1,0 +1,14 @@
+.wrapper {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  min-width: 20rem;
+  padding: 1rem;
+}
+
+.container {
+  background-color: lightblue;
+  flex: 1;
+}
