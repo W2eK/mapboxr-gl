@@ -7,4 +7,5 @@ type MapboxrGLProps = Omit<MapboxOptions, 'container' | 'style'> & {
   wrapper?: React.HTMLAttributes<HTMLDivElement>;
   mapStyle?: MapboxOptions['style'];
 };
+
 export default function MapboxrGL(props: MapboxrGLProps): JSX.Element;

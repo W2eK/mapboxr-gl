@@ -7,9 +7,7 @@ const MapContainer = () => {
     <MapboxrGL
       accessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
       wrapper={{ style: { height: '100vh' } }}
-      test="dd"
-      rex="sdd"
-      rest={4}
+      minZoom={3}
     />
   );
 };
