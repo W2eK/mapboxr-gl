@@ -14,13 +14,13 @@ npm install --save mapboxr-gl
 
 ```jsx
 import React, { Component } from 'react'
+import MapboxrGL from 'mapboxr-gl'
+import 'mapbox-gl/dist/mapbox-gl.css';
 
-import MyComponent from 'mapboxr-gl'
-import 'mapboxr-gl/dist/index.css'
 
 class Example extends Component {
   render() {
-    return <MyComponent />
+    return <MapboxrGL />
   }
 }
 ```
