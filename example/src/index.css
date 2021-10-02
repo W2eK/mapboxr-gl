@@ -28,3 +28,21 @@ body,
 #root {
   height: 100%;
 }
+
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+.components > li {
+  display: flex;
+}
+
+.attributes {
+  padding-left: 1rem;
+}
+
+.attributes label {
+  display: flex;
+  justify-content: space-between;
+}

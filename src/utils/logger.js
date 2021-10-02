@@ -8,7 +8,7 @@ const COLORS = {
   rendering: '#d4d4d4'
 };
 
-const concatMessage = args => {
+export const concatMessage = args => {
   const [arr, ...rest] = args;
   return arr.reduce((arr, str, i) => [...arr, str, rest[i]], []).join('');
 };
@@ -21,7 +21,7 @@ export const logger = (...args) => {
   const color = status === 'rendering' ? `color: ${COLORS[status]};` : '';
   const styles = [
     `font-weight: bold;` + color,
-    'font-weight: bold;' + color,
+    color,
     `color: ${COLORS[status]}`
   ];
   console.log(

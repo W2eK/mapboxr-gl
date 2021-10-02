@@ -1,27 +1,24 @@
-// import { logger } from './is-dev';
+import { concatMessage, logger } from '.';
 
 const stack = [];
 
 const callStack = () => {
   while (stack.length !== 0) {
-    const args = stack.pop();
-    if (!args) return;
-    const [callback, component = '', name = ''] = args;
+    const callback = stack.pop();
+    if (!callback) return;
+    logger`${callback.message}`;
     callback();
-    // logger(component, name, 'removing');
   }
 };
 
-// export const cleanUp = (...args) => {
-//   return () => {
-//     stack.push(args);
-//     window.requestAnimationFrame(callStack);
-//   };
-// };
-
-export const cleanUp = (...args) => {
+// prettier-ignore
+export const cleanUp = callback => (...args) => {
+  callback.message = concatMessage(args);
   return () => {
-    stack.push(args);
-    window.requestAnimationFrame(callStack);
+    stack.push(callback);
+    callStack();
+    /* FIXME: async cleaner
+      remove map after mounting of new  */
+    // window.requestAnimationFrame(callStack);
   };
-};
+}
