@@ -1,3 +1,4 @@
+/* eslint-disable no-sequences */
 import React from 'react';
 import MapboxrGL from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';

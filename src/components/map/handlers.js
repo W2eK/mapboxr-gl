@@ -1,6 +1,6 @@
 // prettier-ignore
-const buildSetter = name => (map, ...args) =>
-    map[name](...args);
+const buildSetter = name => (map, value) =>
+    map[name](value);
 
 const buildSwitcher = name => (map, state) =>
   map[name][state ? 'enable' : 'disable']();

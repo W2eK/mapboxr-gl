@@ -16,8 +16,8 @@ export const concatMessage = args => {
 export const logger = (...args) => {
   if (!isDev() || !window.__MAPBOXR_GL_LOG) return;
   const message = concatMessage(args);
-  const pattern = /([A-Z]*): (.*) is (\w*)/;
-  const [, component, name, status] = message.match(pattern);
+  const pattern = /([A-Z]*): (.*) is (\w*) ?(.*)/;
+  const [, component, name, status, property = ''] = message.match(pattern);
   const color = status === 'rendering' ? `color: ${COLORS[status]};` : '';
   const styles = [
     `font-weight: bold;` + color,
@@ -25,7 +25,7 @@ export const logger = (...args) => {
     `color: ${COLORS[status]}`
   ];
   console.log(
-    `%c<${component.toUpperCase()}/>\t%c${name}:\t%c${status}`,
+    `%c<${component.toUpperCase()}/>\t%c${name}:\t%c${status}${property && ` (${property})`}`,
     ...styles
   );
 };
