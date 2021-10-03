@@ -27,7 +27,9 @@ function MapboxrGL({
   const prev = useRef(dynamic);
   const container = useRef(null);
   const [map, setMap] = useState(null);
-  
+  const [loaded, setLoaded] = useState(false);
+
+  logger`MAPBOX: container is rendering`;
   useEffect(() => {
     /* On Mount: */
     logger`MAPBOX: container is mounting`;
@@ -40,14 +42,11 @@ function MapboxrGL({
     });
     if (isDev()) window.map = map;
 
-    map.on('load', () => {
-      if (onload) onload.forEach(fn => fn(map));
-      if (onceload) onceload.forEach(fn => fn(map));
-      // TODO: should to keep?
-      // window.requestAnimationFrame(() => map.fire('move'));
-      setMap(map);
-    });
-    
+    setMap(map);
+    // map.on('load', () => setLoaded(true));
+    // TODO: should to keep?
+    // window.requestAnimationFrame(() => map.fire('move'));
+
     /* On Unmount: */ // prettier-ignore
     return cleanUp(() => map.remove()) `MAPBOX: container is unmounting`;
   }, getDependencies(rest));

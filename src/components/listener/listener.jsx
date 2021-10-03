@@ -4,6 +4,7 @@ import { logger } from '../../utils';
 
 export function Listener({ type, event, handler, layer }) {
   const map = useMap();
+  logger`LISTENER: ${event} is rendering ${layer}`;
   useEffect(() => {
     logger`LISTENER: ${event} is mounting ${layer}`;
     const props = [event, layer || handler, layer ? handler : undefined];
