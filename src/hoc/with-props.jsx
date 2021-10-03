@@ -1,8 +1,9 @@
 import React from 'react';
+import withDisplayName from './with-name';
 
 export default function withProps(WrappedComponent, handlers) {
   const keys = new Set(Object.keys(handlers));
-  return function WrappedWithProps(props) {
+  function WrappedWithProps(props) {
     const injectedProps = Object.entries(props).reduce(
       (obj, [key, value]) => {
         if (keys.has(key)) {
@@ -15,5 +16,6 @@ export default function withProps(WrappedComponent, handlers) {
       { dynamic: {} }
     );
     return <WrappedComponent {...injectedProps} />;
-  };
+  }
+  return withDisplayName(WrappedWithProps, WrappedComponent);
 }
