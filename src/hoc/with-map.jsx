@@ -1,14 +1,16 @@
 import React, { createContext, useContext } from 'react';
 
 const MapContext = createContext(null);
+
 export const MapProvider = MapContext.Provider;
-export function useMap(params) {
+
+export function useMap() {
   return useContext(MapContext);
 }
 
-export default function withMap(WrappedCompnent) {
+export default function withMap(WrappedComponent) {
   return function WrappedWithMap(props) {
     const map = useMap();
-    return <WrappedCompnent {...props} map={map} />;
+    return <WrappedComponent {...props} map={map} />;
   };
 }

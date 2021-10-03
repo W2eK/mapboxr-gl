@@ -25,6 +25,7 @@ const MapContainer = () => {
     <MapboxrGL
       {...parseAttributes(mapbox.props)}
       wrapper={{ style: { height: '100vh' } }}
+      oncemousemove={console.log}
     />
   ) : null;
 };

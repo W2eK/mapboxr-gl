@@ -33,7 +33,8 @@
     "import/export": 0,
     "no-unused-vars": "off",
     "no-unused-labels": "off",
-    "import/no-webpack-loader-syntax": "off"
+    "import/no-webpack-loader-syntax": "off",
+    "no-use-before-define": "off"
   },
   "overrides": [
     {

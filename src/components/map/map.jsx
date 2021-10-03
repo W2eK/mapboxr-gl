@@ -9,17 +9,25 @@ import {
   stringEqual
 } from '../../utils';
 
-import withProps from '../../hoc/with-props';
 import { MapProvider } from '../../hoc/with-map';
 import handlers from './handlers';
+import withProps from '../../hoc/with-props';
+import withListeners from '../../hoc/with-listeners';
+import Listener from '../listener/listener';
 
-function MapboxrGL({ children, wrapper, dynamic, ...rest }) {
+function MapboxrGL({
+  children,
+  wrapper,
+  dynamic,
+  onload,
+  onceload,
+  listeners,
+  ...rest
+}) {
   const prev = useRef(dynamic);
   const container = useRef(null);
   const [map, setMap] = useState(null);
-  /* On Render: */
-  map && logger`MAPBOX: container is rendering`;
-
+  
   useEffect(() => {
     /* On Mount: */
     logger`MAPBOX: container is mounting`;
@@ -31,8 +39,15 @@ function MapboxrGL({ children, wrapper, dynamic, ...rest }) {
       ...dynamic
     });
     if (isDev()) window.map = map;
-    map.on('load', () => setMap(map));
 
+    map.on('load', () => {
+      if (onload) onload.forEach(fn => fn(map));
+      if (onceload) onceload.forEach(fn => fn(map));
+      // TODO: should to keep?
+      // window.requestAnimationFrame(() => map.fire('move'));
+      setMap(map);
+    });
+    
     /* On Unmount: */ // prettier-ignore
     return cleanUp(() => map.remove()) `MAPBOX: container is unmounting`;
   }, getDependencies(rest));
@@ -47,9 +62,16 @@ function MapboxrGL({ children, wrapper, dynamic, ...rest }) {
   prev.current = dynamic;
   return (
     <div ref={container} {...wrapper}>
-      <MapProvider value={map}>{map && children}</MapProvider>
+      {map && (
+        <MapProvider value={map}>
+          {listeners.map((props, i) => (
+            <Listener key={props.event + i} {...props} />
+          ))}
+          {children}
+        </MapProvider>
+      )}
     </div>
   );
 }
 
-export default withProps(MapboxrGL, handlers);
+export default withListeners(withProps(MapboxrGL, handlers));
