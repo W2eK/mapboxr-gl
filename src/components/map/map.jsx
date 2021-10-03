@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import mapboxgl from '!mapbox-gl';
+
 import {
   getDependencies,
   cleanUp,
@@ -7,14 +8,16 @@ import {
   logger,
   stringEqual
 } from '../../utils';
+
 import withProps from '../../hoc/with-props';
+import { MapProvider } from '../../hoc/with-map';
 import handlers from './handlers';
 
-function MapboxrGL({ wrapper, dynamic, ...rest }) {
+function MapboxrGL({ children, wrapper, dynamic, ...rest }) {
   const prev = useRef(dynamic);
   const container = useRef(null);
   const [map, setMap] = useState(null);
-  /* On Update: */
+  /* On Render: */
   map && logger`MAPBOX: container is rendering`;
 
   useEffect(() => {
@@ -34,7 +37,7 @@ function MapboxrGL({ wrapper, dynamic, ...rest }) {
     return cleanUp(() => map.remove()) `MAPBOX: container is unmounting`;
   }, getDependencies(rest));
 
-  // if (!map) return;
+  /* On Update: */
   Object.entries(dynamic).forEach(([key, value]) => {
     if (!stringEqual(value, prev.current[key])) {
       handlers[key](map, value);
@@ -42,7 +45,11 @@ function MapboxrGL({ wrapper, dynamic, ...rest }) {
     }
   });
   prev.current = dynamic;
-  return <div ref={container} {...wrapper} />;
+  return (
+    <div ref={container} {...wrapper}>
+      <MapProvider value={map}>{map && children}</MapProvider>
+    </div>
+  );
 }
 
 export default withProps(MapboxrGL, handlers);
