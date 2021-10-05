@@ -12,13 +12,18 @@ const callStack = () => {
 };
 
 // prettier-ignore
-export const cleanUp = callback => (...args) => {
-  callback.message = concatMessage(args);
-  return () => {
-    stack.push(callback);
-    callStack();
-    /* FIXME: async cleaner
-      remove map after mounting of new  */
-    // window.requestAnimationFrame(callStack);
+export const cleanUp = (...fn) => (...message) => {
+  const [delayed, instant = () => {}] = fn.reverse();
+  const callback = () => {
+    instant();
+    stack.push(delayed);
+    // callStack();
+    window.requestAnimationFrame(callStack)
   };
+  if(message.length) {
+    delayed.message = concatMessage(message);
+    return callback;
+  } else {
+    callback();
+  }
 }

@@ -11,8 +11,8 @@ export function useMap() {
 
 export default function withMap(WrappedComponent) {
   function WrappedWithMap(props) {
-    const map = useMap();
-    return <WrappedComponent {...props} map={map} />;
+    const { map, loaded } = useMap();
+    return loaded && <WrappedComponent {...props} map={map} />;
   }
   return withDisplayName(WrappedWithMap, WrappedComponent);
 }

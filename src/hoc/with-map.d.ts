@@ -1,7 +1,7 @@
 import { Map } from 'mapbox-gl';
 import { ComponentType } from 'react';
 
-export function useMap(): Map;
+export function useMap(): { map: Map; loaded: boolean };
 
 export const MapProvider: React.Context<Map>;
 

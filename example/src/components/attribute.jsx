@@ -1,6 +1,12 @@
 import React from 'react';
 
 const Attribute = ({ id, value, change }) => {
+  value =
+    typeof value === 'object'
+      ? JSON.stringify(value)
+      : typeof value === 'function'
+      ? value.toString()
+      : value;
   return (
     <li>
       <label>

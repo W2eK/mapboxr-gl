@@ -1,6 +1,6 @@
 /* eslint-disable no-sequences */
 import React from 'react';
-import MapboxrGL from 'mapboxr-gl';
+import MapboxrGL, { Source } from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useStore } from '../store/context';
 
@@ -19,15 +19,34 @@ const parseAttributes = attributes => {
   );
 };
 
+const data = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Point',
+        coordinates: [3.33984375, 6.577303118123887]
+      }
+    }
+  ]
+};
+
 const MapContainer = () => {
-  const { mapbox } = useStore().state;
-  return mapbox.checked ? (
+  const { mapbox, source } = useStore().state;
+  return (
     <MapboxrGL
       {...parseAttributes(mapbox.props)}
       wrapper={{ style: { height: '100vh' } }}
+      // onload={console.log}
       oncemousemove={console.log}
-    />
-  ) : null;
+    >
+      {source.checked && (
+        <Source {...parseAttributes(source.props)} />
+      )}
+    </MapboxrGL>
+  );
 };
 
 export default MapContainer;

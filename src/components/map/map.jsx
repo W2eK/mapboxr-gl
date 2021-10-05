@@ -1,13 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import mapboxgl from '!mapbox-gl';
 
-import {
-  getDependencies,
-  cleanUp,
-  isDev,
-  logger,
-  stringEqual
-} from '../../utils';
+import { getDependencies, isDev, logger, stringEqual } from '../../utils';
 
 import { MapProvider } from '../../hoc/with-map';
 import handlers from './handlers';
@@ -15,24 +9,16 @@ import withProps from '../../hoc/with-props';
 import withListeners from '../../hoc/with-listeners';
 import Listener from '../listener/listener';
 
-function MapboxrGL({
-  children,
-  wrapper,
-  dynamic,
-  onload,
-  onceload,
-  listeners,
-  ...rest
-}) {
+function MapboxrGL({ children, wrapper, dynamic, listeners, ...rest }) {
   const prev = useRef(dynamic);
   const container = useRef(null);
   const [map, setMap] = useState(null);
   const [loaded, setLoaded] = useState(false);
-
-  logger`MAPBOX: container is rendering`;
+  // const loaded = useRef(false);
+  logger`MAPBOX: map is rendering`;
   useEffect(() => {
     /* On Mount: */
-    logger`MAPBOX: container is mounting`;
+    logger`MAPBOX: map is adding`;
 
     const map = new mapboxgl.Map({
       ...rest,
@@ -43,12 +29,18 @@ function MapboxrGL({
     if (isDev()) window.map = map;
 
     setMap(map);
-    // map.on('load', () => setLoaded(true));
+    map.on('load', () => setLoaded(true));
+
     // TODO: should to keep?
     // window.requestAnimationFrame(() => map.fire('move'));
 
-    /* On Unmount: */ // prettier-ignore
-    return cleanUp(() => map.remove()) `MAPBOX: container is unmounting`;
+    /* On Unmount: */
+    return () => {
+      logger`MAPBOX: map is removing`;
+      setLoaded(false);
+      setMap(null);
+      map.remove();
+    };
   }, getDependencies(rest));
 
   /* On Update: */
@@ -62,7 +54,7 @@ function MapboxrGL({
   return (
     <div ref={container} {...wrapper}>
       {map && (
-        <MapProvider value={map}>
+        <MapProvider value={{ map, loaded }}>
           {listeners.map((props, i) => (
             <Listener key={props.event + i} {...props} />
           ))}
