@@ -13,17 +13,20 @@ npm install --save mapboxr-gl
 ## Usage
 
 ```jsx
-import React, { Component } from 'react'
-import MapboxrGL from 'mapboxr-gl'
+import React, { Component } from 'react';
+import MapboxrGL from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
 
 class Example extends Component {
   render() {
-    return <MapboxrGL />
+    return <MapboxrGL />;
   }
 }
 ```
+
+## Caveats
+
+- Can't change attributes quantity and order
 
 ## License
 

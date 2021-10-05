@@ -1,30 +1,56 @@
 import React, { useRef, useState, useEffect } from 'react';
 import mapboxgl from '!mapbox-gl';
 
-import { getDependencies, isDev, logger, stringEqual } from '../../utils';
+import { getDependencies, isDev, logger } from '../../utils';
+import { buildSetter, buildSwitcher, useHandlers } from '../../hooks/use-handlers';
 
 import { MapProvider } from '../../hoc/with-map';
-import handlers from './handlers';
-import withProps from '../../hoc/with-props';
 import withListeners from '../../hoc/with-listeners';
 import Listener from '../listener/listener';
 
-function MapboxrGL({ children, wrapper, dynamic, listeners, ...rest }) {
-  const prev = useRef(dynamic);
+const handlers = {
+  // Properties
+  minZoom: buildSetter('setMinZoom'),
+  maxZoom: buildSetter('setMaxZoom'),
+  minPitch: buildSetter('setMinPitch'),
+  maxPitch: buildSetter('setMaxPitch'),
+  mapStyle: buildSetter('setStyle'),
+  maxBounds: buildSetter('setMaxBounds'),
+  renderWorldCopies: buildSetter('setRenderWorldCopies'),
+  // User interaction handlers
+  boxZoom: buildSwitcher('boxZoom'),
+  doubleClickZoom: buildSwitcher('doubleClickZoom'),
+  dragPan: buildSwitcher('dragPan'),
+  dragRotate: buildSwitcher('dragRotate'),
+  keyboard: buildSwitcher('keyboard'),
+  scrollZoom: buildSwitcher('scrollZoom'),
+  touchPitch: buildSwitcher('touchPitch'),
+  touchZoomRotate: buildSwitcher('touchZoomRotate')
+};
+
+function MapboxrGL({ children, wrapper, listeners, ...props }) {
   const container = useRef(null);
   const [map, setMap] = useState(null);
   const [loaded, setLoaded] = useState(false);
-  // const loaded = useRef(false);
+
   logger`MAPBOX: map is rendering`;
+
+  const rest = useHandlers({
+    handlers,
+    props,
+    subject: map,
+    component: 'mapbox',
+    id: 'container'
+  });
+
   useEffect(() => {
     /* On Mount: */
     logger`MAPBOX: map is adding`;
 
     const map = new mapboxgl.Map({
-      ...rest,
       container: container.current,
-      style: dynamic.mapStyle || 'mapbox://styles/mapbox/streets-v11',
-      ...dynamic
+      style: props.mapStyle || 'mapbox://styles/mapbox/streets-v11',
+      ...props
     });
     if (isDev()) window.map = map;
 
@@ -43,14 +69,6 @@ function MapboxrGL({ children, wrapper, dynamic, listeners, ...rest }) {
     };
   }, getDependencies(rest));
 
-  /* On Update: */
-  Object.entries(dynamic).forEach(([key, value]) => {
-    if (!stringEqual(value, prev.current[key])) {
-      handlers[key](map, value);
-      logger`MAPBOX: container is updating ${key}`;
-    }
-  });
-  prev.current = dynamic;
   return (
     <div ref={container} {...wrapper}>
       {map && (
@@ -65,4 +83,4 @@ function MapboxrGL({ children, wrapper, dynamic, listeners, ...rest }) {
   );
 }
 
-export default withListeners(withProps(MapboxrGL, handlers));
+export default withListeners(MapboxrGL);

@@ -36,16 +36,16 @@ const data = {
 const MapContainer = () => {
   const { mapbox, source } = useStore().state;
   return (
-    <MapboxrGL
-      {...parseAttributes(mapbox.props)}
-      wrapper={{ style: { height: '100vh' } }}
-      // onload={console.log}
-      oncemousemove={console.log}
-    >
-      {source.checked && (
-        <Source {...parseAttributes(source.props)} />
-      )}
-    </MapboxrGL>
+    mapbox.checked && (
+      <MapboxrGL
+        {...parseAttributes(mapbox.props)}
+        wrapper={{ style: { height: '100vh' } }}
+        // onload={console.log}
+        oncemousemove={console.log}
+      >
+        {source.checked && <Source {...parseAttributes(source.props)} />}
+      </MapboxrGL>
+    )
   );
 };
 
