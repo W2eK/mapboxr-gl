@@ -44,6 +44,7 @@ const MapContainer = () => {
         oncemousemove={console.log}
       >
         {source.checked && <Source {...parseAttributes(source.props)} />}
+        {/* {source.checked && <Source {...parseAttributes(source.props)} id="dots-1"/>} */}
       </MapboxrGL>
     )
   );

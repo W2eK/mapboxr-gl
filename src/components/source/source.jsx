@@ -33,7 +33,8 @@ function Source({ id, ...props }) {
     map.addSource(id, props);
     source.current = map.getSource(id);
     return () => {
-      if (!initialized.current) return;
+      // map.style && map.style._loaded && map.getSource(id)
+      if (!initialized.current || !map.style) return;
       logger`SOURCE: ${id} is removing`; // ! removing
       map.removeSource(id);
       source.current = null;
