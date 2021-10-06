@@ -31,7 +31,9 @@ const initialState = {
           },
           {
             type: 'Feature',
-            properties: {},
+            properties: {
+              filter: false
+            },
             geometry: {
               type: 'Point',
               coordinates: [3.5, 6.5]

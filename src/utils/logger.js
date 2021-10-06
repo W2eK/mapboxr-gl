@@ -14,43 +14,35 @@ export const concatMessage = args => {
   return arr.reduce((arr, str, i) => [...arr, str, rest[i]], []).join('');
 };
 
-// const stack = [];
+const adjustText = (text, tabs = 4) => {
+  const tabSize = 4;
+  const maxLength = tabs * tabSize;
+  if (text.length > maxLength) {
+    const index = (tabs * tabSize) / 2;
+    text = text.slice(0, index - 2) + '...' + text.slice(-index + 2);
+  }
+  const filler = ' '.repeat(maxLength - text.length);
+  return text + filler;
+};
 
 export const logger = (...args) => {
   if (!isDev() || !window.__MAPBOXR_GL_LOG) return;
   const message = concatMessage(args);
   const pattern = /([A-Z]*): (.*) is (\w*) ?(.*)/;
   let [, component, name, status, property = ''] = message.match(pattern);
-  if (name.length >= 5 * 4)
-    name =
-      name.slice(0, (5 * 4) / 2 - 2) + '...' + name.slice((5 * 4) / -2 + 2);
-
   const color = status === 'rendering' ? `color: ${COLORS[status]};` : '';
   const styles = [
     `font-weight: bold;` + color,
     color,
     `color: ${COLORS[status]}`
   ];
+  name = adjustText(name);
+  status = adjustText(status);
+  component = adjustText(`<${component}/>`);
   console.log(
-    `%c<${component.toUpperCase()}/>\t\t%c${name}${'\t'.repeat(
-      Math.max(0, 4 - Math.floor(name.length / 4))
-    )}\t%c${status}${property && ` (${property})`}`,
+    `%c${component.toUpperCase()}\t%c${name}\t%c${status}${
+      property && `/${property}/`
+    }`,
     ...styles
   );
-  // const print = () => {
-  // };
-  // print();
-  // stack.push([component + name, status, print]);
-  // setTimeout(callStack, 100);
 };
-
-/*
-function callStack() {
-  while (stack.length) {
-    const [name, status, print] = stack.shift();
-    const has = stack.findIndex(([x]) => x === name) !== -1;
-    if (has && status === 'rendering') continue;
-    print();
-  }
-}
-*/

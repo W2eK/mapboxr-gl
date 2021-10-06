@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { Listener } from '../..';
 import withListeners from '../../hoc/with-listeners';
 import { useMap } from '../../hoc/with-map';
 import { useForce } from '../../hooks/use-force';

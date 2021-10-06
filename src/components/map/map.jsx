@@ -38,7 +38,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   const [loaded, setLoaded] = useState(false);
   const state = useRef({ alive: false });
 
-  logger`MAPBOX: map is rendering`;
+  logger`MAPBOX: container is rendering`;
 
   const rest = useHandlers({
     handlers,
@@ -51,7 +51,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   useEffect(() => {
     /* On Mount: */
     // console.log('111')
-    logger`MAPBOX: map is adding`;
+    logger`MAPBOX: container is adding`;
 
     const map = new mapboxgl.Map({
       container: container.current,
@@ -72,7 +72,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
 
     /* On Unmount: */
     return () => {
-      logger`MAPBOX: map is removing`;
+      logger`MAPBOX: container is removing`;
       state.current.alive = false;
       state.current.map = false;
       setLoaded(false);

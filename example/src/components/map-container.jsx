@@ -49,7 +49,6 @@ const MapContainer = () => {
             )}
           </Source>
         )}
-        {/* {source.checked && <Source {...parseAttributes(source.props)} id="dots-1"/>} */}
       </MapboxrGL>
     )
   );
