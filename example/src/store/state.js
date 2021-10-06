@@ -31,6 +31,25 @@ const initialState = {
         ]
       }
     }
+  },
+  layer: {
+    name: 'Layer',
+    checked: true,
+    props: {
+      id: 'dots-circle',
+      type: 'circle',
+      maxzoom: 5,
+      paint: { 'circle-radius': 10 }
+    }
+  },
+  property: {
+    name: 'Property',
+    checked: true,
+    props: {
+      id: 'circle-color',
+      type: 'paint',
+      value: 'red'
+    }
   }
 };
 

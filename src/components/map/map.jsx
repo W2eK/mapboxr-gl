@@ -1,8 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, cloneElement } from 'react';
 import mapboxgl from '!mapbox-gl';
 
-import { getDependencies, isDev, logger } from '../../utils';
-import { buildSetter, buildSwitcher, useHandlers } from '../../hooks/use-handlers';
+import { cloneChildren, getDependencies, isDev, logger } from '../../utils';
+import {
+  buildSetter,
+  buildSwitcher,
+  useHandlers
+} from '../../hooks/use-handlers';
 
 import { MapProvider } from '../../hoc/with-map';
 import withListeners from '../../hoc/with-listeners';
@@ -28,10 +32,11 @@ const handlers = {
   touchZoomRotate: buildSwitcher('touchZoomRotate')
 };
 
-function MapboxrGL({ children, wrapper, listeners, ...props }) {
+function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   const container = useRef(null);
   const [map, setMap] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const state = useRef({ alive: false });
 
   logger`MAPBOX: map is rendering`;
 
@@ -45,6 +50,7 @@ function MapboxrGL({ children, wrapper, listeners, ...props }) {
 
   useEffect(() => {
     /* On Mount: */
+    // console.log('111')
     logger`MAPBOX: map is adding`;
 
     const map = new mapboxgl.Map({
@@ -53,8 +59,12 @@ function MapboxrGL({ children, wrapper, listeners, ...props }) {
       ...props
     });
     if (isDev()) window.map = map;
-
+    state.current = {
+      alive: true
+    };
+    state.current.map = state.current
     setMap(map);
+    // TODO: choose other event
     map.on('load', () => setLoaded(true));
 
     // TODO: should to keep?
@@ -63,20 +73,21 @@ function MapboxrGL({ children, wrapper, listeners, ...props }) {
     /* On Unmount: */
     return () => {
       logger`MAPBOX: map is removing`;
+      state.current.alive = false;
+      state.current.map = false;
       setLoaded(false);
       setMap(null);
       map.remove();
     };
   }, getDependencies(rest));
-
   return (
     <div ref={container} {...wrapper}>
       {map && (
         <MapProvider value={{ map, loaded }}>
           {listeners.map((props, i) => (
-            <Listener key={props.event + i} {...props} />
+            <Listener key={props.event + i} {...props} parent={state.current} />
           ))}
-          {children}
+          {cloneChildren(children, { parent: state.current })}
         </MapProvider>
       )}
     </div>

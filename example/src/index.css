@@ -36,10 +36,18 @@ ul {
 }
 .components > li {
   display: flex;
+  margin: 1rem 0;
+}
+
+.components > li > div {
+  width: 100%;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #ccc;
 }
 
 .attributes {
   padding-left: 1rem;
+  margin: .25rem 0;
 }
 
 .attributes label {

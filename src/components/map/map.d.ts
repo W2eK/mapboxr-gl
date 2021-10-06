@@ -1,4 +1,5 @@
 import { MapEventType, MapboxOptions } from 'mapbox-gl';
+import { PropsWithChildren } from 'react';
 
 type Handlers<T, U extends 'on' | 'once'> = {
   [P in keyof T as `${U}${P}`]: (
@@ -25,4 +26,6 @@ type MapboxrGLProps = Omit<MapboxOptions, 'container' | 'style'> & {
   MapOnceHandlers &
   MapViewportHandlers;
 
-export default function MapboxrGL(props: MapboxrGLProps): JSX.Element;
+export default function MapboxrGL(
+  props: PropsWithChildren<MapboxrGLProps>
+): JSX.Element;

@@ -6,16 +6,16 @@ const callStack = () => {
   while (stack.length !== 0) {
     const callback = stack.pop();
     if (!callback) return;
-    logger`${callback.message}`;
+    callback.message && logger`${callback.message}`;
     callback();
   }
 };
 
 // prettier-ignore
-export const cleanUp = (...fn) => (...message) => {
-  const [delayed, instant = () => {}] = fn.reverse();
+export const _cleanUp = (...fn) => (...message) => {
+  const [delayed, instant] = fn.reverse();
   const callback = () => {
-    instant();
+    instant && instant();
     stack.push(delayed);
     // callStack();
     window.requestAnimationFrame(callStack)
@@ -27,3 +27,9 @@ export const cleanUp = (...fn) => (...message) => {
     callback();
   }
 }
+
+export const cleanUp = fn => () => {
+  stack.push(fn);
+  // callStack();
+  window.requestAnimationFrame(callStack);
+};

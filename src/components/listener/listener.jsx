@@ -6,6 +6,7 @@ export function Listener({ type, event, handler, layer }) {
   const { map } = useMap();
   logger`LISTENER: ${event} is rendering ${layer}`;
   useEffect(() => {
+    if (!map) return;
     logger`LISTENER: ${event} is adding ${layer}`;
     const props = [event, layer || handler, layer ? handler : undefined];
     map[type](...props);
@@ -13,7 +14,7 @@ export function Listener({ type, event, handler, layer }) {
       logger`LISTENER: ${event} is removing ${layer}`;
       map.off(...props);
     };
-  }, [map, handler]);
+  }, [map, handler, type, event]);
   return null;
 }
 

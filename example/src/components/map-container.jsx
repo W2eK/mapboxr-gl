@@ -1,6 +1,6 @@
 /* eslint-disable no-sequences */
 import React from 'react';
-import MapboxrGL, { Source } from 'mapboxr-gl';
+import MapboxrGL, { Source, Layer, Property } from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useStore } from '../store/context';
 
@@ -19,31 +19,27 @@ const parseAttributes = attributes => {
   );
 };
 
-const data = {
-  type: 'FeatureCollection',
-  features: [
-    {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'Point',
-        coordinates: [3.33984375, 6.577303118123887]
-      }
-    }
-  ]
-};
+const originalConsoleLog = console.log;
 
 const MapContainer = () => {
-  const { mapbox, source } = useStore().state;
+  const { mapbox, source, layer, property } = useStore().state;
   return (
     mapbox.checked && (
       <MapboxrGL
         {...parseAttributes(mapbox.props)}
         wrapper={{ style: { height: '100vh' } }}
         // onload={console.log}
-        oncemousemove={console.log}
+        oncemousemove={originalConsoleLog}
       >
-        {source.checked && <Source {...parseAttributes(source.props)} />}
+        {source.checked && (
+          <Source {...parseAttributes(source.props)}>
+            {layer.checked && (
+              <Layer {...layer.props}>
+                {property.checked && <Property id="circle-color" type="paint" value="red"/>}
+              </Layer>
+            )}
+          </Source>
+        )}
         {/* {source.checked && <Source {...parseAttributes(source.props)} id="dots-1"/>} */}
       </MapboxrGL>
     )
