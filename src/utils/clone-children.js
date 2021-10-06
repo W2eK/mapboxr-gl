@@ -10,6 +10,8 @@ export const normalizeChildren = (children, callback) => {
 };
 
 export const cloneChildren = (children, props) => {
+  if (children && !Array.isArray(children))
+    return cloneElement(children, props);
   return normalizeChildren(children, (child, i) =>
     cloneElement(child, { key: child.key || i, ...props })
   );

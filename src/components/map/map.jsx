@@ -62,7 +62,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     state.current = {
       alive: true
     };
-    state.current.map = state.current
+    state.current.map = state.current;
     setMap(map);
     // TODO: choose other event
     map.on('load', () => setLoaded(true));
@@ -84,9 +84,10 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     <div ref={container} {...wrapper}>
       {map && (
         <MapProvider value={{ map, loaded }}>
-          {listeners.map((props, i) => (
-            <Listener key={props.event + i} {...props} parent={state.current} />
-          ))}
+          {listeners}
+          {/* {listeners.map((props, i) => (
+            <Listener key={props.event + i} {...props} />
+          ))} */}
           {cloneChildren(children, { parent: state.current })}
         </MapProvider>
       )}

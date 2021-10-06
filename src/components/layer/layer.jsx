@@ -1,17 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { Listener } from '../..';
+import withListeners from '../../hoc/with-listeners';
 import { useMap } from '../../hoc/with-map';
 import { useForce } from '../../hooks/use-force';
 import { useId } from '../../hooks/use-id';
-import { cloneChildren, logger } from '../../utils';
+import { cloneChildren, logger, getDependencies } from '../../utils';
+import Cursor from './cursor';
 
-function Layer({ children = null, source, parent, id, ...props }) {
+function Layer({
+  children = null,
+  source,
+  parent,
+  listeners,
+  cursor,
+  id,
+  beforeId,
+  ...props
+}) {
   const state = useRef({ alive: false });
   const [initialized, setInitialized] = useState(false);
   const { map, loaded } = useMap();
   const forceUpdate = useForce();
   id = useId(id, 'layer');
-  
-  logger`LAYER: ${id} is rendering`;
 
   useEffect(() => {
     if (!loaded) return;
@@ -33,11 +43,17 @@ function Layer({ children = null, source, parent, id, ...props }) {
       setInitialized(false);
       forceUpdate();
     };
-  }, [loaded, parent, id]);
+  }, [loaded, parent, id, ...getDependencies(props)]);
 
   return (
-    initialized && cloneChildren(children, { layer: id, parent: state.current })
+    initialized && (
+      <Fragment>
+        {cursor && <Cursor layer={id} cursor={cursor} />}
+        {cloneChildren(listeners, { layer: id })}
+        {cloneChildren(children, { layer: id, parent: state.current })}
+      </Fragment>
+    )
   );
 }
 
-export default Layer;
+export default withListeners(Layer);

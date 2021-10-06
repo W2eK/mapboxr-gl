@@ -16,10 +16,19 @@ const initialState = {
     props: {
       id: 'dots',
       type: 'geojson',
-      maxzoom: 5,
       data: {
         type: 'FeatureCollection',
         features: [
+          {
+            type: 'Feature',
+            properties: {
+              filter: true
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [2.5, 6.5]
+            }
+          },
           {
             type: 'Feature',
             properties: {},
@@ -37,8 +46,10 @@ const initialState = {
     checked: true,
     props: {
       id: 'dots-circle',
+      filter: ['get', 'filter'],
       type: 'circle',
-      maxzoom: 5,
+      cursor: true,
+      maxzoom: 16,
       paint: { 'circle-radius': 10 }
     }
   },

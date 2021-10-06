@@ -7,11 +7,15 @@ import { useStore } from '../store/context';
 const parseAttributes = attributes => {
   const parseValue = value => {
     if (!value) return;
-    try {
-      return JSON.parse(value);
-    } catch (error) {
-      return value;
+    if (typeof value === 'string') {
+      if (isFinite(value)) return +value;
+      try {
+        return JSON.parse(value);
+      } catch (error) {
+        return value;
+      }
     }
+    return value;
   };
   return Object.entries(attributes).reduce(
     (obj, [key, value]) => ((obj[key] = parseValue(value)), obj),
@@ -34,8 +38,13 @@ const MapContainer = () => {
         {source.checked && (
           <Source {...parseAttributes(source.props)}>
             {layer.checked && (
-              <Layer {...layer.props}>
-                {property.checked && <Property id="circle-color" type="paint" value="red"/>}
+              <Layer
+                {...parseAttributes(layer.props)}
+                onmouseenter={console.log}
+              >
+                {property.checked && (
+                  <Property id="circle-color" type="paint" value="red" />
+                )}
               </Layer>
             )}
           </Source>

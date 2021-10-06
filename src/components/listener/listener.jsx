@@ -14,7 +14,7 @@ export function Listener({ type, event, handler, layer }) {
       logger`LISTENER: ${event} is removing ${layer}`;
       map.off(...props);
     };
-  }, [map, handler, type, event]);
+  }, [map, handler, type, event, layer]);
   return null;
 }
 

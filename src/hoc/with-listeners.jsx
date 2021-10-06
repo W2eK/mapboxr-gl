@@ -1,4 +1,5 @@
 import React from 'react';
+import { Listener } from '..';
 import withDisplayName from './with-name';
 
 // prettier-ignore
@@ -37,6 +38,9 @@ export default function withListeners(WrappedComponent) {
       },
       { listeners: [] }
     );
+    injectedProps.listeners = injectedProps.listeners.map((pros, i) => (
+      <Listener key={i} {...pros} />
+    ));
     return <WrappedComponent {...injectedProps} />;
   }
   return withDisplayName(WrappedWithListeners, WrappedComponent);
