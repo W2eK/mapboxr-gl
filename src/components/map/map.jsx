@@ -53,7 +53,8 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     });
     if (isDev()) window.map = map;
     state.current = {
-      alive: true
+      alive: true,
+      cache: {}
     };
     state.current.map = state.current;
     setMap(map);
@@ -76,6 +77,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   return (
     <div ref={container} {...wrapper}>
       {map && (
+        // TODO: Wrap with Error Boundary
         <MapProvider value={{ map, loaded }}>
           {listeners}
           {cloneChildren(children, { parent: state.current })}

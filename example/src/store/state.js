@@ -69,7 +69,7 @@ const initialState = {
     checked: true,
     props: {
       id: 'land',
-      paint: { 'background-color': 'pink' }
+      paint: { 'background-color': 'pink', 'background-opacity': 0.5 }
     }
   }
 };

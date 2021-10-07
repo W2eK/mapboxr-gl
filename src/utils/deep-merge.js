@@ -1,8 +1,12 @@
-export function deepMerge(target, source) {
-  for (const key of Object.keys(source)) {
-    if (source[key] instanceof Object)
-      Object.assign(source[key], deepMerge(target[key], source[key]));
+export function deepMerge(source, overrides) {
+  const result = Array.isArray(source) ? [...source] : { ...source };
+  for (const [key, a] of Object.entries(overrides)) {
+    const b = overrides[key];
+    if (typeof a !== 'object' || typeof b !== 'object' || b === null) {
+      result[key] = b;
+    } else {
+      result[key] = deepMerge(a, b);
+    }
   }
-  Object.assign(target || {}, source);
-  return target;
+  return result;
 }
