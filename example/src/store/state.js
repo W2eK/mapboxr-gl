@@ -63,6 +63,14 @@ const initialState = {
       type: 'paint',
       value: 'red'
     }
+  },
+  master: {
+    name: 'Master',
+    checked: true,
+    props: {
+      id: 'land',
+      paint: { 'background-color': 'pink' }
+    }
   }
 };
 

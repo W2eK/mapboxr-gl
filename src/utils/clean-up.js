@@ -1,4 +1,4 @@
-import { concatMessage, logger } from '.';
+import { concatMessage, logger } from './logger';
 
 const stack = [];
 

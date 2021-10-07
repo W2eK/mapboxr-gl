@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useState, useRef } from 'react';
-import { useMap } from '../..';
+import { useEffect } from 'react';
+import { useMap } from '../../hoc/with-map';
 import { logger } from '../../utils';
 
 function Property({ id, type, value, layer, parent }) {

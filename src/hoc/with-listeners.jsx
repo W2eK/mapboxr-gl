@@ -1,5 +1,5 @@
 import React from 'react';
-import { Listener } from '..';
+import Listener from '../components/listener/listener';
 import withDisplayName from './with-name';
 
 // prettier-ignore

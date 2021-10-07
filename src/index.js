@@ -5,5 +5,5 @@ import Layer from './components/layer/layer';
 import Property from './components/property/property';
 import withMap, { useMap, MapProvider } from './hoc/with-map';
 
-export default MapboxrGL;
 export { Listener, Source, Layer, Property, withMap, useMap, MapProvider };
+export default MapboxrGL;

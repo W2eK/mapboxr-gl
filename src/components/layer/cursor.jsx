@@ -1,5 +1,6 @@
 import React, { Fragment, useCallback } from 'react';
-import { Listener, useMap } from '../..';
+import Listener from '../listener/listener';
+import { useMap } from '../../hoc/with-map';
 
 function Cursor({ cursor, layer }) {
   const { map } = useMap();
@@ -15,7 +16,7 @@ function Cursor({ cursor, layer }) {
     () => (map.getCanvas().style.cursor = ''),
     [map, cursor]
   );
-  
+
   return (
     <Fragment>
       <Listener

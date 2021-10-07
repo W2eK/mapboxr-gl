@@ -26,7 +26,7 @@ const parseAttributes = attributes => {
 const originalConsoleLog = console.log;
 
 const MapContainer = () => {
-  const { mapbox, source, layer, property } = useStore().state;
+  const { mapbox, source, layer, property, master } = useStore().state;
   return (
     mapbox.checked && (
       <MapboxrGL
@@ -49,6 +49,7 @@ const MapContainer = () => {
             )}
           </Source>
         )}
+        {master.checked && <Layer {...parseAttributes(master.props)} />}
       </MapboxrGL>
     )
   );
