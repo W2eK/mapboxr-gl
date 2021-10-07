@@ -5,6 +5,6 @@ export function useMap(): { map: Map; loaded: boolean };
 
 export const MapProvider: React.Context<Map>;
 
-export default function withMap<T>(
+export function withMap<T>(
   WrappedCompnent: ComponentType<T>
 ): ComponentType<T & Record<'map', Map>>;

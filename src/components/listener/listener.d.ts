@@ -14,6 +14,6 @@ type ListenerProps<T extends keyof MapEventType | keyof MapLayerEventType> = {
     }
 );
 
-export default function Listener<
+export function Listener<
   T extends keyof MapEventType | keyof MapLayerEventType
 >(props: ListenerProps<T>): JSX.Element;

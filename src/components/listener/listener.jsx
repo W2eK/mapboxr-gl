@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useMap } from '../../hoc/with-map';
+import { useMap } from '../context'
 import { logger } from '../../utils';
 
 export function Listener({ type, event, handler, layer }) {
@@ -17,5 +17,3 @@ export function Listener({ type, event, handler, layer }) {
   }, [map, handler, type, event, layer]);
   return null;
 }
-
-export default Listener;

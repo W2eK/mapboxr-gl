@@ -1,9 +1,9 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import withListeners from '../../hoc/with-listeners';
-import { useMap } from '../../hoc/with-map';
-import { useForce } from '../../hooks/use-force';
-import { useId } from '../../hooks/use-id';
-import { cloneChildren, logger, getDependencies } from '../../utils';
+import { useMap } from '../context';
+import { useId, useForce } from '../../hooks';
+import { withListeners } from '../../hoc';
+import { cloneChildren, getDependencies, logger } from '../../utils';
+
 import Cursor from './cursor';
 
 function Layer({
@@ -54,5 +54,5 @@ function Layer({
     )
   );
 }
-
-export default withListeners(Layer);
+const Wrapped = withListeners(Layer);
+export { Wrapped as Layer };

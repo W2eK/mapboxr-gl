@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import withDisplayName from './with-name';
+import { withDisplayName } from '../../hoc/with-name';
 
 const MapContext = createContext(null);
 

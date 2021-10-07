@@ -5,6 +5,6 @@ type SourceProps = AnySourceData & {
   id?: string;
 };
 
-export default function Source(
+export function Source(
   props: PropsWithChildren<SourceProps>
 ): JSX.Element;

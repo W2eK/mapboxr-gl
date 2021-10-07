@@ -1,6 +1,6 @@
 import React from 'react';
-import Listener from '../components/listener/listener';
-import withDisplayName from './with-name';
+import { Listener } from '../components/listener';
+import { withDisplayName } from './with-name';
 
 // prettier-ignore
 const EVENTS = new Set([
@@ -15,7 +15,7 @@ const EVENTS = new Set([
   'styleimagemissing', 'load'
 ]);
 
-export default function withListeners(WrappedComponent) {
+export function withListeners(WrappedComponent) {
   function WrappedWithListeners(props) {
     const injectedProps = Object.entries(props).reduce(
       (obj, [key, value]) => {

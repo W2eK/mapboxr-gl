@@ -1,17 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useMap } from '../../hoc/with-map';
-import { cloneChildren, getDependencies, logger } from '../../utils';
-import { buildSetter, useHandlers } from '../../hooks/use-handlers';
-import { useForce } from '../../hooks/use-force';
-import { useId } from '../../hooks/use-id';
+import { useEffect, useRef, useState } from 'react';
 import { removeLayers } from './remove-layers';
+import { useMap } from '../context';
+import { cloneChildren, getDependencies, logger } from '../../utils';
+import { useForce, useId, useHandlers, buildSetter } from '../../hooks';
 
 const handlers = {
   data: buildSetter('setData')
   // TODO: add other handlers
 };
 
-function Source({ children = null, id, parent, ...props }) {
+export function Source({ children = null, id, parent, ...props }) {
   const { map, loaded } = useMap();
   const state = useRef({ alive: true });
   const [initialized, setInitialized] = useState(false);
@@ -57,5 +55,3 @@ function Source({ children = null, id, parent, ...props }) {
     cloneChildren(children, { source: id, parent: state.current })
   );
 }
-
-export default Source;

@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useMap } from '../../hoc/with-map';
+import { useMap } from '../context';
 import { logger } from '../../utils';
 
-function Property({ id, type, value, layer, parent }) {
+export function Property({ id, type, value, layer, parent }) {
   const { map, loaded } = useMap();
   logger`PROPERTY: ${id} is rendering`;
 
@@ -21,5 +21,3 @@ function Property({ id, type, value, layer, parent }) {
   }, [loaded, parent, id]);
   return null;
 }
-
-export default Property;

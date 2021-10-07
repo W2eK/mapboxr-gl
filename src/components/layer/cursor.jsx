@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback } from 'react';
-import Listener from '../listener/listener';
-import { useMap } from '../../hoc/with-map';
+import { useMap } from '../context';
+import { Listener } from '../listener';
 
 function Cursor({ cursor, layer }) {
   const { map } = useMap();

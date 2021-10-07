@@ -14,6 +14,6 @@ type LayerProps = AnyLayer & {
 } & LayerOnHandlers &
   LayerOnceHandlers;
 
-export default function Layer(
+export function Layer(
   props: PropsWithChildren<LayerProps>
 ): JSX.Element;

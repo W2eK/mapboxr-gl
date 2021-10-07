@@ -22,6 +22,6 @@ type MapboxrGLProps = Omit<MapboxOptions, 'container' | 'style'> & {
   MapOnceHandlers &
   MapViewportHandlers;
 
-export default function MapboxrGL(
+export function MapboxrGL(
   props: PropsWithChildren<MapboxrGLProps>
 ): JSX.Element;

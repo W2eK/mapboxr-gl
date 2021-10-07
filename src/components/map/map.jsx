@@ -1,16 +1,9 @@
 import React, { useRef, useState, useEffect, cloneElement } from 'react';
 import mapboxgl from '!mapbox-gl';
-
+import { MapProvider } from '../context';
+import { withListeners } from '../../hoc';
+import { buildSetter, buildSwitcher, useHandlers } from '../../hooks';
 import { cloneChildren, getDependencies, isDev, logger } from '../../utils';
-import {
-  buildSetter,
-  buildSwitcher,
-  useHandlers
-} from '../../hooks/use-handlers';
-
-import { MapProvider } from '../../hoc/with-map';
-import withListeners from '../../hoc/with-listeners';
-import Listener from '../listener/listener';
 
 const handlers = {
   // Properties
@@ -85,9 +78,6 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
       {map && (
         <MapProvider value={{ map, loaded }}>
           {listeners}
-          {/* {listeners.map((props, i) => (
-            <Listener key={props.event + i} {...props} />
-          ))} */}
           {cloneChildren(children, { parent: state.current })}
         </MapProvider>
       )}
@@ -95,4 +85,5 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   );
 }
 
-export default withListeners(MapboxrGL);
+const Wrapped = withListeners(MapboxrGL);
+export { Wrapped as MapboxrGL };

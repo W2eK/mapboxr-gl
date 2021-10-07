@@ -1,7 +1,7 @@
 import React from 'react';
-import withDisplayName from './with-name';
+import { withDisplayName } from './with-name';
 
-export default function withProps(WrappedComponent, handlers) {
+export function withProps(WrappedComponent, handlers) {
   const keys = new Set(Object.keys(handlers));
   function WrappedWithProps(props) {
     const injectedProps = Object.entries(props).reduce(
