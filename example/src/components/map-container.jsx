@@ -43,7 +43,7 @@ const MapContainer = () => {
                 onmouseenter={console.log}
               >
                 {property.checked && (
-                  <Property id="circle-color" type="paint" value="red" />
+                  <Property {...parseAttributes(property.props)} />
                 )}
               </Layer>
             )}
