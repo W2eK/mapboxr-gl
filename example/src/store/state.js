@@ -7,7 +7,8 @@ const initialState = {
       mapStyle: 'mapbox://styles/mapbox/light-v10',
       minZoom: 3,
       antialias: true,
-      zoom: 4
+      zoom: 4,
+      scrollZoom: true
     }
   },
   source: {
@@ -22,7 +23,7 @@ const initialState = {
           {
             type: 'Feature',
             properties: {
-              filter: true
+              filter: false
             },
             geometry: {
               type: 'Point',
@@ -32,7 +33,7 @@ const initialState = {
           {
             type: 'Feature',
             properties: {
-              filter: false
+              filter: true
             },
             geometry: {
               type: 'Point',

@@ -1,8 +1,8 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useMap } from '../context';
-import { useId, useForce } from '../../hooks';
+import { useId, useForce, useHandlers } from '../../hooks';
 import { withListeners } from '../../hoc';
-import { cloneChildren, deepMerge, getDependencies, logger } from '../../utils';
+import { cloneChildren, getDependencies, logger } from '../../utils';
 
 import Cursor from './cursor';
 
@@ -22,13 +22,20 @@ function Layer({
 
   const forceUpdate = useForce();
   id = useId(id, 'layer');
-  
-  // TODO 
-  const rest = props;
+
+  const handlers = {
+    minzoom: value => map.setLayerZoomRange(id, value),
+    maxzoom: value => map.setLayerZoomRange(id, null, value),
+    filter: value => map.setFilter(id, value)
+  };
+
+  useHandlers.props = ['LAYER', id];
+  const rest = useHandlers({ handlers, props });
+
   useEffect(() => {
     if (!loaded) return;
     let master;
-    let props = { ...rest, id, 'source-layer': sourceLayer };
+    props = { ...props, id, 'source-layer': sourceLayer };
     const { cache } = parent.map;
     if (cache[id]) {
       master = cache[id].master;

@@ -2,28 +2,26 @@ import { useEffect, useRef, useState } from 'react';
 import { removeLayers } from './remove-layers';
 import { useMap } from '../context';
 import { cloneChildren, getDependencies, logger } from '../../utils';
-import { useForce, useId, useHandlers, buildSetter } from '../../hooks';
-
-const handlers = {
-  data: buildSetter('setData')
-  // TODO: add other handlers
-};
+import { useForce, useId, useHandlers } from '../../hooks';
 
 export function Source({ children = null, id, parent, ...props }) {
   const { map, loaded } = useMap();
   const state = useRef({ alive: true });
   const [initialized, setInitialized] = useState(false);
-  const [source, setSource] = useState(null);
   const forceUpdate = useForce();
   id = useId(id, 'source');
   logger`SOURCE: ${id} is rendering`;
 
+  const handlers = {
+    data: value => map.getSource(id).setData(value),
+    tiles: value => map.getSource(id).setTiles(value)
+    // TODO: add other handlers
+  };
+
+  useHandlers.props = ['SOURCE', id];
   const rest = useHandlers({
     handlers,
-    props,
-    subject: source,
-    component: 'source',
-    id
+    props
   });
 
   useEffect(() => {
@@ -34,7 +32,6 @@ export function Source({ children = null, id, parent, ...props }) {
       alive: true,
       map: parent.map
     };
-    setSource(map.getSource(id));
     setInitialized(true);
     return () => {
       if (parent.alive && parent.map.alive) {

@@ -2,28 +2,8 @@ import React, { useRef, useState, useEffect, cloneElement } from 'react';
 import mapboxgl from '!mapbox-gl';
 import { MapProvider } from '../context';
 import { withListeners } from '../../hoc';
-import { buildSetter, buildSwitcher, useHandlers } from '../../hooks';
+import { buildSwitcher, useHandlers } from '../../hooks';
 import { cloneChildren, getDependencies, isDev, logger } from '../../utils';
-
-const handlers = {
-  // Properties
-  minZoom: buildSetter('setMinZoom'),
-  maxZoom: buildSetter('setMaxZoom'),
-  minPitch: buildSetter('setMinPitch'),
-  maxPitch: buildSetter('setMaxPitch'),
-  mapStyle: buildSetter('setStyle'),
-  maxBounds: buildSetter('setMaxBounds'),
-  renderWorldCopies: buildSetter('setRenderWorldCopies'),
-  // User interaction handlers
-  boxZoom: buildSwitcher('boxZoom'),
-  doubleClickZoom: buildSwitcher('doubleClickZoom'),
-  dragPan: buildSwitcher('dragPan'),
-  dragRotate: buildSwitcher('dragRotate'),
-  keyboard: buildSwitcher('keyboard'),
-  scrollZoom: buildSwitcher('scrollZoom'),
-  touchPitch: buildSwitcher('touchPitch'),
-  touchZoomRotate: buildSwitcher('touchZoomRotate')
-};
 
 function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   const container = useRef(null);
@@ -33,17 +13,30 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
 
   logger`MAPBOX: container is rendering`;
 
-  const rest = useHandlers({
-    handlers,
-    props,
-    subject: map,
-    component: 'mapbox',
-    id: 'container'
-  });
+  const handlers = {
+    // Properties
+    minZoom: value => map.setMinZoom(value),
+    maxZoom: value => map.setMaxZoom(value),
+    minPitch: value => map.setMinPitch(value),
+    maxPitch: value => map.setMaxPitch(value),
+    mapStyle: value => map.setStyle(value),
+    maxBounds: value => map.setMaxBounds(value),
+    renderWorldCopies: value => map.setRenderWorldCopies(value),
+    // User interaction handlers
+    boxZoom: buildSwitcher(map?.boxZoom),
+    doubleClickZoom: buildSwitcher(map?.doubleClickZoom),
+    dragPan: buildSwitcher(map?.dragPan),
+    dragRotate: buildSwitcher(map?.dragRotate),
+    keyboard: buildSwitcher(map?.keyboard),
+    scrollZoom: buildSwitcher(map?.scrollZoom),
+    touchPitch: buildSwitcher(map?.touchPitch),
+    touchZoomRotate: buildSwitcher(map?.touchZoomRotate)
+  };
+  useHandlers.props = ['MAPBOX', 'container'];
+  const rest = useHandlers({ props, handlers });
 
   useEffect(() => {
     /* On Mount: */
-    // console.log('111')
     logger`MAPBOX: container is adding`;
 
     const map = new mapboxgl.Map({
@@ -80,6 +73,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
         // TODO: Wrap with Error Boundary
         <MapProvider value={{ map, loaded }}>
           {listeners}
+          {/* // TODO: Replace cloneChildren with React.Children  */}
           {cloneChildren(children, { parent: state.current })}
         </MapProvider>
       )}
