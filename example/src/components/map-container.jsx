@@ -42,11 +42,11 @@ const MapContainer = () => {
                 {...parseAttributes(layer.props)}
                 onmouseenter={console.log}
               >
-                {filter.checked && (
-                  <Filter {...parseAttributes(filter.props)} />
-                )}
                 {property.checked && (
-                  <Property {...parseAttributes(property.props)} />
+                  <Property key="unique-property" {...parseAttributes(property.props)} />
+                )}
+                {filter.checked && (
+                  <Filter key="unique-filter" {...parseAttributes(filter.props)} />
                 )}
               </Layer>
             )}

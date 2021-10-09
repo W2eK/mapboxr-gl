@@ -74,7 +74,7 @@ function Layer({
       forceUpdate();
     };
   }, [loaded, parent, id, beforeId, sourceLayer, ...getDependencies(rest)]);
-
+  console.log(children);
   return (
     initialized && (
       <Fragment>

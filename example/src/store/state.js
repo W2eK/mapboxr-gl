@@ -76,7 +76,7 @@ const initialState = {
   },
   master: {
     name: 'Master',
-    checked: true,
+    checked: false,
     props: {
       id: 'land',
       paint: { 'background-color': 'lightblue', 'background-opacity': 0.5 }
