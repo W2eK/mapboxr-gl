@@ -1,6 +1,6 @@
 /* eslint-disable no-sequences */
 import React from 'react';
-import MapboxrGL, { Source, Layer, Property } from 'mapboxr-gl';
+import MapboxrGL, { Source, Layer, Property, Filter } from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useStore } from '../store/context';
 
@@ -26,7 +26,7 @@ const parseAttributes = attributes => {
 const originalConsoleLog = console.log;
 
 const MapContainer = () => {
-  const { mapbox, source, layer, property, master } = useStore().state;
+  const { mapbox, source, layer, property, master, filter } = useStore().state;
   return (
     mapbox.checked && (
       <MapboxrGL
@@ -42,6 +42,9 @@ const MapContainer = () => {
                 {...parseAttributes(layer.props)}
                 onmouseenter={console.log}
               >
+                {filter.checked && (
+                  <Filter {...parseAttributes(filter.props)} />
+                )}
                 {property.checked && (
                   <Property {...parseAttributes(property.props)} />
                 )}

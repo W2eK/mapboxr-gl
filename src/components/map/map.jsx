@@ -22,6 +22,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     mapStyle: value => map.setStyle(value),
     maxBounds: value => map.setMaxBounds(value),
     renderWorldCopies: value => map.setRenderWorldCopies(value),
+    // TODO: add camera properties
     // User interaction handlers
     boxZoom: buildSwitcher(map?.boxZoom),
     doubleClickZoom: buildSwitcher(map?.doubleClickZoom),
@@ -73,7 +74,6 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
         // TODO: Wrap with Error Boundary
         <MapProvider value={{ map, loaded }}>
           {listeners}
-          {/* // TODO: Replace cloneChildren with React.Children  */}
           {cloneChildren(children, { parent: state.current })}
         </MapProvider>
       )}

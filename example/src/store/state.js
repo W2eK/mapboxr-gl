@@ -23,7 +23,8 @@ const initialState = {
           {
             type: 'Feature',
             properties: {
-              filter: false
+              id: 0,
+              filter: true
             },
             geometry: {
               type: 'Point',
@@ -33,7 +34,8 @@ const initialState = {
           {
             type: 'Feature',
             properties: {
-              filter: true
+              id: 1,
+              filter: false
             },
             geometry: {
               type: 'Point',
@@ -65,12 +67,19 @@ const initialState = {
       value: 'red'
     }
   },
+  filter: {
+    name: 'Filter',
+    checked: true,
+    props: {
+      rule: ['any', ['get', 'filter'], ['to-boolean', 'id']]
+    }
+  },
   master: {
     name: 'Master',
     checked: true,
     props: {
       id: 'land',
-      paint: { 'background-color': 'pink', 'background-opacity': 0.5 }
+      paint: { 'background-color': 'lightblue', 'background-opacity': 0.5 }
     }
   }
 };
