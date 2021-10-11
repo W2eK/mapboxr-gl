@@ -2,10 +2,12 @@ import { useEffect, useRef } from 'react';
 import { logger } from '../../utils';
 import { useMap } from '../context';
 
-export function Filter({ rule, layer, parent }) {
+export function Filter({ rule, injected, layer, parent }) {
   const { map, loaded } = useMap();
   const initial = useRef(false);
   const name = JSON.stringify(rule);
+  const ownLayerName = layer;
+  layer = injected || layer;
   logger`FILTER: ${name} is rendering ${layer}`;
 
   useEffect(() => {
@@ -15,7 +17,7 @@ export function Filter({ rule, layer, parent }) {
     } ${layer}`;
     if (initial.current === false) initial.current = map.getFilter(layer);
     map.setFilter(layer, rule);
-  }, [loaded, parent, layer, JSON.stringify(rule)]);
+  }, [loaded, parent, ownLayerName, JSON.stringify(rule)]);
 
   // CLEANUP FUNCTION
   // prettier-ignore
@@ -27,6 +29,6 @@ export function Filter({ rule, layer, parent }) {
       logger`FILTER: ${name} is deleted ${layer}`;
     }
     initial.current = false
-  }, [parent, layer]);
+  }, [parent, ownLayerName]);
   return null;
 }

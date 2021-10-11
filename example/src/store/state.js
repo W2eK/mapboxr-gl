@@ -90,10 +90,16 @@ const initialState = {
   },
   master: {
     name: 'Master',
-    checked: false,
+    checked: true,
+    // props: {
+    //   id: 'land',
+    //   paint: { 'background-color': 'lightblue', 'background-opacity': 0.5 }
+    // }
     props: {
-      id: 'land',
-      paint: { 'background-color': 'lightblue', 'background-opacity': 0.5 }
+      id: 'admin-1-boundary',
+      source: 'composite',
+      sourceLayer: 'admin',
+      paint: { 'line-color': 'red' }
     }
   }
 };

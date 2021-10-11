@@ -8,6 +8,7 @@ const defaultGetChanges = (prev, state) => {
 
 export function FeatureState({
   state,
+  injected,
   source,
   sourceLayer = '',
   getChanges = defaultGetChanges,
@@ -15,6 +16,8 @@ export function FeatureState({
 }) {
   const { map, loaded } = useMap();
   const prev = useRef({});
+  const ownSourceName = source;
+  source = injected || source;
   logger`STATE: ${source} is rendering`;
   useEffect(() => {
     if (!loaded) return;
@@ -27,7 +30,7 @@ export function FeatureState({
       map.setFeatureState({ id, source, sourceLayer }, state)
     );
     prev.current = state;
-  }, [loaded, source, sourceLayer, parent, state]);
+  }, [loaded, ownSourceName, sourceLayer, parent, JSON.stringify(state)]);
 
   // CLEANUP FUNCTION
   // prettier-ignore
@@ -41,6 +44,6 @@ export function FeatureState({
       logger`STATE: ${source} is deleted`;
     }
     prev.current = {};
-  }, [source, sourceLayer, parent]);
+  }, [ownSourceName, sourceLayer, parent]);
   return null;
 }

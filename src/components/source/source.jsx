@@ -30,6 +30,7 @@ export function Source({ children = null, id, parent, ...props }) {
     map.addSource(id, props);
     state.current = {
       alive: true,
+      name: id,
       map: parent.map
     };
     setInitialized(true);
@@ -49,6 +50,6 @@ export function Source({ children = null, id, parent, ...props }) {
 
   return (
     initialized &&
-    cloneChildren(children, { source: id, parent: state.current })
+    cloneChildren(children, { injected: id, parent: state.current })
   );
 }

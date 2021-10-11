@@ -7,11 +7,12 @@ import { cloneChildren, getDependencies, logger } from '../../utils';
 import Cursor from './cursor';
 
 function Layer({
+  id,
   children,
   parent,
   listeners,
   cursor,
-  id,
+  injected,
   sourceLayer = '',
   beforeId,
   ...props
@@ -35,7 +36,8 @@ function Layer({
   useEffect(() => {
     if (!loaded) return;
     let master;
-    props = { ...props, id, 'source-layer': sourceLayer };
+    // ! FIX bug with source-layer
+    props = { source: injected, ...props, id, 'source-layer': sourceLayer };
     const { cache } = parent.map;
     if (cache[id]) {
       master = cache[id].master;
@@ -45,6 +47,7 @@ function Layer({
       const index = layers.findIndex(({ id: masterId }) => masterId === id);
       if (index > -1) {
         master = layers[index];
+        // ! FIX bug with beforeId
         beforeId = beforeId || layers[index + 1]?.id;
       }
     }
@@ -79,7 +82,7 @@ function Layer({
       <Fragment>
         {cursor && <Cursor layer={id} cursor={cursor} />}
         {cloneChildren(listeners, { layer: id })}
-        {cloneChildren(children, { layer: id, parent: state.current })}
+        {cloneChildren(children, { injected: id, parent: state.current })}
       </Fragment>
     )
   );

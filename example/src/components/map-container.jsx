@@ -43,7 +43,7 @@ const MapContainer = () => {
         oncemousemove={originalConsoleLog}
       >
         {source.checked && (
-          <Source {...parseAttributes(source.props)}>
+          <Source key={source.name} {...parseAttributes(source.props)}>
             {state.checked && (
               <FeatureState
                 key={state.name}
@@ -52,7 +52,7 @@ const MapContainer = () => {
             )}
             {layer.checked && (
               <Layer
-                // key={layer.name}
+                key={layer.name}
                 {...parseAttributes(layer.props)}
                 onmouseenter={console.log}
               >
@@ -72,7 +72,9 @@ const MapContainer = () => {
             )}
           </Source>
         )}
-        {master.checked && <Layer {...parseAttributes(master.props)} />}
+        {master.checked && (
+          <Layer key={master.name} {...parseAttributes(master.props)} />
+        )}
       </MapboxrGL>
     )
   );

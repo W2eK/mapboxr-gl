@@ -2,13 +2,15 @@ import { useEffect, useRef } from 'react';
 import { useMap } from '../context';
 import { logger } from '../../utils';
 
-export function Property({ id, type, value, layer, parent }) {
+export function Property({ id, type, value, injected, layer, parent }) {
   const { map, loaded } = useMap();
   const initial = useRef(false);
   type = type[0].toUpperCase() + type.slice(1);
+  const ownLayerName = layer;
+  layer = injected || layer;
 
   logger`PROPERTY: ${id} is rendering ${layer}`;
-  
+
   useEffect(() => {
     if (!loaded) return;
     logger`PROPERTY: ${id} is ${
@@ -17,7 +19,7 @@ export function Property({ id, type, value, layer, parent }) {
     if (initial.current === false)
       initial.current = map[`get${type}Property`](layer, id);
     map[`set${type}Property`](layer, id, value);
-  }, [loaded, parent, id, layer, JSON.stringify(value)]);
+  }, [loaded, parent, id, ownLayerName, JSON.stringify(value)]);
 
   // CLEANUP FUNCTION
   // prettier-ignore
@@ -29,6 +31,6 @@ export function Property({ id, type, value, layer, parent }) {
       logger`PROPERTY: ${id} is deleted ${layer}`;
     }
     initial.current = false;
-  }, [parent, id, layer]);
+  }, [parent, id, ownLayerName]);
   return null;
 }
