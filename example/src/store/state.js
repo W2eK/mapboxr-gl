@@ -22,6 +22,7 @@ const initialState = {
         features: [
           {
             type: 'Feature',
+            id: 0,
             properties: {
               id: 0,
               filter: true
@@ -33,6 +34,7 @@ const initialState = {
           },
           {
             type: 'Feature',
+            id: 1,
             properties: {
               id: 1,
               filter: false
@@ -44,6 +46,13 @@ const initialState = {
           }
         ]
       }
+    }
+  },
+  state: {
+    name: 'FeatureState',
+    checked: true,
+    props: {
+      state: [{ hover: true }, { hover: false }]
     }
   },
   layer: {
@@ -64,7 +73,12 @@ const initialState = {
     props: {
       id: 'circle-color',
       type: 'paint',
-      value: 'red'
+      value: [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        'red',
+        'blue'
+      ]
     }
   },
   filter: {

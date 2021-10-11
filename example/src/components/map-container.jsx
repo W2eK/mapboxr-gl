@@ -1,6 +1,12 @@
 /* eslint-disable no-sequences */
 import React from 'react';
-import MapboxrGL, { Source, Layer, Property, Filter } from 'mapboxr-gl';
+import MapboxrGL, {
+  Source,
+  Layer,
+  Property,
+  Filter,
+  FeatureState
+} from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useStore } from '../store/context';
 
@@ -26,7 +32,8 @@ const parseAttributes = attributes => {
 const originalConsoleLog = console.log;
 
 const MapContainer = () => {
-  const { mapbox, source, layer, property, master, filter } = useStore().state;
+  const { mapbox, source, layer, property, master, filter, state } =
+    useStore().state;
   return (
     mapbox.checked && (
       <MapboxrGL
@@ -37,16 +44,29 @@ const MapContainer = () => {
       >
         {source.checked && (
           <Source {...parseAttributes(source.props)}>
+            {state.checked && (
+              <FeatureState
+                key={state.name}
+                {...parseAttributes(state.props)}
+              />
+            )}
             {layer.checked && (
               <Layer
+                key={layer.name}
                 {...parseAttributes(layer.props)}
                 onmouseenter={console.log}
               >
                 {property.checked && (
-                  <Property key="unique-property" {...parseAttributes(property.props)} />
+                  <Property
+                    key={property.name}
+                    {...parseAttributes(property.props)}
+                  />
                 )}
                 {filter.checked && (
-                  <Filter key="unique-filter" {...parseAttributes(filter.props)} />
+                  <Filter
+                    key={filter.name}
+                    {...parseAttributes(filter.props)}
+                  />
                 )}
               </Layer>
             )}
