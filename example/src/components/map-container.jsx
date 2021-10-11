@@ -52,7 +52,7 @@ const MapContainer = () => {
             )}
             {layer.checked && (
               <Layer
-                key={layer.name}
+                // key={layer.name}
                 {...parseAttributes(layer.props)}
                 onmouseenter={console.log}
               >
