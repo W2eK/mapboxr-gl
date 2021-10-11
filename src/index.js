@@ -1,4 +1,7 @@
+import React from 'react';
+
 import { MapboxrGL } from './components/map';
+import { ErrorBoundary } from './components/error';
 export * from './components/context';
 export * from './components/filter';
 export * from './components/feature-state';
@@ -6,4 +9,11 @@ export * from './components/layer';
 export * from './components/listener';
 export * from './components/property';
 export * from './components/source';
-export default MapboxrGL;
+
+export default function WithErrorBoundary(props) {
+  return (
+    <ErrorBoundary>
+      <MapboxrGL {...props} />
+    </ErrorBoundary>
+  );
+}
