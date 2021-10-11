@@ -3,6 +3,7 @@ import { isDev } from './is-dev';
 const COLORS = {
   adding: '#49c72a',
   redrawing: '#2196f3',
+  restoring: '#2196f3',
   updating: '#df9e13',
   removing: '#df2113',
   deleted: '#82140c',

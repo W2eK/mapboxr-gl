@@ -99,7 +99,8 @@ const initialState = {
       id: 'admin-1-boundary',
       source: 'composite',
       sourceLayer: 'admin',
-      paint: { 'line-color': 'red' }
+      paint: { 'line-color': 'red' },
+      keepMaster: true
     }
   }
 };
