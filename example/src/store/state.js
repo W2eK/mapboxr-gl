@@ -2,6 +2,7 @@ const initialState = {
   mapbox: {
     name: 'MapboxrGL',
     checked: true,
+    open: true,
     props: {
       accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
       mapStyle: 'mapbox://styles/mapbox/light-v10',
@@ -10,6 +11,12 @@ const initialState = {
       zoom: 4,
       scrollZoom: true
     }
+  },
+  marker: {
+    name: 'Marker',
+    checked: true,
+    open: true,
+    props: {}
   },
   popup: {
     name: 'Popup',

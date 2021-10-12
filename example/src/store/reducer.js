@@ -3,6 +3,10 @@ const debug = false;
 function reducer(state, { type, payload }) {
   debug && console.log({ type, payload });
   switch (type) {
+    case 'FOLD': {
+      const prev = state[payload];
+      return { ...state, [payload]: { ...prev, open: !prev.open } };
+    }
     case 'TOGGLE': {
       const prev = state[payload];
       return { ...state, [payload]: { ...prev, checked: !prev.checked } };

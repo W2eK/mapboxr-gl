@@ -1,7 +1,7 @@
 import React from 'react';
 import Attribute from './attribute';
 
-const Component = ({ id, checked, name, toggle, change, props }) => {
+const Component = ({ id, checked, name, toggle, change, props, open, fold }) => {
   const attributes = Object.entries(props).map(([key, value]) => (
     <Attribute key={key} id={key} value={value} change={change} />
   ));
@@ -14,14 +14,14 @@ const Component = ({ id, checked, name, toggle, change, props }) => {
         checked={checked}
         onChange={toggle}
       />
-      <div>
-        <span>{'<'}</span>
-        <label htmlFor={id}>
-          <strong>{name}</strong>
-        </label>
+      <details open={open}>
+        <summary>
+          <label htmlFor={id}>
+            <strong>{name}</strong>
+          </label>
+        </summary>
         <ul className="attributes">{attributes}</ul>
-        <span>{'/>'}</span>
-      </div>
+      </details>
     </li>
   );
 };

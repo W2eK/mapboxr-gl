@@ -1,5 +1,5 @@
 import React from 'react';
-import { changeAttribute, toggleComponent } from '../store/actions';
+import { changeAttribute, foldComponent, toggleComponent } from '../store/actions';
 import { useStore } from '../store/context';
 import Component from './component';
 
@@ -7,6 +7,7 @@ const Controlls = () => {
   const { state, dispatch } = useStore();
   const components = Object.entries(state).map(([key, value]) => {
     const toggle = () => dispatch(toggleComponent(key));
+    const fold = () => dispatch(foldComponent(key));
     const change = ({ target }) =>
       dispatch(changeAttribute(key, target.name, target.value));
     return (
@@ -16,6 +17,7 @@ const Controlls = () => {
         {...value}
         toggle={toggle}
         change={change}
+        fold={fold}
       />
     );
   });
