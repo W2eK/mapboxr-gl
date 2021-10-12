@@ -15,7 +15,7 @@ export const useHandlers = ({ handlers, props }) => {
       const [component = '', name = ''] =
         useHandlers.props || [];
       logger`${component}: ${name} is updating ${key}`;
-      handlers[key](value);
+      handlers[key](value, prev.current[key]);
     }
     return rest;
   }, {});

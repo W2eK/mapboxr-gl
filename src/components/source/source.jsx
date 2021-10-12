@@ -23,7 +23,7 @@ export function Source({ children = null, id, parent, ...props }) {
     handlers,
     props
   });
-
+  // TODO Refactor: add lifecycle hook
   useEffect(() => {
     if (!loaded) return;
     logger`SOURCE: ${id} is adding`;

@@ -11,6 +11,23 @@ const initialState = {
       scrollZoom: true
     }
   },
+  popup: {
+    name: 'Popup',
+    checked: true,
+    props: {
+      anchor: 'bottom',
+      trackPointer: false,
+      coordinates: [0, 0],
+      offset: 20,
+      maxWidth: '50px',
+      className: 'foo bar'
+    }
+  },
+  content: {
+    name: 'Content',
+    checked: true,
+    props: {}
+  },
   source: {
     name: 'Source',
     checked: true,

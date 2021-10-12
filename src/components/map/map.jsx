@@ -6,6 +6,7 @@ import { buildSwitcher, useHandlers } from '../../hooks';
 import { cloneChildren, getDependencies, isDev, logger } from '../../utils';
 
 function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
+  // TODO: Add PropTypes
   const container = useRef(null);
   const [map, setMap] = useState(null);
   const [loaded, setLoaded] = useState(false);

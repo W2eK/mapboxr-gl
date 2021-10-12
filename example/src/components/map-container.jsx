@@ -5,7 +5,8 @@ import MapboxrGL, {
   Layer,
   Property,
   Filter,
-  FeatureState
+  FeatureState,
+  Popup
 } from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useStore } from '../store/context';
@@ -32,8 +33,17 @@ const parseAttributes = attributes => {
 const originalConsoleLog = console.log;
 
 const MapContainer = () => {
-  const { mapbox, source, layer, property, master, filter, state } =
-    useStore().state;
+  const {
+    mapbox,
+    popup,
+    content,
+    source,
+    layer,
+    property,
+    master,
+    filter,
+    state
+  } = useStore().state;
   return (
     mapbox.checked && (
       <MapboxrGL
@@ -42,6 +52,22 @@ const MapContainer = () => {
         // onload={console.log}
         oncemousemove={originalConsoleLog}
       >
+        {popup.checked && (
+          <Popup
+            {...parseAttributes(popup.props)}
+            onopen={console.log}
+            closeOnClick={false}
+          >
+            {content.checked ? (
+              <div style={{ backgroundColor: 'lightcoral' }}>
+                Test Test Test Test Test
+              </div>
+            ) : (
+              'Test Test'
+            )}
+          </Popup>
+        )}
+
         {source.checked && (
           <Source key={source.name} {...parseAttributes(source.props)}>
             {state.checked && (

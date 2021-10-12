@@ -12,14 +12,14 @@ const EVENTS = new Set([
   'boxzoomstart', 'boxzoomend', 'boxzoomcancel', 'webglcontextlost',
   'webglcontextrestored', 'render', 'idle', 'error', 'data', 'styledata',
   'sourcedata', 'dataloading', 'styledataloading', 'sourcedataloading',
-  'styleimagemissing', 'load'
+  'styleimagemissing', 'load', 'open', 'close'
 ]);
 
 export function withListeners(WrappedComponent) {
   function WrappedWithListeners(props) {
     const injectedProps = Object.entries(props).reduce(
       (obj, [key, value]) => {
-        const [, type, event] = key.match(/^(onc?e?)(.*)/) || [];
+        const [, type, event] = key.match(/^(on(?:ce)?)(.*)/) || [];
         if (event && !Array.isArray(value)) value = [value];
         const has = EVENTS.has(event);
         if (has) {
