@@ -15,7 +15,8 @@ export const concatMessage = args => {
   return arr.reduce((arr, str, i) => [...arr, str, rest[i]], []).join('');
 };
 
-const adjustText = (text, tabs = 4) => {
+const adjustText = text => {
+  const tabs = 4;
   const tabSize = 4;
   const maxLength = tabs * tabSize;
   if (text.length > maxLength) {
@@ -26,24 +27,25 @@ const adjustText = (text, tabs = 4) => {
   return text + filler;
 };
 
-export const logger = (...args) => {
-  if (!isDev() || !window.__MAPBOXR_GL_LOG) return;
-  const message = concatMessage(args);
-  const pattern = /([A-Z]*): (.*) is (\w*) ?(.*)/;
-  let [, component, name, status, property = ''] = message.match(pattern);
-  const color = status === 'rendering' ? `color: ${COLORS[status]};` : '';
-  const styles = [
-    `font-weight: bold;` + color,
-    color,
-    `color: ${COLORS[status]}`
-  ];
-  name = adjustText(name);
-  status = adjustText(status);
-  component = adjustText(`<${component}/>`);
-  console.log(
-    `%c${component.toUpperCase()}\t%c${name}\t%c${status}${
-      property && `/${property}/`
-    }`,
-    ...styles
-  );
+export const logger = { current: () => {} };
+
+export const buildLogger = (component, ...name) => {
+  if (!isDev() || !window.__MAPBOXR_GL_LOG) return () => {};
+  component = adjustText(`<${component.toUpperCase()}/>`);
+  name = name.map(adjustText).join('\t');
+  logger.current = (...args) => {
+    let [status, ...rest] = concatMessage(args).split(' ');
+    name = name + rest.map(adjustText).join('\t');
+    const color = status === 'rendering' ? `color: ${COLORS[status]};` : '';
+    const styles = [
+      `font-weight: bold;` + color,
+      `color: ${COLORS[status]}`,
+      color
+    ];
+    status = adjustText(status);
+    console.log(`%c${component}\t%c${status}\t%c${name}`, ...styles);
+  };
+  return logger.current;
 };
+
+export const getLogger = () => logger.current;

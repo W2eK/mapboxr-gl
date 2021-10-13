@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useMap } from '../context';
-import { logger } from '../../utils';
+import { buildLogger } from '../../utils';
 
 export function Property({ id, type, value, injected, layer, parent }) {
   const { map, loaded } = useMap();
@@ -9,13 +9,11 @@ export function Property({ id, type, value, injected, layer, parent }) {
   const ownLayerName = layer;
   layer = injected || layer;
 
-  logger`PROPERTY: ${id} is rendering ${layer}`;
-
+  const l = buildLogger('property', layer, id);
+  /* STATUS: */ l`rendering`;
   useEffect(() => {
     if (!loaded) return;
-    logger`PROPERTY: ${id} is ${
-      initial.current === false ? 'adding' : 'updating'
-    } ${layer}`;
+    /* STATUS: */ l`${initial.current === false ? 'adding' : 'updating'}`;
     if (initial.current === false)
       initial.current = map[`get${type}Property`](layer, id);
     map[`set${type}Property`](layer, id, value);
@@ -25,10 +23,10 @@ export function Property({ id, type, value, injected, layer, parent }) {
   // prettier-ignore
   useEffect(() => () => {
     if (parent.alive && parent.map.alive) {
-      logger`PROPERTY: ${id} is removing ${layer}`;
+      /* STATUS: */ l`removing`;
       map[`set${type}Property`](layer, id, initial.current);
     } else {
-      logger`PROPERTY: ${id} is deleted ${layer}`;
+      /* STATUS: */ l`deleted`;
     }
     initial.current = false;
   }, [parent, id, ownLayerName]);

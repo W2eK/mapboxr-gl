@@ -2,7 +2,12 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { createPortal } from '!react-dom';
 import { useMap } from '../context';
-import { cloneChildren, getDependencies, isDev, logger } from '../../utils';
+import {
+  cloneChildren,
+  getDependencies,
+  isDev,
+  buildLogger
+} from '../../utils';
 import { useHandlers } from '../../hooks';
 import { withListeners } from '../../hoc';
 
@@ -12,8 +17,9 @@ function Popup({ children, parent, listeners, marker, ...props }) {
   const { map } = useMap();
   const [popup, setPopup] = useState(null);
   const container = useRef(null);
-  const name = children.type || children;
 
+  const l = buildLogger('popup', children.type || children);
+  /* STATUS: */ l`rendering`;
   const handlers = {
     offset: value => popup.setOffset(value),
     maxWidth: value => popup.setMaxWidth(value),
@@ -35,15 +41,13 @@ function Popup({ children, parent, listeners, marker, ...props }) {
       popup._update();
     }
   };
-  useHandlers.props = ['POPUP', name];
   const rest = useHandlers({
     handlers,
     props: { ...props }
   });
 
-  logger`POPUP: ${name} is rendering`;
   useEffect(() => {
-    logger`POPUP: ${name} is adding`;
+    /* STATUS: */ l`adding`;
     container.current = document.createElement('div');
     const popup = new mapboxgl.Popup(props);
     if (isDev()) window.popup = popup;
@@ -62,19 +66,19 @@ function Popup({ children, parent, listeners, marker, ...props }) {
 
     return () => {
       if (parent.alive && parent.map.alive) {
-        logger`POPUP: ${name} is removing`;
+        /* STATUS: */ l`removing`;
         popup.remove();
       } else {
-        logger`POPUP: ${name} is deleted`;
+        /* STATUS: */ l`deleted`;
       }
       setPopup(null);
     };
   }, getDependencies(rest));
-  
+
   return (
     popup && (
       <Fragment>
-        {cloneChildren(listeners, { subject: popup })}
+        {cloneChildren(listeners, { instance: popup })}
         {createPortal(children, container.current)}
       </Fragment>
     )

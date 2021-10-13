@@ -1,22 +1,28 @@
 import { useEffect } from 'react';
 import { useMap } from '../context';
-import { logger } from '../../utils';
+import { buildLogger } from '../../utils';
 
-export function Listener({ type, event, handler, layer, subject }) {
-  let { map } = useMap();
-  map = subject || map;
-  const name =
-    layer || subject?.constructor?.name?.toLowerCase() || 'container';
-  logger`LISTENER: ${event} is rendering ${name}`;
+export function Listener({ type, event, handler, layer, instance }) {
+  const { map } = useMap();
+  
+  const l = buildLogger(
+    'listener',
+    layer || instance?.constructor?.name?.toLowerCase() || 'mapbox',
+    event
+  );
+
+  instance = instance || map;
+
+  /* STATUS: */ l`rendering`;
   useEffect(() => {
-    if (!map) return;
-    logger`LISTENER: ${event} is adding ${name}`;
+    if (!instance) return;
+    /* STATUS: */ l`adding`;
     const props = [event, layer || handler, layer ? handler : undefined];
-    map[type](...props);
+    instance[type](...props);
     return () => {
-      logger`LISTENER: ${event} is removing ${name}`;
-      map.off(...props);
+      /* STATUS: */ l`removing`;
+      instance.off(...props);
     };
-  }, [map, handler, type, event, layer, subject]);
+  }, [map, instance, handler, type, event, layer]);
   return null;
 }

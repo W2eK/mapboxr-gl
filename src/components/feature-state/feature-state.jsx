@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { logger } from '../../utils';
+import { buildLogger } from '../../utils';
 import { useMap } from '../context';
 
 const defaultGetChanges = (prev, state) => {
@@ -18,12 +18,16 @@ export function FeatureState({
   const prev = useRef({});
   const ownSourceName = source;
   source = injected || source;
-  logger`STATE: ${source} is rendering`;
+
+  const l = buildLogger('state', source);
+  /* STATUS: */ l`rendering`;
+
   useEffect(() => {
     if (!loaded) return;
     const changes = getChanges(prev.current, state);
     if (!changes.length) return;
-    logger`STATE: ${source} is ${
+    
+    /* STATUS: */ l`${
       Object.keys(prev.current).length ? 'updating' : 'adding'
     }`;
     changes.forEach(([id, state]) =>
@@ -36,12 +40,12 @@ export function FeatureState({
   // prettier-ignore
   useEffect(() => () => {
     if (parent.alive && parent.map.alive) {
-      logger`STATE: ${source} is removing`;
+       /* STATUS: */ l`removing`;
       Object.keys(prev.current).forEach(id =>
         map.removeFeatureState({ id, source, sourceLayer })
       );
     } else {
-      logger`STATE: ${source} is deleted`;
+       /* STATUS: */ l`deleted`;
     }
     prev.current = {};
   }, [ownSourceName, sourceLayer, parent]);

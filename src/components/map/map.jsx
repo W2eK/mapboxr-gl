@@ -3,7 +3,12 @@ import mapboxgl from '!mapbox-gl';
 import { MapProvider } from '../context';
 import { withListeners } from '../../hoc';
 import { buildSwitcher, useHandlers } from '../../hooks';
-import { cloneChildren, getDependencies, isDev, logger } from '../../utils';
+import {
+  buildLogger,
+  cloneChildren,
+  getDependencies,
+  isDev
+} from '../../utils';
 
 function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   // TODO: Add PropTypes
@@ -12,7 +17,9 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   const [loaded, setLoaded] = useState(false);
   const state = useRef({ alive: false });
 
-  logger`MAPBOX: container is rendering`;
+  const l = buildLogger('mapbox');
+  
+  /* STATUS: */ l`rendering`;
 
   const handlers = {
     // Properties
@@ -34,12 +41,11 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     touchPitch: buildSwitcher(map?.touchPitch),
     touchZoomRotate: buildSwitcher(map?.touchZoomRotate)
   };
-  useHandlers.props = ['MAPBOX', 'container'];
+
   const rest = useHandlers({ props, handlers });
 
   useEffect(() => {
-    /* On Mount: */
-    logger`MAPBOX: container is adding`;
+    /* STATUS: */ l`adding`;
 
     const map = new mapboxgl.Map({
       container: container.current,
@@ -59,9 +65,8 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     // TODO: should to keep?
     // window.requestAnimationFrame(() => map.fire('move'));
 
-    /* On Unmount: */
     return () => {
-      logger`MAPBOX: container is removing`;
+      /* STATUS: */ l`removing`;
       state.current.alive = false;
       state.current.map = false;
       setLoaded(false);
@@ -69,6 +74,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
       map.remove();
     };
   }, getDependencies(rest));
+  
   return (
     <div ref={container} {...wrapper}>
       {map && (

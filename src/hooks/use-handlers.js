@@ -1,10 +1,11 @@
 import { useRef } from 'react';
-import { logger, stringEqual } from '../utils';
+import { getLogger, stringEqual } from '../utils';
 
 export const buildSwitcher = handler => state =>
   handler[state ? 'enable' : 'disable']();
 
 export const useHandlers = ({ handlers, props }) => {
+  const l = getLogger();
   const prev = useRef(props);
   const keys = Object.keys(handlers);
   const rest = Object.entries(props).reduce((rest, [key, value]) => {
@@ -12,9 +13,7 @@ export const useHandlers = ({ handlers, props }) => {
       rest[key] = value;
       return rest;
     } else if (!stringEqual(value, prev.current[key])) {
-      const [component = '', name = ''] =
-        useHandlers.props || [];
-      logger`${component}: ${name} is updating ${key}`;
+      l`updating ${key}`;
       handlers[key](value, prev.current[key]);
     }
     return rest;

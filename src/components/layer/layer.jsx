@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useMap } from '../context';
 import { useId, useForce, useHandlers } from '../../hooks';
 import { withListeners } from '../../hoc';
-import { cloneChildren, getDependencies, logger } from '../../utils';
+import { buildLogger, cloneChildren, getDependencies } from '../../utils';
 
 import Cursor from './cursor';
 
@@ -20,9 +20,10 @@ function Layer({
   const state = useRef({ alive: false });
   const [initialized, setInitialized] = useState(false);
   const { map, loaded } = useMap();
-
   const forceUpdate = useForce();
   id = useId(id, 'layer');
+
+  const l = buildLogger('layer', id);
   props['source-layer'] = props.sourceLayer || '';
 
   const handlers = {
@@ -31,9 +32,9 @@ function Layer({
     filter: value => map.setFilter(id, value)
   };
 
-  useHandlers.props = ['LAYER', id];
+  useHandlers.l = l;
   const rest = useHandlers({ handlers, props });
-
+  /* STATUS: */ l`rendering`;
   useEffect(() => {
     if (!loaded) return;
     let master = map.getLayer(id)?.serialize();
@@ -49,8 +50,7 @@ function Layer({
       index = cache[id].index;
     }
     beforeId = beforeId || layers?.[index + 1]?.id;
-
-    logger`LAYER: ${id} is ${master ? 'redrawing master' : 'adding'}`;
+    /* STATUS: */ l`${master ? 'redrawing' : 'adding'}`;
     if (master) {
       const paint = { ...master.paint, ...props.paint };
       const layout = { ...master.layout, ...props.layout };
@@ -67,15 +67,15 @@ function Layer({
     return () => {
       if (parent.alive && parent.map.alive) {
         if (keepMaster && cache[id]) {
-          logger`LAYER: ${id} is restoring`;
+          /* STATUS: */ l`restoring`;
           map.removeLayer(id);
           map.addLayer(cache[id].master, beforeId);
         } else {
-          logger`LAYER: ${id} is removing`;
+          /* STATUS: */ l`removing`;
           map.removeLayer(id);
         }
       } else {
-        logger`LAYER: ${id} is deleted`;
+        /* STATUS: */ l`deleted`;
       }
       state.current.alive = false;
       setInitialized(false);
@@ -86,7 +86,7 @@ function Layer({
     initialized && (
       <Fragment>
         {cursor && <Cursor layer={id} cursor={cursor} />}
-        {cloneChildren(listeners, { layer: id })}
+        {cloneChildren(listeners, { STATUS: id })}
         {cloneChildren(children, { injected: id, parent: state.current })}
       </Fragment>
     )

@@ -1,6 +1,11 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { cloneChildren, getDependencies, isDev, logger } from '../../utils';
+import {
+  cloneChildren,
+  getDependencies,
+  isDev,
+  buildLogger
+} from '../../utils';
 import { createPortal } from '!react-dom';
 import { useMap } from '../context';
 import { withListeners } from '../../hoc';
@@ -12,8 +17,9 @@ function Marker({ children = null, listeners, parent, ...props }) {
   const { map } = useMap();
   const [marker, setMarker] = useState(null);
   const container = useRef(null);
+  const l = buildLogger('marker');
 
-  logger`MARKER: marker is rendering`;
+  /* STATUS: */ l`rendering`;
 
   const handlers = {
     coordinates: marker?.setLngLat.bind(marker),
@@ -28,10 +34,9 @@ function Marker({ children = null, listeners, parent, ...props }) {
       marker._update();
     }
   };
-  useHandlers.props = ['MARKER', 'marker'];
   const rest = useHandlers({ handlers, props });
   useEffect(() => {
-    logger`MARKER: marker is adding`;
+    /* STATUS: */ l`adding`;
     container.current = children ? document.createElement('div') : null;
     const marker = new mapboxgl.Marker({
       ...props,
@@ -44,10 +49,10 @@ function Marker({ children = null, listeners, parent, ...props }) {
     showPopup && setTimeout(() => marker.togglePopup());
     return () => {
       if (parent.alive && parent.map.alive) {
-        logger`MARKER: marker is removing`;
+        /* STATUS: */ l`removing`;
         marker.remove();
       } else {
-        logger`MARKER: marker is deleted`;
+        /* STATUS: */ l`deleted`;
       }
       setMarker(null);
       container.current = null;
@@ -56,7 +61,7 @@ function Marker({ children = null, listeners, parent, ...props }) {
   return (
     marker && (
       <Fragment>
-        {cloneChildren(listeners, { subject: marker })}
+        {cloneChildren(listeners, { instance: marker })}
         {container.current &&
           createPortal(cloneChildren(children, { marker }), container.current)}
       </Fragment>

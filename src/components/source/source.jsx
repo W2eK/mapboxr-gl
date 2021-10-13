@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { removeLayers } from './remove-layers';
 import { useMap } from '../context';
-import { cloneChildren, getDependencies, logger } from '../../utils';
+import { buildLogger, cloneChildren, getDependencies } from '../../utils';
 import { useForce, useId, useHandlers } from '../../hooks';
 
 export function Source({ children = null, id, parent, ...props }) {
@@ -10,7 +10,9 @@ export function Source({ children = null, id, parent, ...props }) {
   const [initialized, setInitialized] = useState(false);
   const forceUpdate = useForce();
   id = useId(id, 'source');
-  logger`SOURCE: ${id} is rendering`;
+
+  const l = buildLogger('source', id);
+  /* STATUS: */ l`rendering`;
 
   const handlers = {
     data: value => map.getSource(id).setData(value),
@@ -18,7 +20,6 @@ export function Source({ children = null, id, parent, ...props }) {
     // TODO: add other handlers
   };
 
-  useHandlers.props = ['SOURCE', id];
   const rest = useHandlers({
     handlers,
     props
@@ -26,7 +27,7 @@ export function Source({ children = null, id, parent, ...props }) {
   // TODO Refactor: add lifecycle hook
   useEffect(() => {
     if (!loaded) return;
-    logger`SOURCE: ${id} is adding`;
+    /* STATUS: */ l`adding`;
     map.addSource(id, props);
     state.current = {
       alive: true,
@@ -36,11 +37,11 @@ export function Source({ children = null, id, parent, ...props }) {
     setInitialized(true);
     return () => {
       if (parent.alive && parent.map.alive) {
-        logger`SOURCE: ${id} is removing`;
+        /* STATUS: */ l`removing`;
         removeLayers(map, id);
         map.removeSource(id);
       } else {
-        logger`SOURCE: ${id} is deleted`;
+        /* STATUS: */ l`deleted`;
       }
       state.current.alive = false;
       setInitialized(false);

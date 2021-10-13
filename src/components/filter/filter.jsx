@@ -1,20 +1,17 @@
 import { useEffect, useRef } from 'react';
-import { logger } from '../../utils';
+import { buildLogger } from '../../utils';
 import { useMap } from '../context';
 
 export function Filter({ rule, injected, layer, parent }) {
   const { map, loaded } = useMap();
   const initial = useRef(false);
-  const name = JSON.stringify(rule);
   const ownLayerName = layer;
   layer = injected || layer;
-  logger`FILTER: ${name} is rendering ${layer}`;
-
+  const l = buildLogger('filter', layer, JSON.stringify(rule));
+  /* STATUS: */ l`rendering`;
   useEffect(() => {
     if (!loaded) return;
-    logger`FILTER: ${name} is ${
-      initial.current === false ? 'adding' : 'updating'
-    } ${layer}`;
+    /* STATUS: */ l`${initial.current === false ? 'adding' : 'updating'}`;
     if (initial.current === false) initial.current = map.getFilter(layer);
     map.setFilter(layer, rule);
   }, [loaded, parent, ownLayerName, JSON.stringify(rule)]);
@@ -23,10 +20,10 @@ export function Filter({ rule, injected, layer, parent }) {
   // prettier-ignore
   useEffect(() => () => {
     if (parent.alive && parent.map.alive) {
-      logger`FILTER: ${name} is removing ${layer}`;
+      /* STATUS: */ l`removing`;
       map.setFilter(layer, initial.current);
     } else {
-      logger`FILTER: ${name} is deleted ${layer}`;
+      /* STATUS: */ l`deleted`;
     }
     initial.current = false
   }, [parent, ownLayerName]);

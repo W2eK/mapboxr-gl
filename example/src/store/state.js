@@ -90,6 +90,7 @@ const initialState = {
   layer: {
     name: 'Layer',
     checked: true,
+    open: true,
     props: {
       id: 'dots-circle',
       filter: ['get', 'filter'],
