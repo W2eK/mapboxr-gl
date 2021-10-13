@@ -2,12 +2,13 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { createPortal } from '!react-dom';
 import { useMap } from '../context';
-import { cloneChildren, getDependencies, logger } from '../../utils';
+import { cloneChildren, getDependencies, isDev, logger } from '../../utils';
 import { useHandlers } from '../../hooks';
 import { withListeners } from '../../hoc';
 
-function Popup({ children, parent, listeners, ...props }) {
-  const { coordinates, trackPointer, className = '' } = props;
+function Popup({ children, parent, listeners, marker, ...props }) {
+  // TODO: Make controlled component
+  const { coordinates, trackPointer } = props;
   const { map } = useMap();
   const [popup, setPopup] = useState(null);
   const container = useRef(null);
@@ -19,7 +20,7 @@ function Popup({ children, parent, listeners, ...props }) {
     coordinates: value => trackPointer || popup.setLngLat(value),
     trackPointer: value =>
       value ? popup.trackPointer() : popup.setLngLat(coordinates),
-    className: (next, prev) => {
+    className: (next, prev = '') => {
       next = next.trim().split(' ');
       prev = prev.trim().split(' ');
       next
@@ -45,14 +46,18 @@ function Popup({ children, parent, listeners, ...props }) {
     logger`POPUP: ${name} is adding`;
     container.current = document.createElement('div');
     const popup = new mapboxgl.Popup(props);
-    window.popup = popup;
+    if (isDev()) window.popup = popup;
     popup.setDOMContent(container.current);
     if (trackPointer) {
       popup.trackPointer();
     } else {
       popup.setLngLat(coordinates);
     }
-    popup.addTo(map);
+    if (marker) {
+      marker.setPopup(popup);
+    } else {
+      popup.addTo(map);
+    }
     setPopup(popup);
 
     return () => {
@@ -65,11 +70,7 @@ function Popup({ children, parent, listeners, ...props }) {
       setPopup(null);
     };
   }, getDependencies(rest));
-
-  useEffect(() => {
-    if (popup) popup.fire('open');
-  }, [popup]);
-
+  
   return (
     popup && (
       <Fragment>

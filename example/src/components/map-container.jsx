@@ -6,7 +6,8 @@ import MapboxrGL, {
   Property,
   Filter,
   FeatureState,
-  Popup
+  Popup,
+  Marker
 } from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useStore } from '../store/context';
@@ -36,6 +37,7 @@ const MapContainer = () => {
   const {
     mapbox,
     popup,
+    marker,
     content,
     source,
     layer,
@@ -49,23 +51,37 @@ const MapContainer = () => {
       <MapboxrGL
         {...parseAttributes(mapbox.props)}
         wrapper={{ style: { height: '100vh' } }}
-        // onload={console.log}
         oncemousemove={originalConsoleLog}
       >
-        {popup.checked && (
-          <Popup
-            {...parseAttributes(popup.props)}
-            onopen={console.log}
-            closeOnClick={false}
-          >
-            {content.checked ? (
-              <div style={{ backgroundColor: 'lightcoral' }}>
-                Test Test Test Test Test
+        {marker.checked && (
+          <Marker {...parseAttributes(marker.props)} ondrag={console.log}>
+            {content.checked && (
+              <div
+                style={{
+                  backgroundColor: 'lightgreen',
+                  padding: '.5rem',
+                  borderRadius: '50%'
+                }}
+              >
+                Test
               </div>
-            ) : (
-              'Test Test'
             )}
-          </Popup>
+            {popup.checked && (
+              <Popup
+                {...parseAttributes(popup.props)}
+                onopen={console.log}
+                closeOnClick={false}
+              >
+                {content.checked ? (
+                  <div style={{ backgroundColor: 'lightcoral' }}>
+                    Test Test Test Test Test
+                  </div>
+                ) : (
+                  'Test Test'
+                )}
+              </Popup>
+            )}
+          </Marker>
         )}
 
         {source.checked && (

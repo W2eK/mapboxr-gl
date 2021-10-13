@@ -6,6 +6,7 @@ export * from './components/filter';
 export * from './components/feature-state';
 export * from './components/layer';
 export * from './components/listener';
+export * from './components/marker';
 export * from './components/popup';
 export * from './components/property';
 export * from './components/source';

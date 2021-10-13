@@ -16,6 +16,19 @@ const initialState = {
     name: 'Marker',
     checked: true,
     open: true,
+    props: {
+      coordinates: [10, 10],
+      anchor: 'bottom',
+      offset: [0, 0],
+      draggable: true,
+      color: 'red',
+      scale: 1,
+      showPopup: true
+    }
+  },
+  content: {
+    name: 'Marker Content',
+    checked: true,
     props: {}
   },
   popup: {
@@ -29,11 +42,6 @@ const initialState = {
       maxWidth: '50px',
       className: 'foo bar'
     }
-  },
-  content: {
-    name: 'Content',
-    checked: true,
-    props: {}
   },
   source: {
     name: 'Source',
