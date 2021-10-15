@@ -11,6 +11,8 @@ import {
 } from '../../utils';
 
 function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
+  // TODO: add strict
+  // getDependencies.strict = props.strict;
   // TODO: Add PropTypes
   const container = useRef(null);
   const [map, setMap] = useState(null);
@@ -18,8 +20,6 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   const state = useRef({ alive: false });
 
   const l = buildLogger('mapbox');
-  
-  /* STATUS: */ l`rendering`;
 
   const handlers = {
     // Properties
@@ -74,7 +74,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
       map.remove();
     };
   }, getDependencies(rest));
-  
+
   return (
     <div ref={container} {...wrapper}>
       {map && (

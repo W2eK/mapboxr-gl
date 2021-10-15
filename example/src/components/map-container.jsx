@@ -54,7 +54,7 @@ const MapContainer = () => {
         oncemousemove={originalConsoleLog}
       >
         {marker.checked && (
-          <Marker {...parseAttributes(marker.props)} ondrag={console.log}>
+          <Marker {...parseAttributes(marker.props)} ondragend={console.log}>
             {content.checked && (
               <div
                 style={{

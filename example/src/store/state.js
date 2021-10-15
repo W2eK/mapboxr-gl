@@ -15,7 +15,7 @@ const initialState = {
   marker: {
     name: 'Marker',
     checked: true,
-    open: true,
+    open: false,
     props: {
       coordinates: [10, 10],
       anchor: 'bottom',
@@ -28,12 +28,12 @@ const initialState = {
   },
   content: {
     name: 'Marker Content',
-    checked: true,
+    checked: false,
     props: {}
   },
   popup: {
     name: 'Popup',
-    checked: true,
+    checked: false,
     props: {
       anchor: 'bottom',
       trackPointer: false,
@@ -103,6 +103,7 @@ const initialState = {
   property: {
     name: 'Property',
     checked: true,
+    open: true,
     props: {
       id: 'circle-color',
       type: 'paint',
@@ -116,7 +117,7 @@ const initialState = {
   },
   filter: {
     name: 'Filter',
-    checked: true,
+    checked: false,
     props: {
       rule: ['any', ['get', 'filter'], ['to-boolean', 'id']]
     }
@@ -124,10 +125,7 @@ const initialState = {
   master: {
     name: 'Master',
     checked: true,
-    // props: {
-    //   id: 'land',
-    //   paint: { 'background-color': 'lightblue', 'background-opacity': 0.5 }
-    // }
+    open: true,
     props: {
       id: 'admin-1-boundary',
       source: 'composite',

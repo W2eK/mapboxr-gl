@@ -38,13 +38,16 @@ export const buildLogger = (component, ...name) => {
     name = name + rest.map(adjustText).join('\t');
     const color = status === 'rendering' ? `color: ${COLORS[status]};` : '';
     const styles = [
-      `font-weight: bold;` + color,
-      `color: ${COLORS[status]}`,
-      color
+      color,
+      `font-weight: normal; color: ${COLORS[status]}`,
+      `font-weight: normal;` + color
     ];
     status = adjustText(status);
-    console.log(`%c${component}\t%c${status}\t%c${name}`, ...styles);
+    console.groupCollapsed(`%c${component}\t%c${status}\t%c${name}`, ...styles);
+    console.trace(component);
+    console.groupEnd();
   };
+  logger.current`rendering`;
   return logger.current;
 };
 

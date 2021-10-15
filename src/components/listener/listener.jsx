@@ -13,7 +13,6 @@ export function Listener({ type, event, handler, layer, instance }) {
 
   instance = instance || map;
 
-  /* STATUS: */ l`rendering`;
   useEffect(() => {
     if (!instance) return;
     /* STATUS: */ l`adding`;

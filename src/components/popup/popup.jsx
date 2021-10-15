@@ -8,20 +8,36 @@ import {
   isDev,
   buildLogger
 } from '../../utils';
-import { useHandlers } from '../../hooks';
+import {
+  buildHandlers,
+  useHandlers,
+  useLifeCycleWithStatus
+} from '../../hooks';
 import { withListeners } from '../../hoc';
 
 function Popup({ children, parent, listeners, marker, ...props }) {
   // TODO: Make controlled component
   const { coordinates, trackPointer } = props;
-  const { map } = useMap();
+  const { map, loaded } = useMap();
   const [popup, setPopup] = useState(null);
   const container = useRef(null);
 
-  const l = buildLogger('popup', children.type || children);
-  /* STATUS: */ l`rendering`;
+  buildLogger('popup', children.type || children);
+
+  // prettier-ignore
+  const render = loaded && (() => {
+    container.current = document.createElement('div');
+    const popup = new mapboxgl.Popup(props);
+    if (isDev()) window.popup = popup;
+    popup.setDOMContent(container.current);
+    trackPointer ? popup.trackPointer() : popup.setLngLat(coordinates);
+    marker ? marker.setPopup(popup) : popup.addTo(map)
+    setPopup(popup);
+    return () => popup.remove();
+  });
+
   const handlers = {
-    offset: value => popup.setOffset(value),
+    offset: value => popup.setMaxWidth(value),
     maxWidth: value => popup.setMaxWidth(value),
     coordinates: value => trackPointer || popup.setLngLat(value),
     trackPointer: value =>
@@ -41,42 +57,15 @@ function Popup({ children, parent, listeners, marker, ...props }) {
       popup._update();
     }
   };
-  const rest = useHandlers({
-    handlers,
-    props: { ...props }
-  });
 
-  useEffect(() => {
-    /* STATUS: */ l`adding`;
-    container.current = document.createElement('div');
-    const popup = new mapboxgl.Popup(props);
-    if (isDev()) window.popup = popup;
-    popup.setDOMContent(container.current);
-    if (trackPointer) {
-      popup.trackPointer();
-    } else {
-      popup.setLngLat(coordinates);
-    }
-    if (marker) {
-      marker.setPopup(popup);
-    } else {
-      popup.addTo(map);
-    }
-    setPopup(popup);
+  const rest = useHandlers({ handlers, props });
 
-    return () => {
-      if (parent.alive && parent.map.alive) {
-        /* STATUS: */ l`removing`;
-        popup.remove();
-      } else {
-        /* STATUS: */ l`deleted`;
-      }
-      setPopup(null);
-    };
-  }, getDependencies(rest));
+  const dependencies = getDependencies(rest);
+
+  const status = useLifeCycleWithStatus({ parent, render }, dependencies);
 
   return (
-    popup && (
+    status.alive && (
       <Fragment>
         {cloneChildren(listeners, { instance: popup })}
         {createPortal(children, container.current)}

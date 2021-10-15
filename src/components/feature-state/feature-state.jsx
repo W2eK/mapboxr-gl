@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useLifeCycleWithCache } from '../../hooks';
 import { buildLogger } from '../../utils';
 import { useMap } from '../context';
 
@@ -8,46 +8,34 @@ const defaultGetChanges = (prev, state) => {
 
 export function FeatureState({
   state,
-  injected,
-  source,
+  injected: injectedSourceName,
+  source: receivedSourceName,
   sourceLayer = '',
   getChanges = defaultGetChanges,
   parent
 }) {
-  const { map, loaded } = useMap();
-  const prev = useRef({});
-  const ownSourceName = source;
-  source = injected || source;
+  const { map } = useMap();
+  const source = injectedSourceName || receivedSourceName;
+  buildLogger('state', source);
 
-  const l = buildLogger('state', source);
-  /* STATUS: */ l`rendering`;
+  const init = () => ({ current: {} });
 
-  useEffect(() => {
-    if (!loaded) return;
-    const changes = getChanges(prev.current, state);
+  const render = prev => {
+    const changes = getChanges(prev?.current || {}, state);
     if (!changes.length) return;
-    
-    /* STATUS: */ l`${
-      Object.keys(prev.current).length ? 'updating' : 'adding'
-    }`;
     changes.forEach(([id, state]) =>
       map.setFeatureState({ id, source, sourceLayer }, state)
     );
     prev.current = state;
-  }, [loaded, ownSourceName, sourceLayer, parent, JSON.stringify(state)]);
+  };
 
-  // CLEANUP FUNCTION
-  // prettier-ignore
-  useEffect(() => () => {
-    if (parent.alive && parent.map.alive) {
-       /* STATUS: */ l`removing`;
-      Object.keys(prev.current).forEach(id =>
-        map.removeFeatureState({ id, source, sourceLayer })
-      );
-    } else {
-       /* STATUS: */ l`deleted`;
-    }
-    prev.current = {};
-  }, [ownSourceName, sourceLayer, parent]);
+  const remove = prev => {
+    Object.keys(prev.current).forEach(id =>
+      map.removeFeatureState({ id, source, sourceLayer })
+    );
+  };
+
+  const dependencies = [parent, source, sourceLayer, JSON.stringify(state)];
+  useLifeCycleWithCache({ parent, init, render, remove }, dependencies);
   return null;
 }

@@ -18,7 +18,7 @@ type MapViewportHandlers = Record<
 type MapboxrGLProps = Omit<MapboxOptions, 'container' | 'style'> & {
   wrapper?: React.HTMLAttributes<HTMLDivElement>;
   mapStyle?: MapboxOptions['style'];
-  // strict? boolean; // TODO
+  // strict?: boolean; // TODO: strict mode
 } & MapOnHandlers &
   MapOnceHandlers &
   MapViewportHandlers;

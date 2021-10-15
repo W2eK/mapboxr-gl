@@ -9,25 +9,45 @@ import {
 import { createPortal } from '!react-dom';
 import { useMap } from '../context';
 import { withListeners } from '../../hoc';
-import { useHandlers } from '../../hooks';
+import { useHandlers, useLifeCycleWithStatus } from '../../hooks';
 
-function Marker({ children = null, listeners, parent, ...props }) {
+function Marker({ children, listeners, parent, ...props }) {
   // TODO: Make controlled component
   const { coordinates, showPopup } = props;
-  const { map } = useMap();
+  const { map, loaded } = useMap();
   const [marker, setMarker] = useState(null);
   const container = useRef(null);
-  const l = buildLogger('marker');
+  buildLogger('marker');
 
-  /* STATUS: */ l`rendering`;
+  const hasChildren = !!children && !!children?.some(Boolean);
+
+  // prettier-ignore
+  const render = loaded && (() => {
+    container.current =
+      hasChildren
+          ? document.createElement('div')
+          : null;
+    const marker = new mapboxgl
+      .Marker({...props,element: container.current});
+    
+    if (isDev()) window.marker = marker;
+    marker.setLngLat(coordinates);
+    marker.addTo(map);
+    setMarker(marker);
+    showPopup && setTimeout(() => marker.togglePopup());
+
+    return () => {
+      marker.remove();
+    };
+  })
 
   const handlers = {
-    coordinates: marker?.setLngLat.bind(marker),
-    offset: marker?.setOffset.bind(marker),
-    draggable: marker?.setDraggable.bind(marker),
-    rotation: marker?.setRotation.bind(marker),
-    rotationAlignment: marker?.setRotationAlignment.bind(marker),
-    pitchAlignment: marker?.setPitchAlignment.bind(marker),
+    coordinates: value => marker.setLngLat(value),
+    offset: value => marker.setOffset(value),
+    draggable: value => marker.setDraggable(value),
+    rotation: value => marker.setRotation(value),
+    rotationAlignment: value => marker.setRotationAlignment(value),
+    pitchAlignment: value => marker.setPitchAlignment(value),
     showPopup: () => window.requestAnimationFrame(() => marker?.togglePopup()),
     anchor: value => {
       marker._anchor = value;
@@ -35,35 +55,20 @@ function Marker({ children = null, listeners, parent, ...props }) {
     }
   };
   const rest = useHandlers({ handlers, props });
-  useEffect(() => {
-    /* STATUS: */ l`adding`;
-    container.current = children ? document.createElement('div') : null;
-    const marker = new mapboxgl.Marker({
-      ...props,
-      element: container.current
-    });
-    if (isDev()) window.marker = marker;
-    marker.setLngLat(coordinates);
-    marker.addTo(map);
-    setMarker(marker);
-    showPopup && setTimeout(() => marker.togglePopup());
-    return () => {
-      if (parent.alive && parent.map.alive) {
-        /* STATUS: */ l`removing`;
-        marker.remove();
-      } else {
-        /* STATUS: */ l`deleted`;
-      }
-      setMarker(null);
-      container.current = null;
-    };
-  }, [!!children, ...getDependencies(rest)]);
+
+  const dependencies = [loaded, hasChildren, ...getDependencies(rest)];
+
+  const status = useLifeCycleWithStatus({ parent, render }, dependencies);
+
   return (
-    marker && (
+    status.alive && (
       <Fragment>
         {cloneChildren(listeners, { instance: marker })}
         {container.current &&
-          createPortal(cloneChildren(children, { marker }), container.current)}
+          createPortal(
+            cloneChildren(children, { marker, parent: status }),
+            container.current
+          )}
       </Fragment>
     )
   );

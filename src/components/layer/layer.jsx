@@ -1,6 +1,6 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment } from 'react';
 import { useMap } from '../context';
-import { useId, useForce, useHandlers } from '../../hooks';
+import { useId, useHandlers, useLifeCycleWithStatus } from '../../hooks';
 import { withListeners } from '../../hoc';
 import { buildLogger, cloneChildren, getDependencies } from '../../utils';
 
@@ -17,13 +17,10 @@ function Layer({
   keepMaster,
   ...props
 }) {
-  const state = useRef({ alive: false });
-  const [initialized, setInitialized] = useState(false);
-  const { map, loaded } = useMap();
-  const forceUpdate = useForce();
   id = useId(id, 'layer');
-
   const l = buildLogger('layer', id);
+
+  const { map } = useMap();
   props['source-layer'] = props.sourceLayer || '';
 
   const handlers = {
@@ -32,14 +29,14 @@ function Layer({
     filter: value => map.setFilter(id, value)
   };
 
-  useHandlers.l = l;
   const rest = useHandlers({ handlers, props });
-  /* STATUS: */ l`rendering`;
-  useEffect(() => {
-    if (!loaded) return;
+
+  // prettier-ignore
+  const render = () => {
     let master = map.getLayer(id)?.serialize();
     const { cache } = parent.map;
     let index, layers;
+    let layerProps = {...props}
     if (master) {
       layers = map.getStyle().layers;
       index = layers.findIndex(({ id: masterId }) => masterId === id);
@@ -50,44 +47,33 @@ function Layer({
       index = cache[id].index;
     }
     beforeId = beforeId || layers?.[index + 1]?.id;
-    /* STATUS: */ l`${master ? 'redrawing' : 'adding'}`;
+    /* STATUS: */ master && l`redrawing`;
     if (master) {
       const paint = { ...master.paint, ...props.paint };
       const layout = { ...master.layout, ...props.layout };
-      props = { ...master, ...props, paint, layout };
+      layerProps = { ...master, ...layerProps, paint, layout };
       cache[id] = { master, index };
     }
-    props = { source: injected, ...props, id };
-    map.addLayer(props, beforeId);
-    setInitialized(true);
-    state.current = {
-      alive: true,
-      map: parent.map
-    };
+    layerProps = { source: injected, ...layerProps, id };
+    map.addLayer(layerProps, beforeId);
     return () => {
-      if (parent.alive && parent.map.alive) {
-        if (keepMaster && cache[id]) {
-          /* STATUS: */ l`restoring`;
-          map.removeLayer(id);
-          map.addLayer(cache[id].master, beforeId);
-        } else {
-          /* STATUS: */ l`removing`;
-          map.removeLayer(id);
-        }
-      } else {
-        /* STATUS: */ l`deleted`;
+      map.removeLayer(id);
+      if(keepMaster && cache[id]) {
+        /* STATUS: */ l`restoring master`;
+        map.addLayer(cache[id].master, beforeId);
       }
-      state.current.alive = false;
-      setInitialized(false);
-      forceUpdate();
     };
-  }, [loaded, parent, id, beforeId, ...getDependencies(rest)]);
+  }
+
+  const dependencies = [parent, id, beforeId, ...getDependencies(rest)];
+  const status = useLifeCycleWithStatus({ parent, render }, dependencies);
+  
   return (
-    initialized && (
+    status.alive && (
       <Fragment>
         {cursor && <Cursor layer={id} cursor={cursor} />}
-        {cloneChildren(listeners, { STATUS: id })}
-        {cloneChildren(children, { injected: id, parent: state.current })}
+        {cloneChildren(listeners, { layer: id })}
+        {cloneChildren(children, { injected: id, parent: status })}
       </Fragment>
     )
   );

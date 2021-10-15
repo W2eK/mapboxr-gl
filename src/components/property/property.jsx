@@ -1,34 +1,26 @@
-import { useEffect, useRef } from 'react';
 import { useMap } from '../context';
 import { buildLogger } from '../../utils';
+import { useLifeCycleWithCache } from '../../hooks';
 
-export function Property({ id, type, value, injected, layer, parent }) {
-  const { map, loaded } = useMap();
-  const initial = useRef(false);
-  type = type[0].toUpperCase() + type.slice(1);
-  const ownLayerName = layer;
-  layer = injected || layer;
+export function Property({
+  id,
+  type,
+  value,
+  injected: injectedLayerName,
+  layer: receivedLayerName,
+  parent
+}) {
+  const { map } = useMap();
+  type = `${type[0].toUpperCase()}${type.slice(1)}Property`;
+  const layer = injectedLayerName || receivedLayerName;
+  buildLogger('property', layer, id);
 
-  const l = buildLogger('property', layer, id);
-  /* STATUS: */ l`rendering`;
-  useEffect(() => {
-    if (!loaded) return;
-    /* STATUS: */ l`${initial.current === false ? 'adding' : 'updating'}`;
-    if (initial.current === false)
-      initial.current = map[`get${type}Property`](layer, id);
-    map[`set${type}Property`](layer, id, value);
-  }, [loaded, parent, id, ownLayerName, JSON.stringify(value)]);
+  const init = () => map[`get${type}`](layer, id);
+  const render = () => map[`set${type}`](layer, id, value);
+  const remove = initial => map[`set${type}`](layer, id, initial);
 
-  // CLEANUP FUNCTION
-  // prettier-ignore
-  useEffect(() => () => {
-    if (parent.alive && parent.map.alive) {
-      /* STATUS: */ l`removing`;
-      map[`set${type}Property`](layer, id, initial.current);
-    } else {
-      /* STATUS: */ l`deleted`;
-    }
-    initial.current = false;
-  }, [parent, id, ownLayerName]);
+  const dependencies = [parent, id, receivedLayerName, JSON.stringify(value)];
+  useLifeCycleWithCache({ parent, init, render, remove }, dependencies);
+
   return null;
 }

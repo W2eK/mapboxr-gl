@@ -2,17 +2,25 @@ import { useEffect, useRef, useState } from 'react';
 import { removeLayers } from './remove-layers';
 import { useMap } from '../context';
 import { buildLogger, cloneChildren, getDependencies } from '../../utils';
-import { useForce, useId, useHandlers } from '../../hooks';
+import {
+  useForce,
+  useId,
+  useHandlers,
+  useLifeCycleWithStatus,
+  useCleaner
+} from '../../hooks';
 
-export function Source({ children = null, id, parent, ...props }) {
-  const { map, loaded } = useMap();
-  const state = useRef({ alive: true });
-  const [initialized, setInitialized] = useState(false);
-  const forceUpdate = useForce();
+export function Source({ children, id, parent, ...props }) {
   id = useId(id, 'source');
+  buildLogger('source', id);
+  const { map, loaded } = useMap();
 
-  const l = buildLogger('source', id);
-  /* STATUS: */ l`rendering`;
+  const render = loaded && (() => map.addSource(id, props));
+
+  const remove = () => {
+    removeLayers(map, id);
+    map.removeSource(id);
+  };
 
   const handlers = {
     data: value => map.getSource(id).setData(value),
@@ -20,37 +28,13 @@ export function Source({ children = null, id, parent, ...props }) {
     // TODO: add other handlers
   };
 
-  const rest = useHandlers({
-    handlers,
-    props
-  });
-  // TODO Refactor: add lifecycle hook
-  useEffect(() => {
-    if (!loaded) return;
-    /* STATUS: */ l`adding`;
-    map.addSource(id, props);
-    state.current = {
-      alive: true,
-      name: id,
-      map: parent.map
-    };
-    setInitialized(true);
-    return () => {
-      if (parent.alive && parent.map.alive) {
-        /* STATUS: */ l`removing`;
-        removeLayers(map, id);
-        map.removeSource(id);
-      } else {
-        /* STATUS: */ l`deleted`;
-      }
-      state.current.alive = false;
-      setInitialized(false);
-      forceUpdate();
-    };
-  }, [loaded, parent, id, ...getDependencies(rest)]);
+  const rest = useHandlers({ handlers, props });
+
+  const dependencies = [loaded, parent, id, ...getDependencies(rest)];
+
+  const status = useLifeCycleWithStatus({ parent, render, remove }, dependencies);
 
   return (
-    initialized &&
-    cloneChildren(children, { injected: id, parent: state.current })
+    status.alive && cloneChildren(children, { injected: id, parent: status })
   );
 }

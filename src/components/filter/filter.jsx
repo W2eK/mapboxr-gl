@@ -1,31 +1,22 @@
-import { useEffect, useRef } from 'react';
+import { useLifeCycleWithCache } from '../../hooks';
 import { buildLogger } from '../../utils';
 import { useMap } from '../context';
 
-export function Filter({ rule, injected, layer, parent }) {
-  const { map, loaded } = useMap();
-  const initial = useRef(false);
-  const ownLayerName = layer;
-  layer = injected || layer;
-  const l = buildLogger('filter', layer, JSON.stringify(rule));
-  /* STATUS: */ l`rendering`;
-  useEffect(() => {
-    if (!loaded) return;
-    /* STATUS: */ l`${initial.current === false ? 'adding' : 'updating'}`;
-    if (initial.current === false) initial.current = map.getFilter(layer);
-    map.setFilter(layer, rule);
-  }, [loaded, parent, ownLayerName, JSON.stringify(rule)]);
+export function Filter({
+  rule,
+  injected: injectedLayerName,
+  layer: receivedLayerName,
+  parent
+}) {
+  const { map } = useMap();
+  const layer = injectedLayerName || receivedLayerName;
+  buildLogger('filter', layer, JSON.stringify(rule));
 
-  // CLEANUP FUNCTION
-  // prettier-ignore
-  useEffect(() => () => {
-    if (parent.alive && parent.map.alive) {
-      /* STATUS: */ l`removing`;
-      map.setFilter(layer, initial.current);
-    } else {
-      /* STATUS: */ l`deleted`;
-    }
-    initial.current = false
-  }, [parent, ownLayerName]);
+  const init = () => map.getFilter(layer);
+  const render = () => map.setFilter(layer, rule);
+  const remove = initial => map.setFilter(layer, initial);
+
+  const dependencies = [parent, receivedLayerName, JSON.stringify(rule)];
+  useLifeCycleWithCache({ parent, init, render, remove }, dependencies);
   return null;
 }
