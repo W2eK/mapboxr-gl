@@ -4,6 +4,8 @@
 # dependencies
 node_modules
 
+stats.html
+
 # builds
 build
 dist

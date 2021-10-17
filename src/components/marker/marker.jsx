@@ -1,15 +1,19 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
+// import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
+// import MapboxWorker from 'mapbox-gl/dist/mapbox-gl-csp-worker';
 import {
   cloneChildren,
   getDependencies,
   isDev,
   buildLogger
 } from '../../utils';
-import { createPortal } from '!react-dom';
+import { createPortal } from 'react-dom';
 import { useMap } from '../context';
 import { withListeners } from '../../hoc';
 import { useHandlers, useLifeCycleWithStatus } from '../../hooks';
+
+// mapboxgl.workerClass = MapboxWorker;
 
 function Marker({ children, listeners, parent, ...props }) {
   // TODO: Make controlled component

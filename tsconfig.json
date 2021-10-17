@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
     "target": "es2018",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "outDir": "dist",
     "jsx": "react",
+    "declaration": true,
     "moduleResolution": "node",
-    "noEmit": true
+    "allowJs": true,
+    "checkJs": false
   },
-  "include": ["src/*"],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

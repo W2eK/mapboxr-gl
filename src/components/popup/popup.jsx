@@ -1,6 +1,8 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { createPortal } from '!react-dom';
+// import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
+// import MapboxWorker from 'mapbox-gl/dist/mapbox-gl-csp-worker';
+import { createPortal } from 'react-dom';
 import { useMap } from '../context';
 import {
   cloneChildren,
@@ -9,11 +11,14 @@ import {
   buildLogger
 } from '../../utils';
 import {
-  buildHandlers,
   useHandlers,
   useLifeCycleWithStatus
 } from '../../hooks';
 import { withListeners } from '../../hoc';
+
+// mapboxgl.workerClass = MapboxWorker;
+
+// console.log(MapboxWorker)
 
 function Popup({ children, parent, listeners, marker, ...props }) {
   // TODO: Make controlled component

@@ -12,10 +12,12 @@ export * from './components/popup';
 export * from './components/property';
 export * from './components/source';
 
-export default function WithErrorBoundary(props) {
+function WithErrorBoundary(props) {
   return (
     <ErrorBoundary>
       <MapboxrGL {...props} />
     </ErrorBoundary>
   );
 }
+
+export default WithErrorBoundary;

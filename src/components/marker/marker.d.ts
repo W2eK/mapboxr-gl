@@ -1,4 +1,5 @@
 import { LngLatLike, MarkerOptions, Marker as MapboxMarker } from 'mapbox-gl';
+import { WithArray } from '../popup';
 
 // TODO Refactor Handlers Types
 type MarkerHandler<T extends 'drag' | 'dragstart' | 'dragend'> = (props: {
