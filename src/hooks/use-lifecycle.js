@@ -43,7 +43,7 @@ export function useLifeCycleWithCache(
   useEffect(() => {
     if (!loaded) return;
     /* STATUS: */ l`${cache.current === null ? 'adding' : 'updating'}`;
-    if (cache.current === null) cache.current = init();
+    if (cache.current === null) cache.current = init?.();
     render(cache.current);
   }, [loaded, ...dependencies]);
 

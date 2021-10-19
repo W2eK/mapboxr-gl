@@ -7,7 +7,8 @@ import MapboxrGL, {
   Filter,
   FeatureState,
   Popup,
-  Marker
+  Marker,
+  Image
 } from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useStore } from '../store/context';
@@ -36,8 +37,10 @@ const originalConsoleLog = console.log;
 const MapContainer = () => {
   const {
     mapbox,
+    image,
     popup,
     marker,
+    icon,
     content,
     source,
     layer,
@@ -53,6 +56,7 @@ const MapContainer = () => {
         wrapper={{ style: { height: '100vh' } }}
         oncemousemove={originalConsoleLog}
       >
+        {image.checked && <Image {...parseAttributes(image.props)} />}
         {marker.checked && (
           <Marker {...parseAttributes(marker.props)} ondragend={console.log}>
             {content.checked && (
@@ -92,6 +96,7 @@ const MapContainer = () => {
                 {...parseAttributes(state.props)}
               />
             )}
+            {icon.checked && <Layer {...parseAttributes(icon.props)}/>}
             {layer.checked && (
               <Layer
                 key={layer.name}

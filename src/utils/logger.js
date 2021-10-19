@@ -15,7 +15,7 @@ export const concatMessage = args => {
   return arr.reduce((arr, str, i) => [...arr, str, rest[i]], []).join('');
 };
 
-const adjustText = text => {
+const adjustText = (text = 'unnamed') => {
   const tabs = 4;
   const tabSize = 4;
   const maxLength = tabs * tabSize;

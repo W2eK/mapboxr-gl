@@ -12,6 +12,16 @@ const initialState = {
       scrollZoom: true
     }
   },
+  image: {
+    name: 'Image',
+    checked: true,
+    open: true,
+    props: {
+      id: 'image',
+      image:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Cat_silhouette.svg/400px-Cat_silhouette.svg.png'
+    }
+  },
   marker: {
     name: 'Marker',
     checked: true,
@@ -87,10 +97,24 @@ const initialState = {
       state: [{ hover: true }, { hover: false }]
     }
   },
+  icon: {
+    name: 'Icons',
+    checked: true,
+    open: false,
+    props: {
+      id: 'dots-icon',
+      filter: ['!', ['get', 'filter']],
+      type: 'symbol',
+      layout: {
+        'icon-image': 'image',
+        'icon-size': 0.25
+      }
+    }
+  },
   layer: {
     name: 'Layer',
     checked: true,
-    open: true,
+    open: false,
     props: {
       id: 'dots-circle',
       filter: ['get', 'filter'],
@@ -103,7 +127,7 @@ const initialState = {
   property: {
     name: 'Property',
     checked: true,
-    open: true,
+    open: false,
     props: {
       id: 'circle-color',
       type: 'paint',
@@ -125,7 +149,7 @@ const initialState = {
   master: {
     name: 'Master',
     checked: true,
-    open: true,
+    open: false,
     props: {
       id: 'admin-1-boundary',
       source: 'composite',
