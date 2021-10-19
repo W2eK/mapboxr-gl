@@ -3,6 +3,11 @@ import { useMap } from '../context';
 import { buildLogger } from '../../utils';
 import { useParent } from '../../hooks';
 
+/**
+ * 
+ * @param {import("./listener").ListenerProps} props
+ * @returns {import("react").ReactElement}
+ */
 export function Listener({ type, event, handler, layer }) {
   const { map } = useMap();
   let { instance } = useParent();

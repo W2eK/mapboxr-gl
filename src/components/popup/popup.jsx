@@ -12,6 +12,11 @@ import {
 } from '../../hooks';
 import { withListeners } from '../../hoc';
 
+/**
+ * 
+ * @param {import("./popup").PopupProps} props 
+ * @returns {import("react").ReactElement}
+ */
 function Popup({ children, listeners, ...props }) {
   // TODO: Make controlled component
   const { coordinates, trackPointer } = props;

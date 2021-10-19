@@ -1,14 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
-// import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
 import mapboxgl from 'mapbox-gl';
-// import MapboxWorker from 'mapbox-gl/dist/mapbox-gl-csp-worker';
 import { MapProvider } from '../context';
 import { withListeners } from '../../hoc';
 import { buildSwitcher, ParentProvider, useHandlers } from '../../hooks';
 import { buildLogger, getDependencies, isDev } from '../../utils';
 
-// mapboxgl.workerClass = MapboxWorker;
 
+/**
+ * 
+ * @param {import("./map").MapboxrGLProps} props
+ * @returns {import("react").ReactElement}
+ */
 function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   // TODO: add strict
   // getDependencies.strict = props.strict;

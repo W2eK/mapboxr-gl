@@ -2,6 +2,11 @@ import { useMap } from '../context';
 import { buildLogger } from '../../utils';
 import { useLifeCycleWithCache, useParent } from '../../hooks';
 
+/**
+ * 
+ * @param {import("./property").PropertyProps} props
+ * @returns {import("react").ReactElement}
+ */
 export function Property({ id, type, value, layer: receivedLayerName }) {
   const { map } = useMap();
   type = `${type[0].toUpperCase()}${type.slice(1)}Property`;

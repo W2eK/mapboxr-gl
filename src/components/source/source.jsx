@@ -10,6 +10,11 @@ import {
   ParentProvider
 } from '../../hooks';
 
+/**
+ *
+ * @param {import("./source").SourceProps} props
+ * @returns {import("react").ReactElement}
+ */
 export function Source({ children, id, ...props }) {
   const { parent } = useParent();
   id = useId(id, 'source');

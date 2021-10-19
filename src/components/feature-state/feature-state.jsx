@@ -6,6 +6,11 @@ const defaultGetChanges = (prev, state) => {
   return Object.entries(state).filter(([key, value]) => prev[key] !== value);
 };
 
+/**
+ * 
+ * @param {import("./feature-state").FeatureStateProps} props
+ * @returns {import("react").ReactElement}
+ */
 export function FeatureState({
   state,
   source: receivedSourceName,

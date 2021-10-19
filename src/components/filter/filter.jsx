@@ -2,6 +2,11 @@ import { useLifeCycleWithCache, useParent } from '../../hooks';
 import { buildLogger } from '../../utils';
 import { useMap } from '../context';
 
+/**
+ *
+ * @param {import("./filter").FilterProps} props
+ * @returns {import("react").ReactElement}
+ */
 export function Filter({ rule, layer: receivedLayerName }) {
   const { map } = useMap();
   const { parent, injected: injectedLayerName } = useParent();

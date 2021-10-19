@@ -12,6 +12,11 @@ import { buildLogger, getDependencies } from '../../utils';
 
 import Cursor from './cursor';
 
+/**
+ *
+ * @param {import("./layer").LayerProps} props
+ * @returns {import("react").ReactElement}
+ */
 function Layer({
   id,
   children,

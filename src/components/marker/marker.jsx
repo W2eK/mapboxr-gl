@@ -11,6 +11,11 @@ import {
   useParent
 } from '../../hooks';
 
+/**
+ * 
+ * @param {import("./marker").MarkerProps} props 
+ * @returns {import("react").ReactElement}
+ */
 function Marker({ children, listeners, ...props }) {
   // TODO: Make controlled component
   const { coordinates, showPopup } = props;
