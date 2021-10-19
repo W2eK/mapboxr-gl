@@ -4,13 +4,8 @@ import mapboxgl from 'mapbox-gl';
 // import MapboxWorker from 'mapbox-gl/dist/mapbox-gl-csp-worker';
 import { MapProvider } from '../context';
 import { withListeners } from '../../hoc';
-import { buildSwitcher, useHandlers } from '../../hooks';
-import {
-  buildLogger,
-  cloneChildren,
-  getDependencies,
-  isDev
-} from '../../utils';
+import { buildSwitcher, ParentProvider, useHandlers } from '../../hooks';
+import { buildLogger, getDependencies, isDev } from '../../utils';
 
 // mapboxgl.workerClass = MapboxWorker;
 
@@ -25,6 +20,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
 
   const l = buildLogger('mapbox');
 
+  // TODO: Add setTerrain
   const handlers = {
     // Properties
     minZoom: value => map.setMinZoom(value),
@@ -78,14 +74,16 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
       map.remove();
     };
   }, getDependencies(rest));
-  
+
   return (
     <div ref={container} {...wrapper}>
       {map && (
         // TODO: Wrap with Error Boundary
         <MapProvider value={{ map, loaded }}>
-          {listeners}
-          {cloneChildren(children, { parent: state.current })}
+          <ParentProvider value={{ parent: state.current }}>
+            {listeners}
+            {children}
+          </ParentProvider>
         </MapProvider>
       )}
     </div>

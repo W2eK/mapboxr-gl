@@ -1,17 +1,11 @@
 import { useMap } from '../context';
 import { buildLogger } from '../../utils';
-import { useLifeCycleWithCache } from '../../hooks';
+import { useLifeCycleWithCache, useParent } from '../../hooks';
 
-export function Property({
-  id,
-  type,
-  value,
-  injected: injectedLayerName,
-  layer: receivedLayerName,
-  parent
-}) {
+export function Property({ id, type, value, layer: receivedLayerName }) {
   const { map } = useMap();
   type = `${type[0].toUpperCase()}${type.slice(1)}Property`;
+  const { parent, injected: injectedLayerName } = useParent();
   const layer = injectedLayerName || receivedLayerName;
   buildLogger('property', layer, id);
 

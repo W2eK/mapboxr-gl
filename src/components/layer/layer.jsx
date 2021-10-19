@@ -1,18 +1,22 @@
-import React, { Fragment } from 'react';
+import React, { cloneElement } from 'react';
 import { useMap } from '../context';
-import { useId, useHandlers, useLifeCycleWithStatus } from '../../hooks';
+import {
+  useId,
+  useHandlers,
+  useLifeCycleWithStatus,
+  useParent,
+  ParentProvider
+} from '../../hooks';
 import { withListeners } from '../../hoc';
-import { buildLogger, cloneChildren, getDependencies } from '../../utils';
+import { buildLogger, getDependencies } from '../../utils';
 
 import Cursor from './cursor';
 
 function Layer({
   id,
   children,
-  parent,
   listeners,
   cursor,
-  injected,
   beforeId,
   keepMaster,
   ...props
@@ -21,6 +25,7 @@ function Layer({
   const l = buildLogger('layer', id);
 
   const { map } = useMap();
+  const { parent, injected } = useParent();
   props['source-layer'] = props.sourceLayer || '';
 
   const handlers = {
@@ -67,14 +72,13 @@ function Layer({
 
   const dependencies = [parent, id, beforeId, ...getDependencies(rest)];
   const status = useLifeCycleWithStatus({ parent, render }, dependencies);
-  
   return (
     status.alive && (
-      <Fragment>
+      <ParentProvider value={{ injected: id, parent: status }}>
         {cursor && <Cursor layer={id} cursor={cursor} />}
-        {cloneChildren(listeners, { layer: id })}
-        {cloneChildren(children, { injected: id, parent: status })}
-      </Fragment>
+        {listeners.map(listener => cloneElement(listener, { layer: id }))}
+        {children}
+      </ParentProvider>
     )
   );
 }

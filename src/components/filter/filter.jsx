@@ -1,14 +1,10 @@
-import { useLifeCycleWithCache } from '../../hooks';
+import { useLifeCycleWithCache, useParent } from '../../hooks';
 import { buildLogger } from '../../utils';
 import { useMap } from '../context';
 
-export function Filter({
-  rule,
-  injected: injectedLayerName,
-  layer: receivedLayerName,
-  parent
-}) {
+export function Filter({ rule, layer: receivedLayerName }) {
   const { map } = useMap();
+  const { parent, injected: injectedLayerName } = useParent();
   const layer = injectedLayerName || receivedLayerName;
   buildLogger('filter', layer, JSON.stringify(rule));
 

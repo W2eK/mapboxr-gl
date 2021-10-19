@@ -3,7 +3,7 @@ import { withDisplayName } from './with-name';
 
 export function withProps(WrappedComponent, handlers) {
   const keys = new Set(Object.keys(handlers));
-  function WrappedWithProps(props) {
+  function WrappedWithProps(props = {}) {
     const injectedProps = Object.entries(props).reduce(
       (obj, [key, value]) => {
         if (keys.has(key)) {

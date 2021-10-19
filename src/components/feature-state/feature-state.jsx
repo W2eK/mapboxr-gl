@@ -1,4 +1,4 @@
-import { useLifeCycleWithCache } from '../../hooks';
+import { useLifeCycleWithCache, useParent } from '../../hooks';
 import { buildLogger } from '../../utils';
 import { useMap } from '../context';
 
@@ -8,13 +8,12 @@ const defaultGetChanges = (prev, state) => {
 
 export function FeatureState({
   state,
-  injected: injectedSourceName,
   source: receivedSourceName,
   sourceLayer = '',
-  getChanges = defaultGetChanges,
-  parent
+  getChanges = defaultGetChanges
 }) {
   const { map } = useMap();
+  const { parent, injected: injectedSourceName } = useParent();
   const source = injectedSourceName || receivedSourceName;
   buildLogger('state', source);
 

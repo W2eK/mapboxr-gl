@@ -1,39 +1,34 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-// import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
-// import MapboxWorker from 'mapbox-gl/dist/mapbox-gl-csp-worker';
-import {
-  cloneChildren,
-  getDependencies,
-  isDev,
-  buildLogger
-} from '../../utils';
+import { getDependencies, isDev, buildLogger } from '../../utils';
 import { createPortal } from 'react-dom';
 import { useMap } from '../context';
 import { withListeners } from '../../hoc';
-import { useHandlers, useLifeCycleWithStatus } from '../../hooks';
+import {
+  ParentProvider,
+  useHandlers,
+  useLifeCycleWithStatus,
+  useParent
+} from '../../hooks';
 
-// mapboxgl.workerClass = MapboxWorker;
-
-function Marker({ children, listeners, parent, ...props }) {
+function Marker({ children, listeners, ...props }) {
   // TODO: Make controlled component
   const { coordinates, showPopup } = props;
-  const { map, loaded } = useMap();
+  const { map } = useMap();
+  const { parent } = useParent();
   const [marker, setMarker] = useState(null);
   const container = useRef(null);
   buildLogger('marker');
 
-  const hasChildren = !!children && !!children?.some(Boolean);
+  const hasChildren = !!children || children?.every?.(Boolean);
+  // debugger;
+  const render = () => {
+    container.current = hasChildren ? document.createElement('div') : null;
+    const marker = new mapboxgl.Marker({
+      ...props,
+      element: container.current
+    });
 
-  // prettier-ignore
-  const render = loaded && (() => {
-    container.current =
-      hasChildren
-          ? document.createElement('div')
-          : null;
-    const marker = new mapboxgl
-      .Marker({...props,element: container.current});
-    
     if (isDev()) window.marker = marker;
     marker.setLngLat(coordinates);
     marker.addTo(map);
@@ -43,7 +38,7 @@ function Marker({ children, listeners, parent, ...props }) {
     return () => {
       marker.remove();
     };
-  })
+  };
 
   const handlers = {
     coordinates: value => marker.setLngLat(value),
@@ -60,20 +55,16 @@ function Marker({ children, listeners, parent, ...props }) {
   };
   const rest = useHandlers({ handlers, props });
 
-  const dependencies = [loaded, hasChildren, ...getDependencies(rest)];
+  const dependencies = [hasChildren, ...getDependencies(rest)];
 
   const status = useLifeCycleWithStatus({ parent, render }, dependencies);
 
   return (
     status.alive && (
-      <Fragment>
-        {cloneChildren(listeners, { instance: marker })}
-        {container.current &&
-          createPortal(
-            cloneChildren(children, { marker, parent: status }),
-            container.current
-          )}
-      </Fragment>
+      <ParentProvider value={{ parent: status, instance: marker }}>
+        {listeners}
+        {container.current && createPortal(children, container.current)}
+      </ParentProvider>
     )
   );
 }

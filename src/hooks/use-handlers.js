@@ -8,6 +8,7 @@ export const useHandlers = ({ handlers, props }) => {
   const l = getLogger();
   const prev = useRef(props);
   const keys = Object.keys(handlers);
+  // TODO: Handle removed props from prev.current
   const rest = Object.entries(props).reduce((rest, [key, value]) => {
     if (!keys.includes(key)) {
       rest[key] = value;

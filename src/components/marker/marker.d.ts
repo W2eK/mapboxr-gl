@@ -1,4 +1,5 @@
 import { LngLatLike, MarkerOptions, Marker as MapboxMarker } from 'mapbox-gl';
+import { FC, PropsWithChildren } from 'react';
 import { WithArray } from '../popup';
 
 // TODO Refactor Handlers Types
@@ -15,4 +16,4 @@ type MarkerProps = Omit<MarkerOptions, 'element'> & {
   showPopup?: boolean;
 };
 
-export function Marker(props: MarkerProps): JSX.Element;
+export function Marker(props: PropsWithChildren<MarkerProps>): JSX.Element;

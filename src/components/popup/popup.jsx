@@ -1,45 +1,37 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-// import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
-// import MapboxWorker from 'mapbox-gl/dist/mapbox-gl-csp-worker';
+
 import { createPortal } from 'react-dom';
 import { useMap } from '../context';
+import { getDependencies, isDev, buildLogger } from '../../utils';
 import {
-  cloneChildren,
-  getDependencies,
-  isDev,
-  buildLogger
-} from '../../utils';
-import {
+  ParentProvider,
   useHandlers,
-  useLifeCycleWithStatus
+  useLifeCycleWithStatus,
+  useParent
 } from '../../hooks';
 import { withListeners } from '../../hoc';
 
-// mapboxgl.workerClass = MapboxWorker;
-
-// console.log(MapboxWorker)
-
-function Popup({ children, parent, listeners, marker, ...props }) {
+function Popup({ children, listeners, ...props }) {
   // TODO: Make controlled component
   const { coordinates, trackPointer } = props;
-  const { map, loaded } = useMap();
+  const { map } = useMap();
+  const { parent, instance: marker } = useParent();
   const [popup, setPopup] = useState(null);
   const container = useRef(null);
 
   buildLogger('popup', children.type || children);
 
-  // prettier-ignore
-  const render = loaded && (() => {
+  const render = () => {
     container.current = document.createElement('div');
     const popup = new mapboxgl.Popup(props);
     if (isDev()) window.popup = popup;
     popup.setDOMContent(container.current);
     trackPointer ? popup.trackPointer() : popup.setLngLat(coordinates);
-    marker ? marker.setPopup(popup) : popup.addTo(map)
+    marker ? marker.setPopup(popup) : popup.addTo(map);
     setPopup(popup);
     return () => popup.remove();
-  });
+  };
 
   const handlers = {
     offset: value => popup.setMaxWidth(value),
@@ -71,10 +63,10 @@ function Popup({ children, parent, listeners, marker, ...props }) {
 
   return (
     status.alive && (
-      <Fragment>
-        {cloneChildren(listeners, { instance: popup })}
+      <ParentProvider value={{ instance: popup }}>
+        {listeners}
         {createPortal(children, container.current)}
-      </Fragment>
+      </ParentProvider>
     )
   );
 }

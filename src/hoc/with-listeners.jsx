@@ -16,7 +16,7 @@ const EVENTS = new Set([
 ]);
 
 export function withListeners(WrappedComponent) {
-  function WrappedWithListeners(props) {
+  function WrappedWithListeners(props = {}) {
     const injectedProps = Object.entries(props).reduce(
       (obj, [key, value]) => {
         const [, type, event] = key.match(/^(on(?:ce)?)(.*)/) || [];

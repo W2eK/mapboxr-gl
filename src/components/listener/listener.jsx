@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useMap } from '../context';
 import { buildLogger } from '../../utils';
+import { useParent } from '../../hooks';
 
-export function Listener({ type, event, handler, layer, instance }) {
+export function Listener({ type, event, handler, layer }) {
   const { map } = useMap();
-  
+  let { instance } = useParent();
+
   const l = buildLogger(
     'listener',
     layer || instance?.constructor?.name?.toLowerCase() || 'mapbox',

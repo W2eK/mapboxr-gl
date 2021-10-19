@@ -1,9 +1,17 @@
+import React from 'react';
 import { removeLayers } from './remove-layers';
 import { useMap } from '../context';
-import { buildLogger, cloneChildren, getDependencies } from '../../utils';
-import { useId, useHandlers, useLifeCycleWithStatus } from '../../hooks';
+import { buildLogger, getDependencies } from '../../utils';
+import {
+  useId,
+  useHandlers,
+  useLifeCycleWithStatus,
+  useParent,
+  ParentProvider
+} from '../../hooks';
 
-export function Source({ children, id, parent, ...props }) {
+export function Source({ children, id, ...props }) {
+  const { parent } = useParent();
   id = useId(id, 'source');
   buildLogger('source', id);
   const { map, loaded } = useMap();
@@ -31,6 +39,10 @@ export function Source({ children, id, parent, ...props }) {
   );
 
   return (
-    status.alive && cloneChildren(children, { injected: id, parent: status })
+    status.alive && (
+      <ParentProvider value={{ injected: id, parent: status }}>
+        {children}
+      </ParentProvider>
+    )
   );
 }
