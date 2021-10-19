@@ -78,7 +78,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
       map.remove();
     };
   }, getDependencies(rest));
-
+  
   return (
     <div ref={container} {...wrapper}>
       {map && (
@@ -91,6 +91,5 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     </div>
   );
 }
-
 const Wrapped = withListeners(MapboxrGL);
 export { Wrapped as MapboxrGL };
