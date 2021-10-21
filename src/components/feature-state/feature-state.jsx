@@ -40,6 +40,6 @@ export function FeatureState({
   };
 
   const dependencies = [parent, source, sourceLayer, JSON.stringify(state)];
-  useLifeCycleWithCache({ parent, init, render, remove }, dependencies);
+  useLifeCycleWithCache({ parent, init, render, remove }, dependencies, dependencies.slice(0, -1));
   return null;
 }

@@ -18,6 +18,6 @@ export function Filter({ rule, layer: receivedLayerName }) {
   const remove = initial => map.setFilter(layer, initial);
 
   const dependencies = [parent, receivedLayerName, JSON.stringify(rule)];
-  useLifeCycleWithCache({ parent, init, render, remove }, dependencies);
+  useLifeCycleWithCache({ parent, init, render, remove }, dependencies, dependencies.slice(0, -1));
   return null;
 }

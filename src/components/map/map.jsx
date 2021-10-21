@@ -5,9 +5,8 @@ import { withListeners } from '../../hoc';
 import { buildSwitcher, ParentProvider, useHandlers } from '../../hooks';
 import { buildLogger, getDependencies, isDev } from '../../utils';
 
-
 /**
- * 
+ *
  * @param {import("./map").MapboxrGLProps} props
  * @returns {import("react").ReactElement}
  */
@@ -61,8 +60,8 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     };
     state.current.map = state.current;
     setMap(map);
-    // TODO: choose other event
-    map.on('load', () => setLoaded(true));
+    map.once('styledata', () => setLoaded(true));
+    map.on('error', () => {});
 
     // TODO: should to keep?
     // window.requestAnimationFrame(() => map.fire('move'));

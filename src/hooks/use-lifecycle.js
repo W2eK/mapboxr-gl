@@ -34,7 +34,8 @@ export function useLifeCycleWithStatus(
 
 export function useLifeCycleWithCache(
   { parent, init, render, remove },
-  dependencies
+  renderDependencies,
+  removeDependencies = renderDependencies
 ) {
   const { loaded } = useMap();
   const cache = useRef(null);
@@ -43,9 +44,9 @@ export function useLifeCycleWithCache(
   useEffect(() => {
     if (!loaded) return;
     /* STATUS: */ l`${cache.current === null ? 'adding' : 'updating'}`;
-    if (cache.current === null) cache.current = init?.();
+    if (cache.current === null) cache.current = init?.() || null;
     render(cache.current);
-  }, [loaded, ...dependencies]);
+  }, [loaded, ...renderDependencies]);
 
   useEffect(() => {
     return () => {
@@ -54,5 +55,5 @@ export function useLifeCycleWithCache(
       alive && remove && remove(cache.current);
       cache.current = null;
     };
-  }, dependencies.slice(0, -1));
+  }, removeDependencies);
 }

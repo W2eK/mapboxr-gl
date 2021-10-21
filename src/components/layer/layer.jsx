@@ -31,7 +31,6 @@ function Layer({
 
   const { map } = useMap();
   const { parent, injected } = useParent();
-  props['source-layer'] = props.sourceLayer || '';
 
   const handlers = {
     minzoom: value => map.setLayerZoomRange(id, value),
@@ -41,29 +40,30 @@ function Layer({
 
   const rest = useHandlers({ handlers, props });
 
-  // prettier-ignore
   const render = () => {
     let master = map.getLayer(id)?.serialize();
+    const layers = map.getStyle().layers;
+    let index = layers.length;
     const { cache } = parent.map;
-    let index, layers;
     let layerProps = {...props}
-    if (master) {
-      layers = map.getStyle().layers;
-      index = layers.findIndex(({ id: masterId }) => masterId === id);
-      map.removeLayer(id);
-    }
+    // debugger
     if (cache[id]) {
       master = cache[id].master;
       index = cache[id].index;
+      // beforeId = beforeId || cache[id].beforeId
+    } else if (master) {
+      index = layers.findIndex(({ id: layerId }) => layerId === id) + 1;
+      map.removeLayer(id);
     }
-    beforeId = beforeId || layers?.[index + 1]?.id;
+    beforeId = beforeId || layers[index]?.id;
+    layerProps['source-layer'] = master?.['source-layer'] || props.sourceLayer || ''
     /* STATUS: */ master && l`redrawing`;
     if (master) {
       const paint = { ...master.paint, ...props.paint };
       const layout = { ...master.layout, ...props.layout };
       layerProps = { ...master, ...layerProps, paint, layout };
-      cache[id] = { master, index };
     }
+    cache[id] = { master, index };
     layerProps = { source: injected, ...layerProps, id };
     map.addLayer(layerProps, beforeId);
     return () => {
@@ -74,7 +74,6 @@ function Layer({
       }
     };
   }
-
   const dependencies = [parent, id, beforeId, ...getDependencies(rest)];
   const status = useLifeCycleWithStatus({ parent, render }, dependencies);
   return (
