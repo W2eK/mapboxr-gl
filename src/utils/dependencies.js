@@ -1,11 +1,23 @@
-export function getDependencies(obj) {
-  // TODO: Add placeholder for undefined constant props
-  // if (getDependencies.strict) return Object.values(obj);
-  return Object.values(obj).map(x =>
-    typeof x === 'function'
-      ? x.toString()
-      : typeof x === 'object'
-      ? JSON.stringify(x)
-      : x
-  );
+/**
+ * @param {number} maxLength
+ */
+export function dependenciesBuilder(maxLength = 0) {
+  /**
+   * @param {object} obj
+   * @param {array} initial
+   */
+  return (obj, ...initial) => {
+    const length = initial.length;
+    initial.length += maxLength;
+    Object.values(obj).forEach((x, i) => {
+      const value =
+        typeof x === 'function'
+          ? x.toString()
+          : typeof x === 'object'
+          ? JSON.stringify(x)
+          : x;
+      initial[length + i] = value;
+    });
+    return initial;
+  };
 }

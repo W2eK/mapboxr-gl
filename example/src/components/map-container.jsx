@@ -89,38 +89,34 @@ const MapContainer = () => {
         )}
 
         {source.checked && (
-          <Source key={source.name} {...parseAttributes(source.props)}>
+          <Source {...parseAttributes(source.props)}>
             {state.checked && (
-              <FeatureState
-                key={state.name}
-                {...parseAttributes(state.props)}
-              />
+              <FeatureState {...parseAttributes(state.props)} />
             )}
-            {icon.checked && <Layer {...parseAttributes(icon.props)}/>}
+            {icon.checked && <Layer {...parseAttributes(icon.props)} />}
             {layer.checked && (
               <Layer
-                key={layer.name}
                 {...parseAttributes(layer.props)}
                 onmouseenter={console.log}
               >
                 {property.checked && (
-                  <Property
-                    key={property.name}
-                    {...parseAttributes(property.props)}
-                  />
+                  <Property {...parseAttributes(property.props)} />
                 )}
                 {filter.checked && (
-                  <Filter
-                    key={filter.name}
-                    {...parseAttributes(filter.props)}
-                  />
+                  <Filter {...parseAttributes(filter.props)} />
                 )}
               </Layer>
             )}
           </Source>
         )}
         {master.checked && (
-          <Layer key={master.name} {...parseAttributes(master.props)} />
+          <Layer
+            id="admin-1-boundary"
+            paint={{ 'line-color': 'red' }}
+            keepMaster
+            source="composite"
+            sourceLayer="admin"
+          />
         )}
       </MapboxrGL>
     )

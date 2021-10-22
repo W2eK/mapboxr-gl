@@ -7,7 +7,7 @@ const defaultGetChanges = (prev, state) => {
 };
 
 /**
- * 
+ *
  * @param {import("./feature-state").FeatureStateProps} props
  * @returns {import("react").ReactElement}
  */
@@ -18,7 +18,7 @@ export function FeatureState({
   getChanges = defaultGetChanges
 }) {
   const { map } = useMap();
-  const { parent, injected: injectedSourceName } = useParent();
+  const { injected: injectedSourceName } = useParent();
   const source = injectedSourceName || receivedSourceName;
   buildLogger('state', source);
 
@@ -39,7 +39,7 @@ export function FeatureState({
     );
   };
 
-  const dependencies = [parent, source, sourceLayer, JSON.stringify(state)];
-  useLifeCycleWithCache({ parent, init, render, remove }, dependencies, dependencies.slice(0, -1));
+  const dependencies = [source, sourceLayer, JSON.stringify(state)];
+  useLifeCycleWithCache({ init, render, remove }, dependencies);
   return null;
 }

@@ -8,9 +8,15 @@ import {
   ParentProvider
 } from '../../hooks';
 import { withListeners } from '../../hoc';
-import { buildLogger, getDependencies } from '../../utils';
+import { buildLogger, dependenciesBuilder } from '../../utils';
 
 import Cursor from './cursor';
+
+const getDependencies = (() => {
+  const NUMBER_OF_PROPS = 13;
+  const NUMBER_OF_HANDLERS = 3;
+  return dependenciesBuilder(NUMBER_OF_PROPS - NUMBER_OF_HANDLERS);
+})();
 
 /**
  *
@@ -37,16 +43,13 @@ function Layer({
     maxzoom: value => map.setLayerZoomRange(id, null, value),
     filter: value => map.setFilter(id, value)
   };
-
   const rest = useHandlers({ handlers, props });
-
   const render = () => {
     let master = map.getLayer(id)?.serialize();
     const layers = map.getStyle().layers;
     let index = layers.length;
     const { cache } = parent.map;
-    let layerProps = {...props}
-    // debugger
+    let layerProps = { ...props };
     if (cache[id]) {
       master = cache[id].master;
       index = cache[id].index;
@@ -56,7 +59,8 @@ function Layer({
       map.removeLayer(id);
     }
     beforeId = beforeId || layers[index]?.id;
-    layerProps['source-layer'] = master?.['source-layer'] || props.sourceLayer || ''
+    layerProps['source-layer'] =
+      master?.['source-layer'] || props.sourceLayer || '';
     /* STATUS: */ master && l`redrawing`;
     if (master) {
       const paint = { ...master.paint, ...props.paint };
@@ -68,13 +72,13 @@ function Layer({
     map.addLayer(layerProps, beforeId);
     return () => {
       map.removeLayer(id);
-      if(keepMaster && cache[id]) {
+      if (keepMaster && cache[id]) {
         /* STATUS: */ l`restoring master`;
         map.addLayer(cache[id].master, beforeId);
       }
     };
-  }
-  const dependencies = [parent, id, beforeId, ...getDependencies(rest)];
+  };
+  const dependencies = getDependencies(rest, id, beforeId, keepMaster);
   const status = useLifeCycleWithStatus({ parent, render }, dependencies);
   return (
     status.alive && (

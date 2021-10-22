@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 
 import { createPortal } from 'react-dom';
 import { useMap } from '../context';
-import { getDependencies, isDev, buildLogger } from '../../utils';
+import { isDev, buildLogger, dependenciesBuilder } from '../../utils';
 import {
   ParentProvider,
   useHandlers,
@@ -12,16 +12,22 @@ import {
 } from '../../hooks';
 import { withListeners } from '../../hoc';
 
+const getDependencies = (() => {
+  const NUMBER_OF_PROPS = 12;
+  const NUMBER_OF_HANDLERS = 6;
+  return dependenciesBuilder(NUMBER_OF_PROPS - NUMBER_OF_HANDLERS);
+})();
+
 /**
- * 
- * @param {import("./popup").PopupProps} props 
+ *
+ * @param {import("./popup").PopupProps} props
  * @returns {import("react").ReactElement}
  */
 function Popup({ children, listeners, ...props }) {
   // TODO: Make controlled component
   const { coordinates, trackPointer } = props;
   const { map } = useMap();
-  const { parent, instance: marker } = useParent();
+  const { instance: marker } = useParent();
   const [popup, setPopup] = useState(null);
   const container = useRef(null);
 
@@ -63,8 +69,7 @@ function Popup({ children, listeners, ...props }) {
   const rest = useHandlers({ handlers, props });
 
   const dependencies = getDependencies(rest);
-
-  const status = useLifeCycleWithStatus({ parent, render }, dependencies);
+  const status = useLifeCycleWithStatus({ render }, dependencies);
 
   return (
     status.alive && (

@@ -1,14 +1,19 @@
 import React from 'react';
 import { removeLayers } from './remove-layers';
 import { useMap } from '../context';
-import { buildLogger, getDependencies } from '../../utils';
+import { buildLogger, dependenciesBuilder } from '../../utils';
 import {
   useId,
   useHandlers,
   useLifeCycleWithStatus,
-  useParent,
   ParentProvider
 } from '../../hooks';
+
+const getDependencies = (() => {
+  const NUMBER_OF_PROPS = 27;
+  const NUMBER_OF_HANDLERS = 2;
+  return dependenciesBuilder(NUMBER_OF_PROPS - NUMBER_OF_HANDLERS);
+})();
 
 /**
  *
@@ -16,18 +21,16 @@ import {
  * @returns {import("react").ReactElement}
  */
 export function Source({ children, id, ...props }) {
-  const { parent } = useParent();
   id = useId(id, 'source');
   buildLogger('source', id);
-  const { map, loaded } = useMap();
+  const { map } = useMap();
 
-  const render = loaded && (() => map.addSource(id, props));
+  const render = () => map.addSource(id, props);
 
   const remove = () => {
     removeLayers(map, id);
     map.removeSource(id);
   };
-
   const handlers = {
     data: value => map.getSource(id).setData(value),
     tiles: value => map.getSource(id).setTiles(value)
@@ -35,13 +38,9 @@ export function Source({ children, id, ...props }) {
   };
 
   const rest = useHandlers({ handlers, props });
+  const dependencies = getDependencies(rest, id);
 
-  const dependencies = [loaded, parent, id, ...getDependencies(rest)];
-
-  const status = useLifeCycleWithStatus(
-    { parent, render, remove },
-    dependencies
-  );
+  const status = useLifeCycleWithStatus({ render, remove }, dependencies);
 
   return (
     status.alive && (

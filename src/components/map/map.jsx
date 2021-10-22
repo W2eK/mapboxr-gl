@@ -3,8 +3,13 @@ import mapboxgl from 'mapbox-gl';
 import { MapProvider } from '../context';
 import { withListeners } from '../../hoc';
 import { buildSwitcher, ParentProvider, useHandlers } from '../../hooks';
-import { buildLogger, getDependencies, isDev } from '../../utils';
+import { buildLogger, dependenciesBuilder, isDev } from '../../utils';
 
+const getDependencies = (() => {
+  const NUMBER_OF_PROPS = 45;
+  const NUMBER_OF_HANDLERS = 15;
+  return dependenciesBuilder(NUMBER_OF_PROPS - NUMBER_OF_HANDLERS);
+})();
 /**
  *
  * @param {import("./map").MapboxrGLProps} props
@@ -44,7 +49,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   };
 
   const rest = useHandlers({ props, handlers });
-
+  // props.
   useEffect(() => {
     /* STATUS: */ l`adding`;
 

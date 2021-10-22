@@ -1,32 +1,35 @@
 import React, { useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { getDependencies, isDev, buildLogger } from '../../utils';
+import { dependenciesBuilder, isDev, buildLogger } from '../../utils';
 import { createPortal } from 'react-dom';
 import { useMap } from '../context';
 import { withListeners } from '../../hoc';
 import {
   ParentProvider,
   useHandlers,
-  useLifeCycleWithStatus,
-  useParent
+  useLifeCycleWithStatus
 } from '../../hooks';
 
+const getDependencies = (() => {
+  const NUMBER_OF_PROPS = 14;
+  const NUMBER_OF_HANDLERS = 8;
+  return dependenciesBuilder(NUMBER_OF_PROPS - NUMBER_OF_HANDLERS);
+})();
+
 /**
- * 
- * @param {import("./marker").MarkerProps} props 
+ *
+ * @param {import("./marker").MarkerProps} props
  * @returns {import("react").ReactElement}
  */
 function Marker({ children, listeners, ...props }) {
   // TODO: Make controlled component
   const { coordinates, showPopup } = props;
   const { map } = useMap();
-  const { parent } = useParent();
   const [marker, setMarker] = useState(null);
   const container = useRef(null);
   buildLogger('marker');
 
-  const hasChildren = !!children || children?.every?.(Boolean);
-  // debugger;
+  const hasChildren = !!children && children?.some?.(Boolean);
   const render = () => {
     container.current = hasChildren ? document.createElement('div') : null;
     const marker = new mapboxgl.Marker({
@@ -59,10 +62,8 @@ function Marker({ children, listeners, ...props }) {
     }
   };
   const rest = useHandlers({ handlers, props });
-
-  const dependencies = [hasChildren, ...getDependencies(rest)];
-
-  const status = useLifeCycleWithStatus({ parent, render }, dependencies);
+  const dependencies = getDependencies(rest, hasChildren);
+  const status = useLifeCycleWithStatus({ render }, dependencies);
 
   return (
     status.alive && (

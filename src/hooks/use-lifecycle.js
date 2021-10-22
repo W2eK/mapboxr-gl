@@ -2,12 +2,35 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useForce } from './use-force';
 import { useMap } from '../components/context';
 import { getLogger } from '../utils';
+import { useParent } from '.';
+
+export function useLifeCycle({ render, remove, clean }, dependencies) {
+  const { loaded } = useMap();
+  const { parent } = useParent();
+  dependencies.push(loaded, parent);
+  const l = getLogger();
+  const forceUpdate = useForce();
+  useEffect(() => {
+    if (!loaded) return;
+    /* STATUS: */ l`adding`;
+    render();
+    forceUpdate();
+    return () => {
+      const alive = parent.alive && parent.map.alive;
+      /* STATUS: */ l`${alive ? 'removing' : 'deleted'}`;
+      alive && remove();
+      clean && clean();
+    };
+  }, dependencies);
+}
 
 export function useLifeCycleWithStatus(
-  { parent, render, remove, clean },
+  { render, remove, clean },
   dependencies
 ) {
   const { loaded } = useMap();
+  const { parent } = useParent();
+  dependencies.push(loaded, parent);
   const l = getLogger();
   const status = useRef({ alive: false });
   const forceUpdate = useForce();
@@ -28,25 +51,26 @@ export function useLifeCycleWithStatus(
       clean && clean();
       status.current.alive = false;
     };
-  }, [loaded, ...dependencies]);
+  }, dependencies);
   return status.current;
 }
 
 export function useLifeCycleWithCache(
-  { parent, init, render, remove },
+  { init, render, remove },
   renderDependencies,
-  removeDependencies = renderDependencies
+  removeDependencies = renderDependencies.slice(0, -1)
 ) {
   const { loaded } = useMap();
+  const { parent } = useParent();
   const cache = useRef(null);
   const l = getLogger();
-
+  renderDependencies.push(loaded, parent);
   useEffect(() => {
     if (!loaded) return;
     /* STATUS: */ l`${cache.current === null ? 'adding' : 'updating'}`;
     if (cache.current === null) cache.current = init?.() || null;
     render(cache.current);
-  }, [loaded, ...renderDependencies]);
+  }, renderDependencies);
 
   useEffect(() => {
     return () => {

@@ -9,7 +9,7 @@ import { useMap } from '../context';
  */
 export function Filter({ rule, layer: receivedLayerName }) {
   const { map } = useMap();
-  const { parent, injected: injectedLayerName } = useParent();
+  const { injected: injectedLayerName } = useParent();
   const layer = injectedLayerName || receivedLayerName;
   buildLogger('filter', layer, JSON.stringify(rule));
 
@@ -17,7 +17,7 @@ export function Filter({ rule, layer: receivedLayerName }) {
   const render = () => map.setFilter(layer, rule);
   const remove = initial => map.setFilter(layer, initial);
 
-  const dependencies = [parent, receivedLayerName, JSON.stringify(rule)];
-  useLifeCycleWithCache({ parent, init, render, remove }, dependencies, dependencies.slice(0, -1));
+  const dependencies = [receivedLayerName, JSON.stringify(rule)];
+  useLifeCycleWithCache({ init, render, remove }, dependencies);
   return null;
 }

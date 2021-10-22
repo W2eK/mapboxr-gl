@@ -10,7 +10,7 @@ import { useLifeCycleWithCache, useParent } from '../../hooks';
 export function Property({ id, type, value, layer: receivedLayerName }) {
   const { map } = useMap();
   type = `${type[0].toUpperCase()}${type.slice(1)}Property`;
-  const { parent, injected: injectedLayerName } = useParent();
+  const { injected: injectedLayerName } = useParent();
   const layer = injectedLayerName || receivedLayerName;
   buildLogger('property', layer, id);
 
@@ -18,12 +18,8 @@ export function Property({ id, type, value, layer: receivedLayerName }) {
   const render = () => map[`set${type}`](layer, id, value);
   const remove = initial => map[`set${type}`](layer, id, initial);
 
-  const dependencies = [parent, id, receivedLayerName, JSON.stringify(value)];
-  useLifeCycleWithCache(
-    { parent, init, render, remove },
-    dependencies,
-    dependencies.slice(0, -1)
-  );
+  const dependencies = [id, receivedLayerName, JSON.stringify(value)];
+  useLifeCycleWithCache({ init, render, remove }, dependencies);
 
   return null;
 }
