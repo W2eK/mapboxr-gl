@@ -1,4 +1,4 @@
-import { useLifeCycleWithCache, useParent } from '../../hooks';
+import { useLifeCycle } from '../../hooks';
 import { buildLogger } from '../../utils';
 import { useMap } from '../context';
 
@@ -8,7 +8,6 @@ import { useMap } from '../context';
  */
 export function Image({ id, image, options }) {
   const { map } = useMap();
-  const { parent } = useParent();
   buildLogger('image', id);
   const callback = (err, image) => {
     if (err) throw err;
@@ -16,9 +15,9 @@ export function Image({ id, image, options }) {
   };
   const render = () => map.loadImage(image, callback);
   const remove = () => map.removeImage(id);
-  
+
   const dependencies = [id, image, JSON.stringify(options)];
-  useLifeCycleWithCache({ parent, render, remove }, dependencies);
+  useLifeCycle({ render, remove }, dependencies);
 
   return null;
 }

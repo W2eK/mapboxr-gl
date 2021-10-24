@@ -24,7 +24,7 @@ const initialState = {
   },
   marker: {
     name: 'Marker',
-    checked: true,
+    checked: false,
     open: false,
     props: {
       coordinates: [10, 10],
@@ -55,7 +55,7 @@ const initialState = {
   },
   source: {
     name: 'Source',
-    checked: true,
+    checked: false,
     props: {
       id: 'dots',
       type: 'geojson',
@@ -92,14 +92,14 @@ const initialState = {
   },
   state: {
     name: 'FeatureState',
-    checked: true,
+    checked: false,
     props: {
       state: [{ hover: true }, { hover: false }]
     }
   },
   icon: {
     name: 'Icons',
-    checked: true,
+    checked: false,
     open: false,
     props: {
       id: 'dots-icon',
@@ -113,7 +113,7 @@ const initialState = {
   },
   layer: {
     name: 'Layer',
-    checked: true,
+    checked: false,
     open: false,
     props: {
       id: 'dots-circle',
@@ -126,7 +126,7 @@ const initialState = {
   },
   property: {
     name: 'Property',
-    checked: true,
+    checked: false,
     open: false,
     props: {
       id: 'circle-color',
@@ -148,7 +148,7 @@ const initialState = {
   },
   master: {
     name: 'Master',
-    checked: true,
+    checked: false,
     open: false,
     props: {
       id: 'admin-1-boundary',

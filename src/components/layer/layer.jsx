@@ -32,6 +32,7 @@ function Layer({
   keepMaster,
   ...props
 }) {
+  // TODO: master without id
   id = useId(id, 'layer');
   const l = buildLogger('layer', id);
 
@@ -41,7 +42,8 @@ function Layer({
   const handlers = {
     minzoom: value => map.setLayerZoomRange(id, value),
     maxzoom: value => map.setLayerZoomRange(id, null, value),
-    filter: value => map.setFilter(id, value)
+    filter: value => map.setFilter(id, value),
+    beforeId: value => map.moveLayer(id, value)
   };
   const rest = useHandlers({ handlers, props });
   const render = () => {
@@ -79,7 +81,7 @@ function Layer({
     };
   };
   const dependencies = getDependencies(rest, id, beforeId, keepMaster);
-  const status = useLifeCycleWithStatus({ parent, render }, dependencies);
+  const status = useLifeCycleWithStatus({ render }, dependencies);
   return (
     status.alive && (
       <ParentProvider value={{ injected: id, parent: status }}>
