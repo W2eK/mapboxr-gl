@@ -1,4 +1,5 @@
 import { AnyLayer, Marker, Popup } from 'mapbox-gl';
+import { LayerList } from '../components/layer/linked-list';
 
 type Parent = {
   alive: boolean;
@@ -6,12 +7,7 @@ type Parent = {
 };
 
 type ParentMap = Parent & {
-  cache: {
-    [key: string]: {
-      index: number;
-      master: AnyLayer;
-    };
-  };
+  cache: LayerList;
 };
 
 export function useParent(): {
