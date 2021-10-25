@@ -4,6 +4,15 @@ import { useMap } from '../components/context';
 import { getLogger } from '../utils';
 import { useParent } from '.';
 
+/**
+ * @param {object} callbacks
+ * @param {function} callbacks.init
+ * @param {function} callbacks.render
+ * @param {function} callbacks.remove
+ * @param {function} callbacks.clean
+ * @param {array} renderDependencies
+ * @param {array} removeDependencies
+ */
 export function useLifeCycle(
   { init, render, remove, clean },
   renderDependencies,
@@ -18,7 +27,7 @@ export function useLifeCycle(
 
   const buildInit = callback => () => {
     if (!loaded) return;
-    /* STATUS: */ l`initializing`;
+    // /* STATUS: */ l`initializing`;
     callback();
   };
 
@@ -38,7 +47,7 @@ export function useLifeCycle(
 
   const buildClean = callback => () => () => {
     if (!loaded) return;
-    /* STATUS: */ l`cleaning`;
+    // /* STATUS: */ l`cleaning`;
     callback();
   };
 
@@ -48,19 +57,19 @@ export function useLifeCycle(
   clean && useEffect(buildClean(clean), []);
 }
 
+/**
+ * @param {object} callbacks
+ * @param {function} callbacks.init
+ * @param {function} callbacks.render
+ * @param {function} callbacks.remove
+ * @param {function} callbacks.clean
+ * @param {array} dependencies
+ * @returns {import('./use-parent').Parent}
+ */
 export function useLifeCycleWithStatus(callbacks, dependencies) {
   const { parent } = useParent();
   const status = useRef({ alive: false });
   const forceUpdate = useForce();
-
-  const buildRemove = callback => {
-    if (typeof callback === 'function') {
-      return () => {
-        callback();
-        status.current.alive = false;
-      };
-    }
-  };
 
   const render = () => {
     status.current = {
@@ -68,26 +77,41 @@ export function useLifeCycleWithStatus(callbacks, dependencies) {
       map: parent.map
     };
     forceUpdate();
-    const callback = callbacks.render();
-    return buildRemove(callback);
+    return callbacks.render();
   };
 
-  const remove = buildRemove(callbacks.remove);
+  const remove = () => {
+    status.current.alive = false;
+    callbacks.remove?.();
+  };
+  const clean = () => {
+    status.current.alive = false;
+    callbacks.clean?.();
+  };
 
-  useLifeCycle({ ...callbacks, render, remove }, dependencies);
+  useLifeCycle({ ...callbacks, render, remove, clean }, dependencies);
   return status.current;
 }
 
+// const
+
+/**
+ * @param {object} callbacks
+ * @param {function} callbacks.init
+ * @param {function} callbacks.render
+ * @param {function} callbacks.remove
+ * @param {function} callbacks.clean
+ * @param {array} renderDependencies
+ */
 export function useLifeCycleWithCache(callbacks, renderDependencies) {
   const cache = useRef(null);
-  const init = () => (cache.current = callbacks.init());
-  const render = () => callbacks.render(cache.current);
-  const remove = () => callbacks.remove(cache.current);
+  const init = () => (cache.current = callbacks.init?.());
+  const render = () => callbacks.render?.(cache.current);
+  const remove = () => callbacks.remove?.(cache.current);
   const clean = () => {
+    callbacks.clean?.(cache.current);
     cache.current = null;
-    callbacks.clean?.();
   };
-  // TODO: Possible bug
   const removeDependencies = renderDependencies.slice(0, -1);
   useLifeCycle(
     { init, render, remove, clean },

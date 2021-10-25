@@ -80,6 +80,7 @@ function Layer({
       }
     };
   };
+  // const remove = () => map.removeLayer(id);
   const dependencies = getDependencies(rest, id, beforeId, keepMaster);
   const status = useLifeCycleWithStatus({ render }, dependencies);
   return (

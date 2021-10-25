@@ -66,7 +66,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     state.current.map = state.current;
     setMap(map);
     map.once('styledata', () => setLoaded(true));
-    map.on('error', () => {});
+    // map.on('error', () => {});
 
     // TODO: should to keep?
     // window.requestAnimationFrame(() => map.fire('move'));
