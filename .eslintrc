@@ -25,7 +25,8 @@
   },
   "rules": {
     "prettier/prettier": "off",
-    "space-before-function-paren": 0,
+    "lines-between-class-members": "off",
+    "space-before-function-parent": 0,
     "react/prop-types": 0,
     "react/jsx-handler-names": 0,
     "react/jsx-fragments": 0,

@@ -10,13 +10,16 @@ type DistributiveOmit<T, K extends keyof any> = T extends any
 type LayerOnHandlers = Handlers<MapLayerEventType, 'on'>;
 type LayerOnceHandlers = Handlers<MapLayerEventType, 'once'>;
 
-type LayerProps = DistributiveOmit<AnyLayer, 'source-layer'> & {
+type LayerProps = {
   id?: string;
   beforeId?: string;
+  master?: string;
+  // keepMaster?: boolean;
+  restoreMaster?: boolean;
   cursor?: boolean | StandardLonghandProperties['cursor'];
   sourceLayer?: string;
-  keepMaster?: boolean;
-} & LayerOnHandlers &
+} & DistributiveOmit<AnyLayer, 'source-layer' | 'id'> &
+  LayerOnHandlers &
   LayerOnceHandlers;
 
 export function Layer(props: PropsWithChildren<LayerProps>): JSX.Element;

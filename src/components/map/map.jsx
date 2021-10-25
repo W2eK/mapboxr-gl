@@ -4,14 +4,15 @@ import { MapProvider } from '../context';
 import { withListeners } from '../../hoc';
 import { buildSwitcher, ParentProvider, useHandlers } from '../../hooks';
 import { buildLogger, dependenciesBuilder, isDev } from '../../utils';
+import { LayerList } from '../layer/linked-list';
 
 const getDependencies = (() => {
   const NUMBER_OF_PROPS = 45;
   const NUMBER_OF_HANDLERS = 15;
   return dependenciesBuilder(NUMBER_OF_PROPS - NUMBER_OF_HANDLERS);
 })();
+
 /**
- *
  * @param {import("./map").MapboxrGLProps} props
  * @returns {import("react").ReactElement}
  */
@@ -22,7 +23,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   const container = useRef(null);
   const [map, setMap] = useState(null);
   const [loaded, setLoaded] = useState(false);
-  const state = useRef({ alive: false });
+  const state = useRef({ alive: false, cache: {} });
 
   const l = buildLogger('mapbox');
 
