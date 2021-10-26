@@ -27,7 +27,7 @@ export function useLifeCycle(
 
   const buildInit = callback => () => {
     if (!loaded) return;
-    // /* STATUS: */ l`initializing`;
+    /* STATUS: */ l`initializing`;
     callback();
   };
 
@@ -46,9 +46,9 @@ export function useLifeCycle(
   };
 
   const buildClean = callback => () => () => {
-    if (!loaded) return;
-    // /* STATUS: */ l`cleaning`;
-    callback();
+    const alive = parent.alive && parent.map.alive;
+    /* STATUS: */ l`cleaning`;
+    callback(alive);
   };
 
   init && useEffect(buildInit(init), [loaded]);
@@ -84,9 +84,9 @@ export function useLifeCycleWithStatus(callbacks, dependencies) {
     status.current.alive = false;
     callbacks.remove?.();
   };
-  const clean = () => {
+  const clean = alive => {
     status.current.alive = false;
-    callbacks.clean?.();
+    callbacks.clean?.(alive);
   };
 
   useLifeCycle({ ...callbacks, render, remove, clean }, dependencies);

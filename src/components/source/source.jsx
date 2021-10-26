@@ -21,7 +21,7 @@ const getDependencies = (() => {
  * @returns {import("react").ReactElement}
  */
 export function Source({ children, id, ...props }) {
-  id = useId(id, 'source');
+  id = useId(id, props.type);
   buildLogger('source', id);
   const { map } = useMap();
 

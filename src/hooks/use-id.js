@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
-let counter = 0;
+const counters = {};
 
 export const useId = (id, prefix) => {
-  return useMemo(() => id || `${prefix}-${counter++}`, [id]);
+  if (!counters[prefix]) counters[prefix] = 0;
+  return useMemo(() => id || `${prefix}-${counters[prefix]++}`, [id, prefix]);
 };

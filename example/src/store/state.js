@@ -14,7 +14,7 @@ const initialState = {
   },
   image: {
     name: 'Image',
-    checked: true,
+    checked: false,
     open: true,
     props: {
       id: 'image',
@@ -149,13 +149,13 @@ const initialState = {
   master: {
     name: 'Master',
     checked: false,
-    open: false,
+    open: true,
     props: {
-      id: 'admin-1-boundary',
-      source: 'composite',
-      sourceLayer: 'admin',
+      id: '',
+      master: 'admin-1-boundary',
       paint: { 'line-color': 'red' },
-      keepMaster: true
+      restoreMaster: true,
+      replaceMaster: true
     }
   }
 };

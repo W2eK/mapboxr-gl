@@ -12,6 +12,7 @@ import MapboxrGL, {
 } from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useStore } from '../store/context';
+import MapLayers from './map-layers';
 
 const parseAttributes = attributes => {
   const parseValue = value => {
@@ -56,6 +57,7 @@ const MapContainer = () => {
         wrapper={{ style: { height: '100vh' } }}
         oncemousemove={originalConsoleLog}
       >
+        <MapLayers />
         {image.checked && <Image {...parseAttributes(image.props)} />}
         {marker.checked && (
           <Marker {...parseAttributes(marker.props)} ondragend={console.log}>
@@ -109,15 +111,7 @@ const MapContainer = () => {
             )}
           </Source>
         )}
-        {master.checked && (
-          <Layer
-            id="admin-1-boundary"
-            paint={{ 'line-color': 'red' }}
-            keepMaster
-            source="composite"
-            sourceLayer="admin"
-          />
-        )}
+        {master.checked && <Layer {...parseAttributes(master.props)} />}
       </MapboxrGL>
     )
   );

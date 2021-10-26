@@ -14,7 +14,7 @@ type LayerProps = {
   id?: string;
   beforeId?: string;
   master?: string;
-  // keepMaster?: boolean;
+  replaceMaster?: boolean;
   restoreMaster?: boolean;
   cursor?: boolean | StandardLonghandProperties['cursor'];
   sourceLayer?: string;

@@ -4,7 +4,7 @@ import { MapProvider } from '../context';
 import { withListeners } from '../../hoc';
 import { buildSwitcher, ParentProvider, useHandlers } from '../../hooks';
 import { buildLogger, dependenciesBuilder, isDev } from '../../utils';
-import { LayerList } from '../layer/linked-list';
+import { LayerCache } from '../layer/linked-list';
 
 const getDependencies = (() => {
   const NUMBER_OF_PROPS = 45;
@@ -23,7 +23,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   const container = useRef(null);
   const [map, setMap] = useState(null);
   const [loaded, setLoaded] = useState(false);
-  const state = useRef({ alive: false, cache: {} });
+  const state = useRef({ alive: false, cache: new LayerCache() });
 
   const l = buildLogger('mapbox');
 
@@ -62,11 +62,16 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     if (isDev()) window.map = map;
     state.current = {
       alive: true,
-      cache: {}
+      cache: new LayerCache()
     };
     state.current.map = state.current;
     setMap(map);
-    map.once('styledata', () => setLoaded(true));
+    map.once('styledata', () => {
+      const cache = state.current.cache;
+      map.getStyle().layers.forEach(layer => cache.create(layer));
+      if (isDev()) window.cache = cache;
+      setLoaded(true);
+    });
     // map.on('error', () => {});
 
     // TODO: should to keep?
