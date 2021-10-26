@@ -157,6 +157,12 @@ const initialState = {
       restoreMaster: true,
       replaceMaster: true
     }
+  },
+  terrain: {
+    name: 'Terrian',
+    checked: true,
+    open: false,
+    props: { exaggeration: 1 }
   }
 };
 

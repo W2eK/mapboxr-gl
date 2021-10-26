@@ -8,6 +8,8 @@ import MapboxrGL, {
   FeatureState,
   Popup,
   Marker,
+  Terrain,
+  Fog,
   Image
 } from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -48,7 +50,8 @@ const MapContainer = () => {
     property,
     master,
     filter,
-    state
+    state,
+    terrain
   } = useStore().state;
   return (
     mapbox.checked && (
@@ -112,6 +115,18 @@ const MapContainer = () => {
           </Source>
         )}
         {master.checked && <Layer {...parseAttributes(master.props)} />}
+        <Fog range={[1.0, 12.0]} color="red" horizonBlend={0.1} />
+        {terrain.checked && (
+          <Source
+            id="mapbox-dem"
+            type="raster-dem"
+            url="mapbox://mapbox.mapbox-terrain-dem-v1"
+            tileSize={512}
+            maxzoom={14}
+          >
+            <Terrain {...parseAttributes(terrain.props)} />
+          </Source>
+        )}
       </MapboxrGL>
     )
   );

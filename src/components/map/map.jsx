@@ -20,6 +20,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   // TODO: add strict
   // getDependencies.strict = props.strict;
   // TODO: Add PropTypes
+  // TODO: Debugging options (showCollisionBoxes)
   const container = useRef(null);
   const [map, setMap] = useState(null);
   const [loaded, setLoaded] = useState(false);
@@ -27,7 +28,6 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
 
   const l = buildLogger('mapbox');
 
-  // TODO: Add setTerrain
   const handlers = {
     // Properties
     minZoom: value => map.setMinZoom(value),
