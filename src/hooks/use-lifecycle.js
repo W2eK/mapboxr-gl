@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useForce } from './use-force';
 import { useMap } from '../components/context';
 import { getLogger } from '../utils';
-import { useParent } from '.';
+import { useParent } from './use-parent';
 
 /**
  * @param {object} callbacks

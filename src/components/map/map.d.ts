@@ -1,11 +1,6 @@
 import { MapEventType, MapboxOptions } from 'mapbox-gl';
 import { PropsWithChildren } from 'react';
-
-export type Handlers<T, U extends 'on' | 'once'> = {
-  [P in keyof T as `${U}${P}`]?: (
-    event: T[P]
-  ) => void | ((event: T[P]) => void)[];
-};
+import { Handlers } from '../../utils/utils';
 
 type MapOnHandlers = Handlers<MapEventType, 'on'>;
 type MapOnceHandlers = Handlers<MapEventType, 'once'>;

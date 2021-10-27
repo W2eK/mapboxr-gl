@@ -1,9 +1,8 @@
 // @ts-check
-import { AnyLayer } from 'mapbox-gl';
 
 class LayerNode {
   /** @param {string} name */
-  /** @param {AnyLayer=} data */
+  /** @param {import('mapbox-gl').AnyLayer=} data */
   constructor(name, data) {
     this.name = name;
     /** @type {LayerNode} */
@@ -103,7 +102,7 @@ export class LayerCache {
     /** @type {Object<string, LayerNode>} */
     this.map = {};
   }
-  /** @param {string | AnyLayer} input @param {string=} beforeId */
+  /** @param {string | import('mapbox-gl').AnyLayer} input @param {string=} beforeId */
   create(input, beforeId) {
     let node, name;
     if (typeof input === 'object') {
@@ -147,7 +146,7 @@ export class LayerCache {
   revive(name, reverse) {
     this.get(name, reverse).alive = true;
   }
-  /** @param {string} name @returns {AnyLayer} */
+  /** @param {string} name @returns {import('mapbox-gl').AnyLayer} */
   data(name) {
     return this.get(name).data;
   }

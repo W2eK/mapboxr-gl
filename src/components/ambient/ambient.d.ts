@@ -4,12 +4,7 @@ import {
   Light as MapboxLight
 } from 'mapbox-gl';
 
-type NormalizeProps<T extends Record<string, any>> = {
-  [P in keyof T as ToCamelCase<P>]: T[P];
-};
-
-type ToCamelCase<T extends string | number | symbol> =
-  T extends `${infer R}-${infer U}` ? `${R}${Capitalize<ToCamelCase<U>>}` : T;
+import { NormalizeProps } from '../../utils/utils';
 
 type TerrainProps = TerrainSpecification;
 export function Terrain(props: TerrainProps): JSX.Element;

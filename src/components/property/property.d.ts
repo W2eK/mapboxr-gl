@@ -1,22 +1,15 @@
 import { AnyLayout, AnyPaint } from 'mapbox-gl';
+import { UnionToIntersection, ValueOf } from '../../utils/utils';
 
-type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (
-  x: infer R
-) => any
-  ? R
-  : never;
-
-type BuildTypes<T extends 'layout' | 'paint', U> = {
+type BuildPropertyType<T extends 'layout' | 'paint', U> = {
   [P in keyof U]: { type: T; id: P; value: U[P] };
 };
 
-type ValueOf<T> = T[keyof T];
-
 type PaintProperties = ValueOf<
-  BuildTypes<'paint', UnionToIntersection<AnyPaint>>
+  BuildPropertyType<'paint', UnionToIntersection<AnyPaint>>
 >;
 type LayoutProperties = ValueOf<
-  BuildTypes<'layout', UnionToIntersection<AnyLayout>>
+  BuildPropertyType<'layout', UnionToIntersection<AnyLayout>>
 >;
 
 type PropertyProps = {

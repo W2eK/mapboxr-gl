@@ -1,16 +1,15 @@
 import { PopupOptions, LngLatLike, Popup as MapboxPopup } from 'mapbox-gl';
+import { NormalizeArray } from '../../utils/utils';
 
 type PopupHandler<T extends 'close' | 'open'> = (props: {
   type: T;
   target: MapboxPopup;
 }) => void;
 
-export type WithArray<T> = T | T[];
-
 // TODO: Rename handlers name to camel case
 type PopupProps = PopupOptions & {
-  onopen?: WithArray<PopupHandler<'open'>>;
-  onclose?: WithArray<PopupHandler<'close'>>;
+  onopen?: NormalizeArray<PopupHandler<'open'>>;
+  onclose?: NormalizeArray<PopupHandler<'close'>>;
   coordinates?: LngLatLike;
   trackPointer?: boolean;
 };

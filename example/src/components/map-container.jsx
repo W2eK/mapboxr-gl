@@ -10,6 +10,7 @@ import MapboxrGL, {
   Marker,
   Terrain,
   Fog,
+  Listener,
   Image
 } from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';

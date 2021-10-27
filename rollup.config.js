@@ -4,7 +4,6 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import visualizer from 'rollup-plugin-visualizer';
 import dts from 'rollup-plugin-dts';
-import del from 'rollup-plugin-delete';
 
 import pkg from './package.json';
 
@@ -15,12 +14,14 @@ const config = [
       {
         file: pkg.main,
         format: 'cjs',
-        sourcemap: true
+        sourcemap: true,
+        exports: 'named'
       },
       {
         file: pkg.module,
         format: 'esm',
-        sourcemap: true
+        sourcemap: true,
+        exports: 'named'
       }
     ],
     treeshake: true,
