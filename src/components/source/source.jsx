@@ -27,16 +27,17 @@ export function Source({ children, id, ...props }) {
 
   const render = () => map.addSource(id, props);
 
-  const remove = () => {
-    removeLayers(map, id);
-    map.removeSource(id);
+  const remove = alive => {
+    if (alive) {
+      removeLayers(map, id);
+      map.removeSource(id);
+    }
   };
   const handlers = {
     data: value => map.getSource(id).setData(value),
     tiles: value => map.getSource(id).setTiles(value)
     // TODO: add other handlers
   };
-
   const rest = useHandlers({ handlers, props });
   const dependencies = getDependencies(rest, id);
 

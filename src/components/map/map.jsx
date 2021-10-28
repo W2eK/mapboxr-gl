@@ -52,7 +52,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   const rest = useHandlers({ props, handlers });
   // props.
   useEffect(() => {
-    /* STATUS: */ l`adding`;
+    /* STATUS: */ l`render`;
 
     const map = new mapboxgl.Map({
       container: container.current,
@@ -78,7 +78,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     // window.requestAnimationFrame(() => map.fire('move'));
 
     return () => {
-      /* STATUS: */ l`removing`;
+      /* STATUS: */ l`remove`;
       state.current.alive = false;
       state.current.map = false;
       setLoaded(false);

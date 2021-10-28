@@ -41,7 +41,7 @@ function Popup({ children, listeners, ...props }) {
     trackPointer ? popup.trackPointer() : popup.setLngLat(coordinates);
     marker ? marker.setPopup(popup) : popup.addTo(map);
     setPopup(popup);
-    return () => popup.remove();
+    return alive => alive && popup.remove();
   };
 
   const handlers = {

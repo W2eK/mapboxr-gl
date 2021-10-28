@@ -15,7 +15,7 @@ export function Filter({ rule, layer: receivedLayerName }) {
 
   const init = () => map.getFilter(layer);
   const render = () => map.setFilter(layer, rule);
-  const remove = initial => map.setFilter(layer, initial);
+  const remove = (initial, alive) => alive && map.setFilter(layer, initial);
 
   const dependencies = [receivedLayerName, JSON.stringify(rule)];
   useLifeCycleWithCache({ init, render, remove }, dependencies);

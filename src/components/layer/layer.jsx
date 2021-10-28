@@ -82,7 +82,7 @@ function Layer({
     if (type === 'new_layer') {
       map.addLayer({ source: injected, ...props, id }, position);
     } else {
-      l`redrawing`;
+      l`redraw`;
       const cached = cache.data(master);
       const paint = { ...cached.paint, ...props.paint };
       const layout = { ...cached.layout, ...props.layout };
@@ -91,18 +91,19 @@ function Layer({
       map.addLayer(style, position);
     }
   };
-  const remove = () => {
+  const remove = alive => {
+    alive && map.removeLayer(id);
     cache.kill(id, true);
-    map.removeLayer(id);
   };
   const clean = alive => {
     if (alive && type === 'replace_master' && restoreMaster) {
-      l`restoring`;
+      l`restore`;
       const style = cache.get(master).data;
       cache.revive(master);
       const beforeId = cache.after(master);
       map.addLayer(style, beforeId);
     }
+    cache.kill(id, true);
   };
   const dependencies = getDependencies(rest, restoreMaster);
   const status = useLifeCycleWithStatus(

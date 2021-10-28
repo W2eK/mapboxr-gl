@@ -16,7 +16,8 @@ export function Property({ id, type, value, layer: receivedLayerName }) {
 
   const init = () => map[`get${type}`](layer, id);
   const render = () => map[`set${type}`](layer, id, value);
-  const remove = initial => map[`set${type}`](layer, id, initial);
+  const remove = (initial, alive) =>
+    alive && map[`set${type}`](layer, id, initial);
 
   const dependencies = [id, receivedLayerName, JSON.stringify(value)];
   useLifeCycleWithCache({ init, render, remove }, dependencies);

@@ -1,10 +1,11 @@
 import { MapEventType, MapboxOptions } from 'mapbox-gl';
 import { PropsWithChildren } from 'react';
-import { Handlers } from '../../utils/utils';
+import { BuildHandlers } from '../../utils/utils';
 
-type MapOnHandlers = Handlers<MapEventType, 'on'>;
-type MapOnceHandlers = Handlers<MapEventType, 'once'>;
+type MapOnHandlers = BuildHandlers<MapEventType, 'on'>;
+type MapOnceHandlers = BuildHandlers<MapEventType, 'once'>;
 
+// ! REMOVE onviewport
 type MapViewportHandlers = Partial<
   Record<'onviewport' | 'onceviewport', MapOnHandlers['onzoom']>
 >;

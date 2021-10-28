@@ -1,10 +1,10 @@
 import { AnyLayer, MapLayerEventType } from 'mapbox-gl';
 import { StandardLonghandProperties } from 'csstype';
 import { PropsWithChildren } from 'react';
-import { Handlers, DistributiveOmit } from '../../utils/utils';
+import { BuildHandlers, DistributiveOmit } from '../../utils/utils';
 
-type LayerOnHandlers = Handlers<MapLayerEventType, 'on'>;
-type LayerOnceHandlers = Handlers<MapLayerEventType, 'once'>;
+type LayerOnHandlers = BuildHandlers<MapLayerEventType, 'on'>;
+type LayerOnceHandlers = BuildHandlers<MapLayerEventType, 'once'>;
 
 type LayerProps = {
   id?: string;

@@ -6,7 +6,7 @@ import {
 
 import { NormalizeProps } from '../../utils/utils';
 
-type TerrainProps = TerrainSpecification;
+type TerrainProps = Partial<TerrainSpecification>;
 export function Terrain(props: TerrainProps): JSX.Element;
 
 type FogProps = NormalizeProps<MapboxFog>;

@@ -14,7 +14,7 @@ export function Image({ id, image, options }) {
     map.addImage(id, image, options);
   };
   const render = () => map.loadImage(image, callback);
-  const remove = () => map.removeImage(id);
+  const remove = alive => alive && map.removeImage(id);
 
   const dependencies = [id, image, JSON.stringify(options)];
   useLifeCycle({ render, remove }, dependencies);

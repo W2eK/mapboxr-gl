@@ -22,11 +22,11 @@ export function Listener({ type, event, handler, layer }) {
 
   useEffect(() => {
     if (!instance) return;
-    /* STATUS: */ l`adding`;
+    /* STATUS: */ l`render`;
     const props = [event, layer || handler, layer ? handler : undefined];
     instance[type](...props);
     return () => {
-      /* STATUS: */ l`removing`;
+      /* STATUS: */ l`remove`;
       instance.off(...props);
     };
   }, [map, instance, handler, type, event, layer]);

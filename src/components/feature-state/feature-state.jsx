@@ -33,10 +33,11 @@ export function FeatureState({
     prev.current = state;
   };
 
-  const remove = prev => {
-    Object.keys(prev.current).forEach(id =>
-      map.removeFeatureState({ id, source, sourceLayer })
-    );
+  const remove = (prev, alive) => {
+    alive &&
+      Object.keys(prev.current).forEach(id =>
+        map.removeFeatureState({ id, source, sourceLayer })
+      );
   };
 
   const dependencies = [source, sourceLayer, JSON.stringify(state)];

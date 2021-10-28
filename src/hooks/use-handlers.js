@@ -14,7 +14,7 @@ export const useHandlers = ({ handlers, props }) => {
       rest[key] = value;
       return rest;
     } else if (!stringEqual(value, prev.current[key])) {
-      l`updating ${key}`;
+      l`update ${key}`;
       handlers[key](value, prev.current[key]);
     }
     return rest;

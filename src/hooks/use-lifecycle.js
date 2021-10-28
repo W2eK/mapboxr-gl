@@ -27,13 +27,13 @@ export function useLifeCycle(
 
   const buildInit = callback => () => {
     if (!loaded) return;
-    /* STATUS: */ l`initializing`;
+    /* STATUS: */ l`init`;
     callback();
   };
 
   const buildRender = callback => () => {
     if (!loaded) return;
-    /* STATUS: */ l`adding`;
+    /* STATUS: */ l`render`;
     const remove = callback();
     if (typeof remove === 'function') return buildRemove(remove)();
   };
@@ -41,13 +41,13 @@ export function useLifeCycle(
   const buildRemove = callback => () => () => {
     if (!loaded) return;
     const alive = parent.alive && parent.map.alive;
-    /* STATUS: */ l`${alive ? 'removing' : 'deleted'}`;
-    alive && callback();
+    /* STATUS: */ l`${alive ? 'remove' : 'deleted'}`;
+    callback(alive);
   };
 
   const buildClean = callback => () => () => {
     const alive = parent.alive && parent.map.alive;
-    /* STATUS: */ l`cleaning`;
+    /* STATUS: */ l`clean`;
     callback(alive);
   };
 
@@ -80,9 +80,9 @@ export function useLifeCycleWithStatus(callbacks, dependencies) {
     return callbacks.render();
   };
 
-  const remove = () => {
+  const remove = alive => {
     status.current.alive = false;
-    callbacks.remove?.();
+    callbacks.remove?.(alive);
   };
   const clean = alive => {
     status.current.alive = false;
@@ -107,7 +107,7 @@ export function useLifeCycleWithCache(callbacks, renderDependencies) {
   const cache = useRef(null);
   const init = () => (cache.current = callbacks.init?.());
   const render = () => callbacks.render?.(cache.current);
-  const remove = () => callbacks.remove?.(cache.current);
+  const remove = alive => callbacks.remove?.(cache.current, alive);
   const clean = () => {
     callbacks.clean?.(cache.current);
     cache.current = null;

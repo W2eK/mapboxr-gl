@@ -43,9 +43,7 @@ function Marker({ children, listeners, ...props }) {
     setMarker(marker);
     showPopup && setTimeout(() => marker.togglePopup());
 
-    return () => {
-      marker.remove();
-    };
+    return alive => alive && marker.remove();
   };
 
   const handlers = {

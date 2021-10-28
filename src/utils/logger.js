@@ -1,15 +1,15 @@
 import { isDev } from './is-dev';
 
 const COLORS = {
-  adding: '#49c72a',
-  initializing: '#49c72a',
-  redrawing: '#2196f3',
-  restoring: '#2196f3',
-  updating: '#df9e13',
-  removing: '#df2113',
-  cleaning: '#df2113',
-  deleted: '#82140c',
-  rendering: '#d4d4d4'
+  init: '#00BCD4',
+  render: '#4CAF50',
+  redraw: '#CDDC39',
+  restore: '#CDDC39',
+  update: '#FF9800',
+  remove: '#F44336',
+  clean: '#E91E63',
+  deleted: '#B71C1C',
+  touched: '#d4d4d4'
 };
 
 export const concatMessage = args => {
@@ -38,7 +38,7 @@ export const buildLogger = (component, ...name) => {
   logger.current = (...args) => {
     let [status, ...rest] = concatMessage(args).split(' ');
     name = name + rest.map(adjustText).join('\t');
-    const color = status === 'rendering' ? `color: ${COLORS[status]};` : '';
+    const color = status === 'touched' ? `color: ${COLORS[status]};` : '';
     const styles = [
       `font-weight: bold;` + color,
       `font-weight: normal; color: ${COLORS[status]}`,
@@ -49,7 +49,7 @@ export const buildLogger = (component, ...name) => {
     // console.trace(component);
     // console.groupEnd();
   };
-  logger.current`rendering`;
+  logger.current`touched`;
   return logger.current;
 };
 
