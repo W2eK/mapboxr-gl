@@ -5,8 +5,8 @@ import {
   useHandlers,
   useLifeCycleWithStatus,
   useParent,
-  ParentProvider,
-  useAssert
+  ParentProvider
+  // useAssert
 } from '../../hooks';
 import { withListeners } from '../../hoc';
 import { buildLogger, dependenciesBuilder } from '../../utils';
@@ -59,26 +59,28 @@ function Layer({
     maxzoom: value => map.setLayerZoomRange(id, null, value),
     filter: value => map.setFilter(id, value),
     beforeId: value => {
-      cache.register(id, value);
-      map.moveLayer(id, value);
+      const predecessors = cache.register(id, beforeId);
+      const position = cache.position(id);
+      map.moveLayer(id, position);
+      predecessors.forEach(name => map.moveLayer(name, id));
     }
   };
   const rest = useHandlers({ handlers, props: { ...props, beforeId } });
 
   const init = () => {
-    if (type === 'replace_master') {
-      cache.register(id, beforeId || master);
-      if (cache.alive(master)) {
-        map.removeLayer(master);
-        cache.kill(master);
-      }
-    } else {
-      cache.register(id, beforeId);
-    }
+    // if (type === 'replace_master') {
+    //   cache.register(id, beforeId || master);
+    //   if (cache.alive(master)) {
+    //     map.removeLayer(master);
+    //     cache.kill(master);
+    //   }
+    // } else {
+    //   cache.register(id, beforeId);
+    // }
   };
   const render = () => {
-    cache.register(id, beforeId);
-    const position = cache.before(id, true);
+    const predecessors = cache.register(id, beforeId);
+    const position = cache.position(id);
     if (type === 'new_layer') {
       map.addLayer({ source: injected, ...props, id }, position);
     } else {
@@ -90,6 +92,7 @@ function Layer({
       if (injected) style.source = injected;
       map.addLayer(style, position);
     }
+    predecessors.forEach(name => map.moveLayer(name, id));
   };
   const remove = alive => {
     alive && map.removeLayer(id);
@@ -110,7 +113,7 @@ function Layer({
     { render, init, remove, clean },
     dependencies
   );
-  useAssert({ id, hasMaster: !!master, replaceMaster, restoreMaster });
+  // useAssert({ id, hasMaster: !!master, replaceMaster, restoreMaster });
   return (
     status.alive && (
       <ParentProvider value={{ injected: id, parent: status }}>

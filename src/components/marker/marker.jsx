@@ -29,7 +29,9 @@ function Marker({ children, listeners, ...props }) {
   const container = useRef(null);
   buildLogger('marker');
 
-  const hasChildren = !!children && children?.some?.(Boolean);
+  const hasChildren = Array.isArray(children)
+    ? children?.some?.(Boolean)
+    : !!children;
   const render = () => {
     container.current = hasChildren ? document.createElement('div') : null;
     const marker = new mapboxgl.Marker({

@@ -5,7 +5,7 @@ const initialState = {
     open: true,
     props: {
       accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
-      mapStyle: 'mapbox://styles/mapbox/light-v10',
+      mapStyle: 'mapbox://styles/w2ek/ckvdvwd231g5914pferix31ps', // 'mapbox://styles/mapbox/light-v10',
       minZoom: 3,
       antialias: true,
       zoom: 4,

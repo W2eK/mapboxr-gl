@@ -1,4 +1,3 @@
-/// <reference types="react-scripts" />
 
 export { MapboxrGL as default } from './components/map/map';
 export * from './components/ambient';

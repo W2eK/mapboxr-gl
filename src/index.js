@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { MapboxrGL } from './components/map';
 import { ErrorBoundary } from './components/error';

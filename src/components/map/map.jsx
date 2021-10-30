@@ -68,7 +68,10 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     setMap(map);
     map.once('styledata', () => {
       const cache = state.current.cache;
-      map.getStyle().layers.forEach(layer => cache.create(layer));
+      map.getStyle().layers.forEach(layer => {
+        const node = cache.create(layer);
+        cache.list.add(node);
+      });
       if (isDev()) window.cache = cache;
       setLoaded(true);
     });
