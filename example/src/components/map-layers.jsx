@@ -31,9 +31,20 @@ function MapLayers() {
       <Layer key="rect-green" id="rect-green" type="fill" paint={{'fill-color': 'green', 'fill-translate': [30, 30]}} />
       <Layer id="rect-red" type="fill" paint={{'fill-color': 'red', 'fill-translate': [10, 10]}} /> */}
       <Layer
+        id="rect-purple"
+        type="fill"
+        paint={{ 'fill-color': 'purple', 'fill-translate': [-30, -30] }}
+        beforeId="rect-green"
+      />
+      <Layer
         id="rect-green"
         type="fill"
         paint={{ 'fill-color': 'green', 'fill-translate': [0, 0] }}
+      />
+      <Layer
+        id="rect-tan"
+        type="fill"
+        paint={{ 'fill-color': 'tan', 'fill-translate': [15, 15] }}
         beforeId="rect-red"
       />
       <Layer

@@ -18,8 +18,8 @@ export function FeatureState({
   getChanges = defaultGetChanges
 }) {
   const { map } = useMap();
-  const { injected: injectedSourceName } = useParent();
-  const source = injectedSourceName || receivedSourceName;
+  const { source: injectedSourceName } = useParent();
+  const source = receivedSourceName || injectedSourceName;
   buildLogger('state', source);
 
   const init = () => ({ current: {} });

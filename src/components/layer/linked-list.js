@@ -13,8 +13,8 @@ class LayerNode {
     this.registered = false;
     this.data = data;
     this.master = !!data;
-    /** @type {LayerNode[]} */
-    this.predecessors = [];
+    /** @type {LayerNode} */
+    this._last = null;
   }
   /** @returns {LayerNode | undefined} */
   before() {
@@ -27,6 +27,22 @@ class LayerNode {
     if (!this.next) return undefined;
     if (this.next.alive) return this.next;
     return this.next.after();
+  }
+  /** @returns {LayerNode} */
+  get last() {
+    if (!this._last) return this;
+    return this._last.last;
+  }
+  /** @returns {string[]} */
+  get predecessors() {
+    const arr = [this.name];
+    return arr;
+  }
+  /** @param {LayerNode} node */
+  set last(node) {
+    // if (this._last) node.last = this._last;
+    // this._last = node;
+    if (!this._last) this._last = node;
   }
   /**
    * @param {LayerNode | undefined} a
@@ -53,8 +69,10 @@ class LayerList {
       this.tail = node;
       return;
     }
-    if (node.predecessors.length) {
-      this.splice(node.predecessors, node, before);
+    this.splice(node.last, node, before);
+    /*
+    if (node.queue) {
+      this.splice(node.queue, node, before);
     } else if (!before) {
       this.push(node);
     } else if (!before.prev) {
@@ -62,6 +80,7 @@ class LayerList {
     } else {
       this.insert(node, before.prev, before);
     }
+    */
   }
   /** @param {LayerNode} node @param {LayerNode} prev @param {LayerNode} next */
   insert(node, prev, next) {
@@ -99,9 +118,8 @@ class LayerList {
     next.prev = null;
     this.head = next;
   }
-  /** @param {LayerNode[]} nodes @param {LayerNode} last @param {LayerNode=} before */
-  splice(nodes, last, before) {
-    const [first] = nodes;
+  /** @param {LayerNode} first @param {LayerNode} last @param {LayerNode=} before */
+  splice(first, last, before) {
     const prev = first.prev;
     const next = last.next;
     LayerNode.link(prev, next);
@@ -153,21 +171,6 @@ export class LayerCache {
     }
     this.map[name] = node;
     node.alive = alive;
-    /*
-    if (!beforeId) {
-      this.list.add(node);
-    } else {
-      const before = this.get(beforeId);
-      if (before) {
-        this.list.add(node, before);
-      } else {
-        const before = this.create(beforeId);
-        before.alive = false;
-        before.predecessors.push(node);
-        this.list.add(node, before);
-      }
-    }
-    */
     return node;
   }
   /** @param {string} name @param {boolean=} exact @returns {LayerNode | undefined} */
@@ -179,26 +182,25 @@ export class LayerCache {
   has(name, exact) {
     return !!this.get(name, exact);
   }
-  /** @param {string} name @param {string=} beforeId @returns {string[]} */
+  /** @param {string} name @param {string=} beforeId @returns {string[]}  */
   register(name, beforeId) {
     const node = this.get(name, true) || this.create(name);
     node.alive = true;
     if (beforeId && node.after()?.name === beforeId) {
-      return node.predecessors.map(({ name }) => name);
+      return node.predecessors;
     } else if (beforeId) {
+      if (node.next && node.next.last === node) node.next._last = null;
       const next = this.get(beforeId) || this.create(beforeId, false);
       if (node.registered) {
         this.list.remove(node);
       }
-      if (!next.alive) {
-        next.predecessors.push(node);
-        this.list.push(next);
-      }
+      // TODO: TODO!
+      next.last = node;
       this.list.add(node, next);
     } else if (!node.registered) {
       this.list.add(node);
     }
-    return node.predecessors.map(({ name }) => name);
+    return node.predecessors;
   }
   /** @param {string} name @param {boolean=} exact */
   alive(name, exact) {

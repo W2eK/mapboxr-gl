@@ -9,8 +9,8 @@ import { useMap } from '../context';
  */
 export function Filter({ rule, layer: receivedLayerName }) {
   const { map } = useMap();
-  const { injected: injectedLayerName } = useParent();
-  const layer = injectedLayerName || receivedLayerName;
+  const { source: injectedLayerName } = useParent();
+  const layer = receivedLayerName || injectedLayerName;
   buildLogger('filter', layer, JSON.stringify(rule));
 
   const init = () => map.getFilter(layer);

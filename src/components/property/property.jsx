@@ -10,8 +10,8 @@ import { useLifeCycleWithCache, useParent } from '../../hooks';
 export function Property({ id, type, value, layer: receivedLayerName }) {
   const { map } = useMap();
   type = `${type[0].toUpperCase()}${type.slice(1)}Property`;
-  const { injected: injectedLayerName } = useParent();
-  const layer = injectedLayerName || receivedLayerName;
+  const { layer: injectedLayerName } = useParent();
+  const layer = receivedLayerName || injectedLayerName;
   buildLogger('property', layer, id);
 
   const init = () => map[`get${type}`](layer, id);

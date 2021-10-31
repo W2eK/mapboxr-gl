@@ -8,8 +8,8 @@ import { useMap } from '../context';
  */
 export function Terrain({ ...props }) {
   const { map } = useMap();
-  const { injected } = useParent();
-  if (injected) props.source = injected;
+  const { source } = useParent();
+  if (source) props.source = source;
   buildLogger('terrain', props.source);
   const dependencies = dependenciesBuilder(2)(props);
   const render = () => map.setTerrain(props);

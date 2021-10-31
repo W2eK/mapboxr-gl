@@ -45,7 +45,7 @@ function Layer({
 
   // prettier-ignore
   const {parent: {map: { cache } },
-    injected } = useParent();
+  source: injectedSourceName } = useParent();
 
   if (props.sourceLayer !== undefined) {
     props['source-layer'] = props.sourceLayer;
@@ -62,7 +62,9 @@ function Layer({
       const predecessors = cache.register(id, beforeId);
       const position = cache.position(id);
       map.moveLayer(id, position);
-      predecessors.forEach(name => map.moveLayer(name, id));
+      predecessors
+        .slice(1)
+        .forEach((name, i) => map.moveLayer(name, predecessors[i]));
     }
   };
   const rest = useHandlers({ handlers, props: { ...props, beforeId } });
@@ -82,17 +84,19 @@ function Layer({
     const predecessors = cache.register(id, beforeId);
     const position = cache.position(id);
     if (type === 'new_layer') {
-      map.addLayer({ source: injected, ...props, id }, position);
+      map.addLayer({ source: injectedSourceName, ...props, id }, position);
     } else {
       l`redraw`;
       const cached = cache.data(master);
       const paint = { ...cached.paint, ...props.paint };
       const layout = { ...cached.layout, ...props.layout };
       const style = { ...cached, ...props, paint, layout, id };
-      if (injected) style.source = injected;
+      if (injectedSourceName) style.source = injectedSourceName;
       map.addLayer(style, position);
     }
-    predecessors.forEach(name => map.moveLayer(name, id));
+    predecessors
+      .slice(1)
+      .forEach((name, i) => map.moveLayer(name, predecessors[i]));
   };
   const remove = alive => {
     alive && map.removeLayer(id);
@@ -116,7 +120,7 @@ function Layer({
   // useAssert({ id, hasMaster: !!master, replaceMaster, restoreMaster });
   return (
     status.alive && (
-      <ParentProvider value={{ injected: id, parent: status }}>
+      <ParentProvider value={{ layer: id, parent: status }}>
         {cursor && <Cursor layer={id} cursor={cursor} />}
         {listeners.map(listener => cloneElement(listener, { layer: id }))}
         {children}

@@ -45,7 +45,7 @@ export function Source({ children, id, ...props }) {
 
   return (
     status.alive && (
-      <ParentProvider value={{ injected: id, parent: status }}>
+      <ParentProvider value={{ source: id, parent: status }}>
         {children}
       </ParentProvider>
     )

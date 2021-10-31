@@ -12,7 +12,8 @@ type ParentMap = Parent & {
 
 export function useParent(): {
   parent: Parent;
-  injected?: string;
+  source?: string;
+  layer?: string;
   instance?: Marker | Popup;
 };
 
