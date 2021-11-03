@@ -4,7 +4,7 @@ import { buildLogger } from '../../utils';
 import { useParent } from '../../hooks';
 
 /**
- * 
+ *
  * @param {import("./listener").ListenerProps} props
  * @returns {import("react").ReactElement}
  */
@@ -17,7 +17,7 @@ export function Listener({ type, event, handler, layer }) {
     layer || instance?.constructor?.name?.toLowerCase() || 'mapbox',
     event
   );
-
+  event = event === 'viewport' ? 'move' : event;
   instance = instance || map;
 
   useEffect(() => {

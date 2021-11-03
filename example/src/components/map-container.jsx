@@ -60,6 +60,7 @@ const MapContainer = () => {
         {...parseAttributes(mapbox.props)}
         wrapper={{ style: { height: '100vh' } }}
         oncemousemove={originalConsoleLog}
+        // onviewport={originalConsoleLog}
       >
         <MapLayers />
         {image.checked && <Image {...parseAttributes(image.props)} />}

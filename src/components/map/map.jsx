@@ -37,7 +37,17 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
     mapStyle: value => map.setStyle(value),
     maxBounds: value => map.setMaxBounds(value),
     renderWorldCopies: value => map.setRenderWorldCopies(value),
-    // TODO: add camera properties
+
+    // Camera properties
+    center: value => map.setCenter(value),
+    zoom: value => map.setZoom(value),
+    bearing: value => map.setBearing(value),
+    pitch: value => map.setPitch(value),
+    padding: (padding = {}) => {
+      const { top = 0, bottom = 0, left = 0, right = 0 } = padding;
+      map.setPadding({ top, bottom, left, right });
+    },
+
     // User interaction handlers
     boxZoom: buildSwitcher(map?.boxZoom),
     doubleClickZoom: buildSwitcher(map?.doubleClickZoom),

@@ -1,3 +1,4 @@
+import { MapboxEvent } from 'mapbox-gl';
 import React from 'react';
 import { Listener } from '../components/listener';
 import { withDisplayName } from './with-name';
@@ -15,6 +16,20 @@ const EVENTS = new Set([
   'styleimagemissing', 'load', 'open', 'close'
 ]);
 
+/**
+ * @param {import("../components/map/map").ViewportHandler} handler
+ * @return {import("../components/map/map").MapOnHandlers['onmove']}
+ */
+const buildViewportHandler = handler => {
+  return ({ target: map }) => {
+    const center = map.getCenter().toArray();
+    const zoom = map.getZoom();
+    const bearing = map.getBearing();
+    const pitch = map.getPitch();
+    handler({ center, zoom, bearing, pitch, map });
+  };
+};
+
 export function withListeners(WrappedComponent) {
   function WrappedWithListeners(props = {}) {
     const injectedProps = Object.entries(props).reduce(
@@ -28,8 +43,11 @@ export function withListeners(WrappedComponent) {
           );
         } else if (event === 'viewport') {
           obj.listeners.push(
-            ...value.map(handler => ({ type, event: 'zoom', handler })),
-            ...value.map(handler => ({ type, event: 'move', handler }))
+            ...value.map(handler => ({
+              type,
+              event: 'viewport',
+              handler: buildViewportHandler(handler)
+            }))
           );
         } else {
           obj[key] = value;
