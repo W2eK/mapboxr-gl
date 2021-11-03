@@ -47,6 +47,13 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
       const { top = 0, bottom = 0, left = 0, right = 0 } = padding;
       map.setPadding({ top, bottom, left, right });
     },
+    
+    // Debug features
+    showCollisionBoxes: value => (map.showCollisionBoxes = value),
+    showOverdrawInspector: value => (map.showOverdrawInspector = value),
+    showPadding: value => (map.showPadding = value),
+    showTerrainWireframe: value => (map.showTerrainWireframe = value),
+    showTileBoundaries: value => (map.showTileBoundaries = value),
 
     // User interaction handlers
     boxZoom: buildSwitcher(map?.boxZoom),
