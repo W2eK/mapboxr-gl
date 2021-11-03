@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { useMap } from '../context';
 import { isDev, buildLogger, dependenciesBuilder } from '../../utils';
 import {
+  buildHandlers,
   ParentProvider,
   useHandlers,
   useLifeCycleWithStatus,
@@ -44,29 +45,34 @@ function Popup({ children, listeners, ...props }) {
     return alive => alive && popup.remove();
   };
 
-  const handlers = {
-    offset: value => popup.setMaxWidth(value),
-    maxWidth: value => popup.setMaxWidth(value),
-    coordinates: value => trackPointer || popup.setLngLat(value),
-    trackPointer: value =>
-      value ? popup.trackPointer() : popup.setLngLat(coordinates),
+  const handlers = buildHandlers({
+    offset: 'setOffset',
+    maxWidth: 'setMaxWidth',
+    coordinates(value) {
+      trackPointer || this.setLngLat(value);
+    },
+    trackPointer(value) {
+      value ? this.trackPointer() : this.setLngLat(coordinates);
+    },
+    /*
     className: (next, prev = '') => {
       next = next.trim().split(' ');
       prev = prev.trim().split(' ');
       next
         .filter(name => !prev.includes(name))
-        .forEach(name => popup.addClassName(name));
+        .forEach(name => this.addClassName(name));
       prev
         .filter(name => !next.includes(name))
-        .forEach(name => popup.addClassName(name));
+        .forEach(name => this.addClassName(name));
     },
-    anchor: next => {
-      popup.options.anchor = next;
-      popup._update();
+    */
+    anchor(next) {
+      this.options.anchor = next;
+      this._update();
     }
-  };
+  });
 
-  const rest = useHandlers({ handlers, props });
+  const rest = useHandlers({ handlers, props, context: popup });
 
   const dependencies = getDependencies(rest);
   const status = useLifeCycleWithStatus({ render }, dependencies);

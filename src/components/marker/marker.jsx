@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { useMap } from '../context';
 import { withListeners } from '../../hoc';
 import {
+  buildHandlers,
   ParentProvider,
   useHandlers,
   useLifeCycleWithStatus
@@ -15,6 +16,22 @@ const getDependencies = (() => {
   const NUMBER_OF_HANDLERS = 8;
   return dependenciesBuilder(NUMBER_OF_PROPS - NUMBER_OF_HANDLERS);
 })();
+
+const handlers = buildHandlers({
+  coordinates: 'setLngLat',
+  offset: 'setOffset',
+  draggable: 'setDraggable',
+  rotation: 'setRotation',
+  rotationAlignment: 'setRotationAlignment',
+  pitchAlignment: 'setPitchAlignment',
+  showPopup() {
+    window.requestAnimationFrame(() => this?.togglePopup());
+  },
+  anchor(value) {
+    this._anchor = value;
+    this._update();
+  }
+});
 
 /**
  *
@@ -48,20 +65,7 @@ function Marker({ children, listeners, ...props }) {
     return alive => alive && marker.remove();
   };
 
-  const handlers = {
-    coordinates: value => marker.setLngLat(value),
-    offset: value => marker.setOffset(value),
-    draggable: value => marker.setDraggable(value),
-    rotation: value => marker.setRotation(value),
-    rotationAlignment: value => marker.setRotationAlignment(value),
-    pitchAlignment: value => marker.setPitchAlignment(value),
-    showPopup: () => window.requestAnimationFrame(() => marker?.togglePopup()),
-    anchor: value => {
-      marker._anchor = value;
-      marker._update();
-    }
-  };
-  const rest = useHandlers({ handlers, props });
+  const rest = useHandlers({ handlers, props, context: marker });
   const dependencies = getDependencies(rest, hasChildren);
   const status = useLifeCycleWithStatus({ render }, dependencies);
 

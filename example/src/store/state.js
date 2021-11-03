@@ -24,7 +24,7 @@ const initialState = {
   },
   marker: {
     name: 'Marker',
-    checked: false,
+    checked: true,
     open: false,
     props: {
       coordinates: [10, 10],
@@ -38,12 +38,12 @@ const initialState = {
   },
   content: {
     name: 'Marker Content',
-    checked: false,
+    checked: true,
     props: {}
   },
   popup: {
     name: 'Popup',
-    checked: false,
+    checked: true,
     props: {
       anchor: 'bottom',
       trackPointer: false,
@@ -55,7 +55,7 @@ const initialState = {
   },
   source: {
     name: 'Source',
-    checked: false,
+    checked: true,
     props: {
       id: 'dots',
       type: 'geojson',
@@ -113,7 +113,7 @@ const initialState = {
   },
   layer: {
     name: 'Layer',
-    checked: false,
+    checked: true,
     open: false,
     props: {
       id: 'dots-circle',

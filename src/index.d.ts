@@ -1,6 +1,7 @@
 
 export { MapboxrGL as default } from './components/map/map';
 export * from './components/ambient';
+// export * from './components/camera';
 export * from './components/context';
 export * from './components/filter';
 export * from './components/feature-state';

@@ -3,6 +3,7 @@ import React from 'react';
 import { MapboxrGL } from './components/map';
 import { ErrorBoundary } from './components/error';
 export * from './components/ambient';
+// export * from './components/camera';
 export * from './components/context';
 export * from './components/filter';
 export * from './components/feature-state';

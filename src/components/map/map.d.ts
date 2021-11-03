@@ -17,13 +17,13 @@ type MapViewportHandlers = Partial<
   Record<'onviewport' | 'onceviewport', ViewportHandler>
 >;
 
-type DebugFeatures = {
+type DebugFeatures = Partial<{
   showCollisionBoxes: boolean;
   showOverdrawInspector: boolean;
   showPadding: boolean;
   showTerrainWireframe: boolean;
   showTileBoundaries: boolean;
-};
+}>;
 
 type MapboxrGLProps = Omit<MapboxOptions, 'container' | 'style'> &
   MapOnHandlers &
@@ -32,7 +32,7 @@ type MapboxrGLProps = Omit<MapboxOptions, 'container' | 'style'> &
   DebugFeatures & {
     wrapper?: React.HTMLAttributes<HTMLDivElement>;
     mapStyle?: MapboxOptions['style'];
-    padding: Partial<PaddingOptions>;
+    padding?: Partial<PaddingOptions>;
     // strict?: boolean; // TODO: strict mode
   };
 

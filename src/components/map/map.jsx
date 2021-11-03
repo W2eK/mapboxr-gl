@@ -2,15 +2,25 @@ import React, { useRef, useState, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { MapProvider } from '../context';
 import { withListeners } from '../../hoc';
-import { buildSwitcher, ParentProvider, useHandlers } from '../../hooks';
+import { ParentProvider, useHandlers } from '../../hooks';
 import { buildLogger, dependenciesBuilder, isDev } from '../../utils';
 import { LayerCache } from '../layer/linked-list';
+import { handlers } from './handlers';
 
 const getDependencies = (() => {
   const NUMBER_OF_PROPS = 45;
   const NUMBER_OF_HANDLERS = 15;
   return dependenciesBuilder(NUMBER_OF_PROPS - NUMBER_OF_HANDLERS);
 })();
+
+const customProps = [
+  'padding',
+  'showCollisionBoxes',
+  'showOverdrawInspector',
+  'showPadding',
+  'showTerrainWireframe',
+  'showTileBoundaries'
+];
 
 /**
  * @param {import("./map").MapboxrGLProps} props
@@ -20,7 +30,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
   // TODO: add strict
   // getDependencies.strict = props.strict;
   // TODO: Add PropTypes
-  // TODO: Debugging options (showCollisionBoxes)
+  // TODO: Free camera
   const container = useRef(null);
   const [map, setMap] = useState(null);
   const [loaded, setLoaded] = useState(false);
@@ -28,45 +38,7 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
 
   const l = buildLogger('mapbox');
 
-  const handlers = {
-    // Properties
-    minZoom: value => map.setMinZoom(value),
-    maxZoom: value => map.setMaxZoom(value),
-    minPitch: value => map.setMinPitch(value),
-    maxPitch: value => map.setMaxPitch(value),
-    mapStyle: value => map.setStyle(value),
-    maxBounds: value => map.setMaxBounds(value),
-    renderWorldCopies: value => map.setRenderWorldCopies(value),
-
-    // Camera properties
-    center: value => map.setCenter(value),
-    zoom: value => map.setZoom(value),
-    bearing: value => map.setBearing(value),
-    pitch: value => map.setPitch(value),
-    padding: (padding = {}) => {
-      const { top = 0, bottom = 0, left = 0, right = 0 } = padding;
-      map.setPadding({ top, bottom, left, right });
-    },
-    
-    // Debug features
-    showCollisionBoxes: value => (map.showCollisionBoxes = value),
-    showOverdrawInspector: value => (map.showOverdrawInspector = value),
-    showPadding: value => (map.showPadding = value),
-    showTerrainWireframe: value => (map.showTerrainWireframe = value),
-    showTileBoundaries: value => (map.showTileBoundaries = value),
-
-    // User interaction handlers
-    boxZoom: buildSwitcher(map?.boxZoom),
-    doubleClickZoom: buildSwitcher(map?.doubleClickZoom),
-    dragPan: buildSwitcher(map?.dragPan),
-    dragRotate: buildSwitcher(map?.dragRotate),
-    keyboard: buildSwitcher(map?.keyboard),
-    scrollZoom: buildSwitcher(map?.scrollZoom),
-    touchPitch: buildSwitcher(map?.touchPitch),
-    touchZoomRotate: buildSwitcher(map?.touchZoomRotate)
-  };
-
-  const rest = useHandlers({ props, handlers });
+  const rest = useHandlers({ props, handlers, context: map });
   // props.
   useEffect(() => {
     /* STATUS: */ l`render`;
@@ -90,6 +62,10 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
         cache.list.add(node);
       });
       if (isDev()) window.cache = cache;
+      customProps.forEach(
+        key => key in props && handlers[key].call(map, props[key])
+      );
+
       setLoaded(true);
     });
     // map.on('error', () => {});

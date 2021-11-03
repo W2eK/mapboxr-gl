@@ -55,11 +55,11 @@ function Layer({
   const l = buildLogger('layer', id, type);
 
   const handlers = {
-    minzoom: value => map.setLayerZoomRange(id, value),
-    maxzoom: value => map.setLayerZoomRange(id, null, value),
+    minzoom: (value = 0) => map.setLayerZoomRange(id, value),
+    maxzoom: (value = 24) => map.setLayerZoomRange(id, null, value),
     filter: value => map.setFilter(id, value),
     beforeId: value => {
-      const predecessors = cache.register(id, beforeId);
+      const predecessors = cache.register(id, value);
       const position = cache.position(id);
       map.moveLayer(id, position);
       predecessors

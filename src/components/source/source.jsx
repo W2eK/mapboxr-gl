@@ -6,7 +6,8 @@ import {
   useId,
   useHandlers,
   useLifeCycleWithStatus,
-  ParentProvider
+  ParentProvider,
+  buildHandlers
 } from '../../hooks';
 
 const getDependencies = (() => {
@@ -14,6 +15,12 @@ const getDependencies = (() => {
   const NUMBER_OF_HANDLERS = 2;
   return dependenciesBuilder(NUMBER_OF_PROPS - NUMBER_OF_HANDLERS);
 })();
+
+const handlers = buildHandlers({
+  data: 'setData',
+  tiles: 'setTiles'
+  // TODO: add other handlers
+});
 
 /**
  *
@@ -33,12 +40,8 @@ export function Source({ children, id, ...props }) {
       map.removeSource(id);
     }
   };
-  const handlers = {
-    data: value => map.getSource(id).setData(value),
-    tiles: value => map.getSource(id).setTiles(value)
-    // TODO: add other handlers
-  };
-  const rest = useHandlers({ handlers, props });
+
+  const rest = useHandlers({ handlers, props, context: map.getSource(id) });
   const dependencies = getDependencies(rest, id);
 
   const status = useLifeCycleWithStatus({ render, remove }, dependencies);

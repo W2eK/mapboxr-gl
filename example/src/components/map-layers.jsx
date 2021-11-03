@@ -35,8 +35,9 @@ function MapLayers() {
         type="fill"
         paint={{ 'fill-color': 'purple', 'fill-translate': [-30, -30] }}
         beforeId="rect-green"
+        // maxzoom={4}
       />
-      <Layer
+      {/* <Layer
         id="rect-green"
         type="fill"
         paint={{ 'fill-color': 'green', 'fill-translate': [0, 0] }}
@@ -67,7 +68,7 @@ function MapLayers() {
         type="fill"
         paint={{ 'fill-color': 'yellow', 'fill-translate': [90, 90] }}
         beforeId="rect-green"
-      />
+      /> */}
     </Source>
   );
 }
