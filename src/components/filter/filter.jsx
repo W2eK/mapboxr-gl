@@ -9,7 +9,7 @@ import { useMap } from '../context';
  */
 export function Filter({ rule, layer: receivedLayerName }) {
   const { map } = useMap();
-  const { source: injectedLayerName } = useParent();
+  const { layer: injectedLayerName } = useParent();
   const layer = receivedLayerName || injectedLayerName;
   buildLogger('filter', layer, JSON.stringify(rule));
 

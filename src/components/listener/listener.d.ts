@@ -1,9 +1,18 @@
-import { MapEventType, MapLayerEventType, MapboxEvent } from 'mapbox-gl';
+import { MapEventType, MapLayerEventType, MapboxEvent, Map } from 'mapbox-gl';
 
 type Handler<T extends MapboxEvent<any>> = (event: T) => void | any;
 
+type ImageMissingHandler = (event: {
+  id: string;
+  type: 'styleimagemissing';
+  target: Map;
+  style: Record<string, any>;
+}) => void | any;
+
 export type MapHandlers = {
   [P in keyof MapEventType]: Handler<MapEventType[P]>;
+} & {
+  styleimagemissing: ImageMissingHandler;
 };
 
 export type LayerHandlers = {

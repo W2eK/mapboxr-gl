@@ -70,15 +70,13 @@ function Layer({
   const rest = useHandlers({ handlers, props: { ...props, beforeId } });
 
   const init = () => {
-    // if (type === 'replace_master') {
-    //   cache.register(id, beforeId || master);
-    //   if (cache.alive(master)) {
-    //     map.removeLayer(master);
-    //     cache.kill(master);
-    //   }
-    // } else {
-    //   cache.register(id, beforeId);
-    // }
+    if (type === 'replace_master') {
+      cache.register(id, beforeId || master);
+      if (cache.alive(master)) {
+        map.removeLayer(master);
+        cache.kill(master);
+      }
+    }
   };
   const render = () => {
     const predecessors = cache.register(id, beforeId);

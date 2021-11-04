@@ -129,7 +129,7 @@ const initialState = {
     checked: false,
     open: false,
     props: {
-      id: 'circle-color',
+      name: 'circle-color',
       type: 'paint',
       value: [
         'case',

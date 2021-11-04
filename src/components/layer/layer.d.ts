@@ -14,6 +14,7 @@ type LayerProps = {
   restoreMaster?: boolean;
   cursor?: boolean | StandardLonghandProperties['cursor'];
   sourceLayer?: string;
+  type?: string;
 } & DistributiveOmit<AnyLayer, 'source-layer' | 'id'> &
   LayerOnHandlers &
   LayerOnceHandlers;

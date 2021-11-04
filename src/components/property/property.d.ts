@@ -2,7 +2,7 @@ import { AnyLayout, AnyPaint } from 'mapbox-gl';
 import { UnionToIntersection, ValueOf } from '../../utils/utils';
 
 type BuildPropertyType<T extends 'layout' | 'paint', U> = {
-  [P in keyof U]: { type: T; id: P; value: U[P] };
+  [P in keyof U]: { type: T; name: P; value: U[P] };
 };
 
 type PaintProperties = ValueOf<

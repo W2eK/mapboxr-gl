@@ -2,8 +2,16 @@ import { useLifeCycleWithCache, useParent } from '../../hooks';
 import { buildLogger } from '../../utils';
 import { useMap } from '../context';
 
-const defaultGetChanges = (prev, state) => {
+const objectComparator = (prev = {}, state) => {
   return Object.entries(state).filter(([key, value]) => prev[key] !== value);
+};
+
+const primitiveComparator = (prev, next) => {
+  if (prev === next) return [];
+  const result = [];
+  if (prev !== null) result.push([prev, { active: false }]);
+  if (next !== null) result.push([next, { active: true }]);
+  return result;
 };
 
 /**
@@ -15,7 +23,9 @@ export function FeatureState({
   state,
   source: receivedSourceName,
   sourceLayer = '',
-  getChanges = defaultGetChanges
+  compareState = state instanceof Object
+    ? objectComparator
+    : primitiveComparator
 }) {
   const { map } = useMap();
   const { source: injectedSourceName } = useParent();
@@ -25,7 +35,7 @@ export function FeatureState({
   const init = () => ({ current: {} });
 
   const render = prev => {
-    const changes = getChanges(prev?.current || {}, state);
+    const changes = compareState(prev?.current, state);
     if (!changes.length) return;
     changes.forEach(([id, state]) =>
       map.setFeatureState({ id, source, sourceLayer }, state)
@@ -34,10 +44,13 @@ export function FeatureState({
   };
 
   const remove = (prev, alive) => {
-    alive &&
-      Object.keys(prev.current).forEach(id =>
-        map.removeFeatureState({ id, source, sourceLayer })
-      );
+    if (alive) {
+      const keys =
+        typeof prev.current === 'object'
+          ? Object.keys(prev.current)
+          : [prev.current];
+      keys.forEach(id => map.removeFeatureState({ id, source, sourceLayer }));
+    }
   };
 
   const dependencies = [source, sourceLayer, JSON.stringify(state)];
