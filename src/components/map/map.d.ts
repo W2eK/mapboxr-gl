@@ -1,6 +1,6 @@
 import { Map, MapEventType, MapboxOptions, PaddingOptions } from 'mapbox-gl';
 import { PropsWithChildren } from 'react';
-import { BuildHandlers } from '../../utils/utils';
+import { BuildHandlers, EqualityCheck } from '../../utils/utils';
 
 type MapOnHandlers = BuildHandlers<MapEventType, 'on'>;
 type MapOnceHandlers = BuildHandlers<MapEventType, 'once'>;
@@ -26,6 +26,7 @@ type DebugFeatures = Partial<{
 }>;
 
 type MapboxrGLProps = Omit<MapboxOptions, 'container' | 'style'> &
+  EqualityCheck &
   MapOnHandlers &
   MapOnceHandlers &
   MapViewportHandlers &

@@ -38,7 +38,7 @@ const handlers = buildHandlers({
  * @param {import("./marker").MarkerProps} props
  * @returns {import("react").ReactElement}
  */
-function Marker({ children, listeners, ...props }) {
+function Marker({ children, listeners, strict, ...props }) {
   // TODO: Make controlled component
   const { coordinates, showPopup } = props;
   const { map } = useMap();
@@ -65,9 +65,9 @@ function Marker({ children, listeners, ...props }) {
     return alive => alive && marker.remove();
   };
 
-  const rest = useHandlers({ handlers, props, context: marker });
+  const rest = useHandlers({ handlers, props, context: marker, strict });
   const dependencies = getDependencies(rest, hasChildren);
-  const status = useLifeCycleWithStatus({ render }, dependencies);
+  const status = useLifeCycleWithStatus({ render, strict }, dependencies);
 
   return (
     status.alive && (

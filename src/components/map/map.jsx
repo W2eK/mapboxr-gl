@@ -6,6 +6,7 @@ import { ParentProvider, useHandlers } from '../../hooks';
 import { buildLogger, dependenciesBuilder, isDev } from '../../utils';
 import { LayerCache } from '../layer/linked-list';
 import { handlers } from './handlers';
+import { useDeepEffect } from '../../hooks/use-deep';
 
 const getDependencies = (() => {
   const NUMBER_OF_PROPS = 45;
@@ -26,9 +27,7 @@ const customProps = [
  * @param {import("./map").MapboxrGLProps} props
  * @returns {import("react").ReactElement}
  */
-function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
-  // TODO: add strict
-  // getDependencies.strict = props.strict;
+function MapboxrGL({ children = null, wrapper, strict, listeners, ...props }) {
   // TODO: Add PropTypes
   // TODO: Free camera
   const container = useRef(null);
@@ -38,50 +37,53 @@ function MapboxrGL({ children = null, wrapper, listeners, ...props }) {
 
   const l = buildLogger('mapbox');
 
-  const rest = useHandlers({ props, handlers, context: map });
-  // props.
-  useEffect(() => {
-    /* STATUS: */ l`render`;
+  const rest = useHandlers({ props, handlers, context: map, strict });
 
-    const map = new mapboxgl.Map({
-      container: container.current,
-      style: props.mapStyle || 'mapbox://styles/mapbox/streets-v11',
-      ...props
-    });
-    if (isDev()) window.map = map;
-    state.current = {
-      alive: true,
-      cache: new LayerCache()
-    };
-    state.current.map = state.current;
-    setMap(map);
-    map.once('styledata', () => {
-      const cache = state.current.cache;
-      map.getStyle().layers.forEach(layer => {
-        const node = cache.create(layer);
-        cache.list.add(node);
+  useDeepEffect(
+    () => {
+      /* STATUS: */ l`render`;
+      const map = new mapboxgl.Map({
+        container: container.current,
+        style: props.mapStyle || 'mapbox://styles/mapbox/streets-v11',
+        ...props
       });
-      if (isDev()) window.cache = cache;
-      customProps.forEach(
-        key => key in props && handlers[key].call(map, props[key])
-      );
+      if (isDev()) window.map = map;
+      state.current = {
+        alive: true,
+        cache: new LayerCache()
+      };
+      state.current.map = state.current;
+      setMap(map);
+      map.once('styledata', () => {
+        const cache = state.current.cache;
+        map.getStyle().layers.forEach(layer => {
+          const node = cache.create(layer);
+          cache.list.add(node);
+        });
+        if (isDev()) window.cache = cache;
+        customProps.forEach(
+          key => key in props && handlers[key].call(map, props[key])
+        );
 
-      setLoaded(true);
-    });
-    // map.on('error', () => {});
+        setLoaded(true);
+      });
+      // map.on('error', () => {});
 
-    // TODO: should to keep?
-    // window.requestAnimationFrame(() => map.fire('move'));
+      // TODO: should to keep?
+      // window.requestAnimationFrame(() => map.fire('move'));
 
-    return () => {
-      /* STATUS: */ l`remove`;
-      state.current.alive = false;
-      state.current.map = false;
-      setLoaded(false);
-      setMap(null);
-      map.remove();
-    };
-  }, getDependencies(rest));
+      return () => {
+        /* STATUS: */ l`remove`;
+        state.current.alive = false;
+        state.current.map = false;
+        setLoaded(false);
+        setMap(null);
+        map.remove();
+      };
+    },
+    getDependencies(rest),
+    strict
+  );
 
   return (
     <div ref={container} {...wrapper}>

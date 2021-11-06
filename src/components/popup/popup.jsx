@@ -24,7 +24,7 @@ const getDependencies = (() => {
  * @param {import("./popup").PopupProps} props
  * @returns {import("react").ReactElement}
  */
-function Popup({ children, listeners, ...props }) {
+function Popup({ children, strict, listeners, ...props }) {
   // TODO: Make controlled component
   const { coordinates, trackPointer } = props;
   const { map } = useMap();
@@ -72,10 +72,10 @@ function Popup({ children, listeners, ...props }) {
     }
   });
 
-  const rest = useHandlers({ handlers, props, context: popup });
+  const rest = useHandlers({ handlers, props, context: popup, strict });
 
   const dependencies = getDependencies(rest);
-  const status = useLifeCycleWithStatus({ render }, dependencies);
+  const status = useLifeCycleWithStatus({ render, strict }, dependencies);
 
   return (
     status.alive && (

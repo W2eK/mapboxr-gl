@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { getLogger, stringEqual } from '../utils';
+import { deepEqual, getLogger, stringEqual } from '../utils';
 
 export const buildSwitcher = key =>
   function switcher(state) {
@@ -24,8 +24,9 @@ export const buildHandlers = handlers => {
   }, {});
 };
 
-export const useHandlers = ({ handlers, props, context }) => {
+export const useHandlers = ({ handlers, props, context, strict }) => {
   const l = getLogger();
+  const equalityFn = strict ? (a, b) => a === b : deepEqual;
   const prev = useRef(props);
   const keys = new Set(Object.keys(handlers));
   const handled = new Set();
@@ -36,7 +37,7 @@ export const useHandlers = ({ handlers, props, context }) => {
       rest[key] = value;
       return rest;
     }
-    if (!stringEqual(value, prev.current[key])) {
+    if (!equalityFn(value, prev.current[key])) {
       l`update ${key}`;
       handlers[key].call(context, value);
     }
@@ -44,7 +45,7 @@ export const useHandlers = ({ handlers, props, context }) => {
   }, {});
 
   Object.entries(prev.current)
-    .filter(([key]) => !handled.has(key))
+    .filter(([key]) => keys.has(key) && !handled.has(key))
     .forEach(([key, value]) => {
       l`update ${key}`;
       handlers[key].call(context, undefined);

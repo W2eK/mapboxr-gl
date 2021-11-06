@@ -7,7 +7,13 @@ import { useLifeCycleWithCache, useParent } from '../../hooks';
  * @param {import("./property").PropertyProps} props
  * @returns {import("react").ReactElement}
  */
-export function Property({ name, type, value, layer: receivedLayerName }) {
+export function Property({
+  name,
+  type,
+  value,
+  strict,
+  layer: receivedLayerName
+}) {
   const { map } = useMap();
   type = `${type[0].toUpperCase()}${type.slice(1)}Property`;
   const { layer: injectedLayerName } = useParent();
@@ -19,8 +25,8 @@ export function Property({ name, type, value, layer: receivedLayerName }) {
   const remove = (initial, alive) =>
     alive && map[`set${type}`](layer, name, initial);
 
-  const dependencies = [name, receivedLayerName, JSON.stringify(value)];
-  useLifeCycleWithCache({ init, render, remove }, dependencies);
+  const dependencies = [name, receivedLayerName, value];
+  useLifeCycleWithCache({ init, render, remove, strict }, dependencies);
 
   return null;
 }

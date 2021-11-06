@@ -6,7 +6,7 @@ import { useMap } from '../context';
  * @param {import("./image").ImageProps} props
  * @returns {import("react").ReactElement}
  */
-export function Image({ id, image, options }) {
+export function Image({ id, image, options, strict }) {
   const { map } = useMap();
   buildLogger('image', id);
   const callback = (err, image) => {
@@ -16,8 +16,8 @@ export function Image({ id, image, options }) {
   const render = () => map.loadImage(image, callback);
   const remove = alive => alive && map.removeImage(id);
 
-  const dependencies = [id, image, JSON.stringify(options)];
-  useLifeCycle({ render, remove }, dependencies);
+  const dependencies = [id, image, options];
+  useLifeCycle({ render, remove, strict }, dependencies);
 
   return null;
 }

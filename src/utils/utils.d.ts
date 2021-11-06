@@ -21,10 +21,18 @@ export type NormalizeProps<T extends Record<string, any>> = {
 
 export type NormalizeArray<T> = T | T[];
 
-
 // * Type Builders
-export type BuildHandlers<T extends Record<string, any>, U extends 'on' | 'once'> = {
+export type BuildHandlers<
+  T extends Record<string, any>,
+  U extends 'on' | 'once'
+> = {
   [P in keyof T as `${U}${string & P}`]?: (
     event: T[P]
   ) => void | ((event: T[P]) => void)[];
+};
+
+// * Common Types
+type StrictEqualityCheck = boolean;
+export type EqualityCheck = {
+  strict?: StrictEqualityCheck;
 };

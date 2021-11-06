@@ -1,5 +1,5 @@
 import { AnyLayout, AnyPaint } from 'mapbox-gl';
-import { UnionToIntersection, ValueOf } from '../../utils/utils';
+import { EqualityCheck, UnionToIntersection, ValueOf } from '../../utils/utils';
 
 type BuildPropertyType<T extends 'layout' | 'paint', U> = {
   [P in keyof U]: { type: T; name: P; value: U[P] };
@@ -14,6 +14,7 @@ type LayoutProperties = ValueOf<
 
 type PropertyProps = {
   layer?: string;
-} & (PaintProperties | LayoutProperties);
+} & EqualityCheck &
+  (PaintProperties | LayoutProperties);
 
 export function Property(props: PropertyProps): JSX.Element;

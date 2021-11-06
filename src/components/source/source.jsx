@@ -27,7 +27,7 @@ const handlers = buildHandlers({
  * @param {import("./source").SourceProps} props
  * @returns {import("react").ReactElement}
  */
-export function Source({ children, id, ...props }) {
+export function Source({ children, id, strict = false, ...props }) {
   id = useId(id, props.type);
   buildLogger('source', id);
   const { map } = useMap();
@@ -41,10 +41,18 @@ export function Source({ children, id, ...props }) {
     }
   };
 
-  const rest = useHandlers({ handlers, props, context: map.getSource(id) });
+  const rest = useHandlers({
+    handlers,
+    props,
+    context: map.getSource(id),
+    strict
+  });
   const dependencies = getDependencies(rest, id);
 
-  const status = useLifeCycleWithStatus({ render, remove }, dependencies);
+  const status = useLifeCycleWithStatus(
+    { render, remove, strict },
+    dependencies
+  );
 
   return (
     status.alive && (

@@ -20,6 +20,7 @@ const primitiveComparator = (prev, next) => {
  * @returns {import("react").ReactElement}
  */
 export function FeatureState({
+  strict,
   state,
   source: receivedSourceName,
   sourceLayer = '',
@@ -53,7 +54,7 @@ export function FeatureState({
     }
   };
 
-  const dependencies = [source, sourceLayer, JSON.stringify(state)];
-  useLifeCycleWithCache({ init, render, remove }, dependencies);
+  const dependencies = [source, sourceLayer, state];
+  useLifeCycleWithCache({ init, render, remove, strict }, dependencies);
   return null;
 }

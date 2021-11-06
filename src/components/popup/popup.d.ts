@@ -1,5 +1,5 @@
 import { PopupOptions, LngLatLike, Popup as MapboxPopup } from 'mapbox-gl';
-import { NormalizeArray } from '../../utils/utils';
+import { EqualityCheck, NormalizeArray } from '../../utils/utils';
 
 type PopupHandler<T extends 'close' | 'open'> = (props: {
   type: T;
@@ -12,6 +12,6 @@ type PopupProps = PopupOptions & {
   onclose?: NormalizeArray<PopupHandler<'close'>>;
   coordinates?: LngLatLike;
   trackPointer?: boolean;
-};
+} & EqualityCheck;
 
 export function Popup(props: PopupProps): JSX.Element;

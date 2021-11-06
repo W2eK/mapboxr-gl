@@ -32,6 +32,7 @@ function Layer({
   cursor,
   beforeId,
   listeners,
+  strict,
   ...props
 }) {
   const type = !master
@@ -67,7 +68,7 @@ function Layer({
         .forEach((name, i) => map.moveLayer(name, predecessors[i]));
     }
   };
-  const rest = useHandlers({ handlers, props: { ...props, beforeId } });
+  const rest = useHandlers({ handlers, props: { ...props, beforeId }, strict });
 
   const init = () => {
     if (type === 'replace_master') {
@@ -112,7 +113,7 @@ function Layer({
   };
   const dependencies = getDependencies(rest, restoreMaster);
   const status = useLifeCycleWithStatus(
-    { render, init, remove, clean },
+    { render, init, remove, clean, strict },
     dependencies
   );
   // useAssert({ id, hasMaster: !!master, replaceMaster, restoreMaster });

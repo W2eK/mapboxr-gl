@@ -1,7 +1,11 @@
 import { AnyLayer, MapLayerEventType } from 'mapbox-gl';
 import { StandardLonghandProperties } from 'csstype';
 import { PropsWithChildren } from 'react';
-import { BuildHandlers, DistributiveOmit } from '../../utils/utils';
+import {
+  BuildHandlers,
+  DistributiveOmit,
+  EqualityCheck
+} from '../../utils/utils';
 
 type LayerOnHandlers = BuildHandlers<MapLayerEventType, 'on'>;
 type LayerOnceHandlers = BuildHandlers<MapLayerEventType, 'once'>;
@@ -17,6 +21,7 @@ type LayerProps = {
   type?: string;
 } & DistributiveOmit<AnyLayer, 'source-layer' | 'id'> &
   LayerOnHandlers &
-  LayerOnceHandlers;
+  LayerOnceHandlers &
+  EqualityCheck;
 
 export function Layer(props: PropsWithChildren<LayerProps>): JSX.Element;
