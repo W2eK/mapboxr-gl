@@ -5,229 +5,187 @@ class LayerNode {
   /** @param {import('mapbox-gl').AnyLayer=} data */
   constructor(name, data) {
     this.name = name;
-    /** @type {LayerNode} */
-    this.next = null;
-    /** @type {LayerNode} */
-    this.prev = null;
-    this.alive = false;
-    this.registered = false;
     this.data = data;
     this.master = !!data;
+    this.alive = false;
+    this.registered = false;
+    /** @type {LayerNode | null} */
+    this.next = null;
+    /** @type {LayerNode | null} */
+    this.prev = null;
     /** @type {LayerNode} */
-    this._last = null;
+    this.__first = this;
+    // /** @type {Map<Function, boolean>} */
+    // this.fuse = new Map();
   }
-  /** @returns {LayerNode | undefined} */
-  before() {
-    if (!this.prev) return this.alive ? this : this.after();
-    if (this.prev.alive) return this.prev;
-    return this.prev.before();
+  get first() {
+    if (this.__first === this) return this;
+    return this.__first.first;
   }
-  /** @returns {LayerNode | undefined} */
-  after() {
-    if (!this.next) return undefined;
+  /** @param {LayerNode} node */
+  set first(node) {
+    if (node.next?.__first === node) node.next.__first = node.next;
+    if (this.__first !== this) {
+      // this.__first.next = node;
+      // node.prev = this.__first;
+      node.__first = this.__first;
+    }
+    // node.next = this;
+    // this.prev = node;
+    this.__first = node;
+  }
+  /** @returns {LayerNode | null} */
+  get after() {
+    if (!this.next) return null;
     if (this.next.alive) return this.next;
-    return this.next.after();
-  }
-  /** @returns {LayerNode} */
-  get last() {
-    if (!this._last) return this;
-    return this._last.last;
+    return this.next.after;
   }
   /** @returns {string[]} */
   get predecessors() {
-    const arr = [this.name];
+    const arr = [];
+    if (this.alive) arr.push(this.name);
+    if (this.__first !== this) arr.push(...this.__first.predecessors);
     return arr;
   }
-  /** @param {LayerNode} node */
-  set last(node) {
-    // if (this._last) node.last = this._last;
-    // this._last = node;
-    if (!this._last) this._last = node;
-  }
-  /**
-   * @param {LayerNode | undefined} a
-   * @param {LayerNode | undefined} b
-   */
-  static link(a = null, b = null) {
-    if (a) a.next = b;
-    if (b) b.prev = a;
+  // /** @param {Function} fn @returns {Function} */
+  // withFuse(fn) {
+  //   return (...args) => {
+  //     if (this.fuse.get(fn)) {
+  //       console.warn('Infinite Loop');
+  //       return null;
+  //     } else {
+  //       this.fuse.set(fn, true);
+  //       const result = fn(...args);
+  //       this.fuse.set(fn, false);
+  //       return result;
+  //     }
+  //   };
+  // }
+  /** @returns {LayerNode} */
+  get tail() {
+    return this.next ? this.next.tail : this;
   }
 }
 
 class LayerList {
   constructor() {
     /** @type {LayerNode} */
-    this.tail = null;
-    /** @type {LayerNode} */
-    this.head = null;
+    this.first = null;
+    this.fuse = new Set();
   }
   /** @param {LayerNode} node @param {LayerNode=} before */
   add(node, before) {
     node.registered = true;
-    if (!this.head) {
-      this.head = node;
-      this.tail = node;
-      return;
-    }
-    this.splice(node.last, node, before);
-    /*
-    if (node.queue) {
-      this.splice(node.queue, node, before);
-    } else if (!before) {
-      this.push(node);
-    } else if (!before.prev) {
-      this.unshift(node);
+    if (this.first) {
+      this.insert(node, before);
     } else {
-      this.insert(node, before.prev, before);
+      this.first = node;
     }
-    */
   }
-  /** @param {LayerNode} node @param {LayerNode} prev @param {LayerNode} next */
-  insert(node, prev, next) {
-    prev.next = node;
-    next.prev = node;
-    node.next = next;
-    node.prev = prev;
-  }
-  /** @param {LayerNode} node */
-  push(node) {
-    if (this.tail === node) return;
-    const prev = this.tail;
-    node.prev = prev;
-    prev.next = node;
-    this.tail = node;
-  }
-  /** @param {LayerNode} node */
-  unshift(node) {
-    const next = this.head;
-    node.next = next;
-    next.prev = node;
-    this.head = node;
-  }
-  pop() {
-    const tail = this.tail;
-    const prev = tail.prev;
-    tail.prev = null;
-    prev.next = null;
-    this.tail = prev;
-  }
-  shift() {
-    const head = this.head;
-    const next = head.next;
-    head.next = null;
-    next.prev = null;
-    this.head = next;
-  }
-  /** @param {LayerNode} first @param {LayerNode} last @param {LayerNode=} before */
-  splice(first, last, before) {
+  /** @param {LayerNode} last @param {LayerNode=} before */
+  insert(last, before) {
+    // ! FIRST and LAST already LINKED!
+    const first = last.first;
     const prev = first.prev;
     const next = last.next;
-    LayerNode.link(prev, next);
+    this.link(prev, next);
     if (before) {
       const prev = before.prev;
-      LayerNode.link(last, before);
-      LayerNode.link(prev, first);
+      this.link(prev, first);
+      this.link(last, before);
     } else {
       const tail = this.tail;
-      LayerNode.link(tail, first);
-      this.tail = last;
-      last.next = null;
+      this.link(tail, first);
     }
   }
-  /** @param {LayerNode} node */
-  remove(node) {
-    const next = node.next;
-    const prev = node.prev;
-    if (!next) return this.pop();
-    if (!prev) return this.shift();
-    next.prev = prev;
-    prev.next = next;
-    node.next = null;
-    node.prev = null;
+  /**
+   * @param {LayerNode | undefined} a
+   * @param {LayerNode | undefined} b
+   */
+  link(a = null, b = null) {
+    if (a) a.next = b;
+    if (b) b.prev = a;
   }
-  /** @param {LayerNode} node @returns {string} */
-  print(node = this.head) {
-    return node.next ? node.name + ' | ' + this.print(node.next) : node.name;
+  /** @returns {LayerNode} */
+  get tail() {
+    return this.first.tail;
+  }
+  /** @returns {string} */
+  print() {
+    let last = this.first;
+    const names = [];
+    while (last) {
+      if (names.includes(last.name)) {
+        names.push(last.name, '...');
+        last = null;
+      } else {
+        names.push(last.name);
+        last = last.next;
+      }
+    }
+    return names.join(' | ');
   }
 }
 
 export class LayerCache {
   constructor() {
     this.list = new LayerList();
-    /** @type {Object<string, LayerList>} */
-    this.queue = {};
     /** @type {Object<string, LayerNode>} */
     this.map = {};
   }
-  /** @param {string | import('mapbox-gl').AnyLayer} input @param {boolean} alive  */
-  create(input, alive = true) {
+  /** @param {string | import('mapbox-gl').AnyLayer} input  */
+  create(input) {
     let node, name;
-    if (typeof input === 'object') {
+    if (input instanceof Object) {
+      // TODO: keep original position
       node = new LayerNode(input.id, input);
-      name = `__${input.id}`;
+      name = input.id;
     } else {
       node = new LayerNode(input);
       name = input;
     }
     this.map[name] = node;
-    node.alive = alive;
     return node;
   }
-  /** @param {string} name @param {boolean=} exact @returns {LayerNode | undefined} */
-  get(name, exact) {
-    if (exact) return this.map[name];
-    return this.map[`__${name}`] ?? this.map[name];
-  }
-  /** @param {string} name @param {boolean=} exact @returns {boolean} */
-  has(name, exact) {
-    return !!this.get(name, exact);
-  }
-  /** @param {string} name @param {string=} beforeId @returns {string[]}  */
+  /** @param {string} name @param {string=} beforeId  @returns {string[]} */
   register(name, beforeId) {
-    const node = this.get(name, true) || this.create(name);
+    const node = this.get(name) || this.create(name);
     node.alive = true;
-    if (beforeId && node.after()?.name === beforeId) {
-      return node.predecessors;
+    if (beforeId && node.after?.name === beforeId) {
+      //
     } else if (beforeId) {
-      if (node.next && node.next.last === node) node.next._last = null;
-      const next = this.get(beforeId) || this.create(beforeId, false);
-      if (node.registered) {
-        this.list.remove(node);
-      }
-      // TODO: TODO!
-      next.last = node;
+      const next = this.get(beforeId) || this.create(beforeId);
+      if (!next.registered) this.list.add(next);
       this.list.add(node, next);
+      next.first = node;
     } else if (!node.registered) {
       this.list.add(node);
     }
     return node.predecessors;
-  }
-  /** @param {string} name @param {boolean=} exact */
-  alive(name, exact) {
-    return this.get(name, exact).alive;
-  }
-  /** @param {string} name @param {boolean=} exact */
-  kill(name, exact) {
-    this.get(name, exact).alive = false;
-  }
-  /** @param {string} name @param {boolean=} exact */
-  revive(name, exact) {
-    this.get(name, exact).alive = true;
+    // if(beforeId && )
   }
   /** @param {string} name @returns {string | null} */
   position(name) {
-    return this.get(name, true).after()?.name;
+    return this.get(name).after?.name;
   }
-  /** @param {string} name @returns {import('mapbox-gl').AnyLayer} */
+  /** @param {string} name @returns {import('mapbox-gl').AnyLayer | Object} */
   data(name) {
     return this.get(name).data;
   }
-  // /** @param {string} name @param {boolean=} exact @returns {string} */
-  // before(name, exact) {
-  //   return this.get(name, exact)?.before()?.name;
-  // }
-  // /** @param {string} name @param {boolean=} exact @returns {string} */
-  // after(name, exact) {
-  //   return this.get(name, exact)?.after()?.name;
-  // }
+  /** @param {string} name @returns {LayerNode | undefined} */
+  get(name) {
+    return this.map[name];
+  }
+  /** @param {string} name @returns {boolean} */
+  has(name) {
+    return !!this.get(name);
+  }
+  /** @param {string} name @returns {boolean} */
+  alive(name) {
+    return !!this.get(name)?.alive;
+  }
+  /** @param {string} name */
+  kill(name) {
+    this.get(name).alive = false;
+  }
 }

@@ -1,4 +1,4 @@
-import { AnyLayer, MapLayerEventType } from 'mapbox-gl';
+import { AnyLayer, Expression, MapLayerEventType } from 'mapbox-gl';
 import { StandardLonghandProperties } from 'csstype';
 import { PropsWithChildren } from 'react';
 import {
@@ -19,7 +19,8 @@ type LayerProps = {
   cursor?: boolean | StandardLonghandProperties['cursor'];
   sourceLayer?: string;
   type?: string;
-} & DistributiveOmit<AnyLayer, 'source-layer' | 'id'> &
+  filter?: Expression | null;
+} & DistributiveOmit<AnyLayer, 'source-layer' | 'id' | 'filter'> &
   LayerOnHandlers &
   LayerOnceHandlers &
   EqualityCheck;

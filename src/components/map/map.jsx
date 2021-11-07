@@ -58,6 +58,7 @@ function MapboxrGL({ children = null, wrapper, strict, listeners, ...props }) {
         const cache = state.current.cache;
         map.getStyle().layers.forEach(layer => {
           const node = cache.create(layer);
+          node.alive = true;
           cache.list.add(node);
         });
         if (isDev()) window.cache = cache;

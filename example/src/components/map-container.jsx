@@ -62,7 +62,7 @@ const MapContainer = () => {
         oncemousemove={originalConsoleLog}
         // onviewport={originalConsoleLog}
       >
-        {/* <MapLayers /> */}
+        <MapLayers />
         {image.checked && <Image {...parseAttributes(image.props)} />}
         {marker.checked && (
           <Marker {...parseAttributes(marker.props)} ondragend={console.log}>

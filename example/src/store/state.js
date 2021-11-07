@@ -148,12 +148,11 @@ const initialState = {
   },
   master: {
     name: 'Master',
-    checked: false,
+    checked: true,
     open: true,
     props: {
-      id: '',
-      master: 'admin-1-boundary',
-      paint: { 'line-color': 'red' },
+      master: 'landcover',
+      paint: { 'fill-color': 'red' },
       restoreMaster: true,
       replaceMaster: true
     }

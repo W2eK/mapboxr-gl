@@ -35,14 +35,15 @@ function MapLayers() {
         type="fill"
         paint={{ 'fill-color': 'purple', 'fill-translate': [-30, -30] }}
         beforeId="rect-green"
-        // maxzoom={4}
+        maxzoom={5}
       />
-      {/* <Layer
+      <Layer
         id="rect-green"
         type="fill"
         paint={{ 'fill-color': 'green', 'fill-translate': [0, 0] }}
+        beforeId="landcover"
       />
-      <Layer
+      {/* <Layer
         id="rect-tan"
         type="fill"
         paint={{ 'fill-color': 'tan', 'fill-translate': [15, 15] }}
@@ -52,8 +53,8 @@ function MapLayers() {
         id="rect-blue"
         type="fill"
         paint={{ 'fill-color': 'blue', 'fill-translate': [30, 30] }}
-      />
-      <Layer
+      /> */}
+      {/* <Layer
         id="rect-red"
         type="fill"
         paint={{
@@ -62,13 +63,13 @@ function MapLayers() {
           'fill-opacity': 0.3
         }}
         beforeId="landcover"
-      />
+      /> */}
       <Layer
         id="rect-yellow"
         type="fill"
         paint={{ 'fill-color': 'yellow', 'fill-translate': [90, 90] }}
         beforeId="rect-green"
-      /> */}
+      />
     </Source>
   );
 }
