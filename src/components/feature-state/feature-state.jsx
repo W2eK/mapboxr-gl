@@ -47,7 +47,7 @@ export function FeatureState({
   const remove = (prev, alive) => {
     if (alive) {
       const keys =
-        typeof prev.current === 'object'
+        prev.current instanceof Object
           ? Object.keys(prev.current)
           : [prev.current];
       keys.forEach(id => map.removeFeatureState({ id, source, sourceLayer }));

@@ -8,9 +8,10 @@ import { useParent } from '../../hooks';
  * @param {import("./listener").ListenerProps} props
  * @returns {import("react").ReactElement}
  */
-export function Listener({ type, event, handler, layer }) {
+export function Listener({ type, event, handler, layer: receivedLayerName }) {
   const { map } = useMap();
-  let { instance } = useParent();
+  let { instance, layer: injectedLayerName } = useParent();
+  const layer = receivedLayerName || injectedLayerName;
 
   const l = buildLogger(
     'listener',

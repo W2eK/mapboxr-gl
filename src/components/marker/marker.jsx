@@ -19,7 +19,9 @@ const getDependencies = (() => {
 
 const handlers = buildHandlers({
   coordinates: 'setLngLat',
-  offset: 'setOffset',
+  offset(offset = [0, 0]) {
+    this?.setOffset(offset);
+  },
   draggable: 'setDraggable',
   rotation: 'setRotation',
   rotationAlignment: 'setRotationAlignment',
