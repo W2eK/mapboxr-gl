@@ -12,7 +12,9 @@ export const handlers = buildHandlers({
 
   // Camera properties
   center: 'setCenter',
-  zoom: 'setZoom',
+  zoom: function (x) {
+    this.setZoom(x || 0);
+  },
   bearing: 'setBearing',
   pitch: 'setPitch',
   padding(padding = {}) {
