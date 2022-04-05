@@ -1,7 +1,7 @@
 import { EqualityCheck } from '../../utils/utils';
 
 type FeatureStateProps<
-  T extends Record<string | number, U> | string | number | null,
+  T extends Record<string | number, U> | string | number | null | [string | number,  U][],
   U extends Record<string, boolean | number | string>
 > = {
   state: T;
@@ -11,6 +11,6 @@ type FeatureStateProps<
 } & EqualityCheck;
 
 export function FeatureState<
-  T extends Record<string | number, U> | string | number | null,
+  T extends Record<string | number, U> | string | number | null | [string | number,  U][],
   U extends Record<string, boolean | number | string>
 >(props: FeatureStateProps<T, U>): JSX.Element;
