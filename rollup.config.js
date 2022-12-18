@@ -1,50 +1,38 @@
-import babel from '@rollup/plugin-babel';
-import external from 'rollup-plugin-peer-deps-external';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import visualizer from 'rollup-plugin-visualizer';
+import typescript from '@rollup/plugin-typescript';
+import { terser } from 'rollup-plugin-terser';
+import external from 'rollup-plugin-peer-deps-external';
 import dts from 'rollup-plugin-dts';
+import packageJson from './package.json' assert { type: 'json' };
 
-import pkg from './package.json';
-
-const config = [
+export default [
   {
-    input: pkg.source,
+    input: 'src/index.ts',
     output: [
       {
-        file: pkg.main,
+        file: packageJson.main,
         format: 'cjs',
         sourcemap: true,
-        exports: 'named'
+        name: 'react-ts-lib'
       },
       {
-        file: pkg.module,
+        file: packageJson.module,
         format: 'esm',
-        sourcemap: true,
-        exports: 'named'
+        sourcemap: true
       }
     ],
-    treeshake: true,
     plugins: [
-      // del({ targets: ['dist/*'] }),
       external(),
-      babel({
-        exclude: 'node_modules/**',
-        babelHelpers: 'bundled'
-      }),
-      resolve({
-        extensions: ['.mjs', '.js', '.json', '.node', '.jsx']
-      }),
+      resolve(),
       commonjs(),
-      visualizer()
-    ],
-    external: Object.keys(pkg.peerDependencies || {})
+      typescript({ tsconfig: './tsconfig.json' }),
+      // terser()
+    ]
   },
   {
-    input: './src/index.d.ts',
-    output: [{ file: pkg.types, format: 'es' }],
+    input: 'dist/esm/types/index.d.ts',
+    output: [{ file: 'dist/index.d.ts', format: 'esm' }],
     plugins: [dts()]
   }
 ];
-
-export default config;

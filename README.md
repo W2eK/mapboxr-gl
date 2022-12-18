@@ -2,11 +2,11 @@
 
 > Yet another MapboxGL.js wrapper for React
 
-[![NPM](https://img.shields.io/npm/v/mapboxr-gl.svg)](https://www.npmjs.com/package/mapboxr-gl) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
 ## Install
 
 ```bash
+npm install --save mapbox-gl
+npm install --save-dev @types/mapbox-gl
 npm install --save mapboxr-gl
 ```
 
@@ -17,16 +17,39 @@ import React, { Component } from 'react';
 import MapboxrGL from 'mapboxr-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-class Example extends Component {
-  render() {
-    return <MapboxrGL />;
-  }
+if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+  (window as any).__MAPBOXR_GL_DEBUG = true;
+  (window as any).__MAPBOXR_GL_LOG = false;
 }
+
+const Example = () => {
+  return <MapboxrGL
+    accessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+    wrapperStyle={{ minHeight: '100vh' }}
+  />;
+};
 ```
 
-## Caveats
+## Builtin Example
 
-- Can't change attributes quantity and order
+```bash
+clone https://github.com/W2eK/mapboxr-gl.git
+cd mapboxr-gl/example
+npm install && npm run start
+```
+
+## Features
+
+- Map
+  - onviewport handler
+  - array listeners
+  - DebugProps
+  - padding
+
+## TODO Features
+
+- strict mode
+- built-in throttler for listeners
 
 ## License
 
